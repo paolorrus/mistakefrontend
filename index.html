@@ -990,8 +990,8 @@
 <script>
 // ==================== SUPABASE CONFIG ====================
 // 👇 RELLENA ESTOS DOS VALORES DESPUÉS DE CREAR TU PROYECTO EN SUPABASE
-const SUPABASE_URL = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_GeZunZhpg866eW5dQ69fXQ_Zodl2l8r';
+const SUPABASE_URL = 'TU_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';
 
 let sb = null;
 let realtimeChannel = null;
@@ -1005,6 +1005,7 @@ function initSupabase(){
 const PASSWORD_ADMIN  = 'cototonto'; // admin: puede editar todo
 const PASSWORD_VIEWER = 'mistake';   // viewer: solo lectura, sync realtime
 const STORAGE_KEY = 'zvz_compo_data_v3';
+const BACKEND_URL = 'https://zvz-backend.onrender.com'; // Bot de Discord
 
 const ROWS = [
   { role:'TANK',    num:1,  weapon:'MONARCA',         group:0 },
@@ -1412,26 +1413,35 @@ function filterPlayers(){ renderPlayers(); }
 async function loadDiscordPlayers(){
   const channelId=document.getElementById('discordChannelId').value.trim();
   if(!channelId){showToast('Introduce el ID del canal');return;}
-  showToast('Conectando con Discord...');
+  showToast('📡 Conectando con Discord...');
   try{
     const res=await fetch(`${BACKEND_URL}/voice/${channelId}`);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const data=await res.json();
     if(data.error) throw new Error(data.error);
-    const newPlayers=data.members.filter(m=>!players.includes(m));
-    players.push(...newPlayers);
+    const members=data.members||[];
+    if(!members.length){showToast('⚠️ Canal vacío o no encontrado');return;}
+    // Replace players list with Discord members (session only, never saved)
+    players=members; 
+    discordPlayers=members;
+    assignments={};
     renderPlayers();
-    showToast(`✅ ${data.members.length} jugadores cargados`);
+    renderCompo();
+    showToast(`✅ ${members.length} jugadores cargados`);
   }catch(e){
+    console.error('Discord load error:',e);
     showToast('❌ Error: '+e.message);
   }
 }
 
 function clearDiscordPlayers(){
-  // Clears Discord-loaded players from memory (they're never persisted anyway)
-  players = players.filter(p => !p.fromDiscord);
+  // Clear ALL players from the list (Discord players are never persisted)
+  players = [];
   discordPlayers = [];
+  assignments = {};
   renderPlayers();
-  showToast('🗑 Jugadores de Discord borrados');
+  renderCompo();
+  showToast('🗑 Jugadores borrados');
 }
 
 // ==================== ITEM MODAL ====================
