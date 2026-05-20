@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mistake ZvZ Compos</title>
+<title>ZvZ Compo — Albion Online</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -251,105 +251,172 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
     min-height: 100vh;
-  }
-  .selector-title {
-    font-family: 'Cinzel', serif;
-    font-size: 32px;
-    font-weight: 900;
-    color: var(--gold);
-    letter-spacing: 4px;
-    margin-bottom: 8px;
-    text-shadow: 0 0 30px #c8a84b44;
-    text-align: center;
-  }
-  .selector-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 48px;
-    text-align: center;
-  }
-  .compo-cards {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 900px;
-  }
-  .compo-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    cursor: pointer;
-    padding: 28px 24px;
-    width: 160px;
-    text-align: center;
-    transition: all .2s;
+    padding: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, #1a120088 0%, transparent 60%),
+      radial-gradient(ellipse at 0% 100%, #0d1e3544 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, #1e0d2a44 0%, transparent 50%);
     position: relative;
     overflow: hidden;
-    animation: cardIn .4s ease both;
   }
+  /* Animated grid background */
+  #selectorScreen::before {
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: .18;
+    pointer-events:none;
+  }
+
+  /* Top bar with logo */
+  .sel-topbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border-gold);
+    background: linear-gradient(180deg, #0d1018cc 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+    z-index: 2;
+  }
+  .sel-topbar-brand { display:flex; align-items:center; gap:10px; }
+  .sel-topbar-logo {
+    width:36px; height:36px; border-radius:50%;
+    border:1px solid #c8a84b55; object-fit:cover;
+  }
+  .sel-topbar-name {
+    font-family:'Cinzel',serif; font-size:14px; font-weight:900;
+    color:var(--gold); letter-spacing:3px;
+  }
+  .sel-topbar-logout {
+    background:none; border:1px solid var(--border); border-radius:6px;
+    color:var(--text-muted); cursor:pointer;
+    font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:1px; padding:6px 14px; text-transform:uppercase;
+    transition:.2s;
+  }
+  .sel-topbar-logout:hover { border-color:var(--dps); color:var(--dps); }
+
+  /* Center hero */
+  .sel-hero {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 48px;
+  }
+  .sel-hero-label {
+    font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:6px; color:var(--gold); text-transform:uppercase;
+    margin-bottom:12px; opacity:.7;
+  }
+  .sel-hero-title {
+    font-family:'Cinzel',serif; font-size:52px; font-weight:900;
+    letter-spacing:6px; line-height:1;
+    background: linear-gradient(180deg, #fff 0%, var(--gold-light) 30%, var(--gold) 60%, var(--gold-dark) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 40px #c8a84b55);
+    text-align:center;
+  }
+  .sel-hero-sub {
+    font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+    letter-spacing:4px; color:var(--text-muted); margin-top:10px;
+    text-transform:uppercase;
+  }
+  .sel-hero-line {
+    width:120px; height:1px; margin:20px 0 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+
+  /* Compo grid — horizontal list */
+  .compo-cards {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1100px;
+    padding: 0 24px;
+    position: relative; z-index: 2;
+  }
+  .compo-card {
+    background: linear-gradient(160deg, #161b22 0%, #0f1318 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    cursor: pointer;
+    padding: 0;
+    width: 200px;
+    text-align: left;
+    transition: all .25s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    overflow: hidden;
+    animation: cardIn .5s cubic-bezier(.22,1,.36,1) both;
+  }
+  .compo-card-inner {
+    padding: 22px 20px 18px;
+  }
+  /* Accent bar top */
   .compo-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--gold) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity .2s;
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+    opacity:.5; transition:opacity .25s;
   }
-  .compo-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 40px #c8a84b22; }
-  .compo-card:hover::before { opacity: .04; }
+  .compo-card:hover { border-color:var(--gold-dark); transform:translateY(-6px) scale(1.02); box-shadow:0 20px 50px #00000066, 0 0 30px #c8a84b18; }
+  .compo-card:hover::before { opacity:1; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
   @keyframes cardIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+    from { transform: translateY(30px) scale(.96); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
   }
-  .card-num {
-    font-family: 'Cinzel', serif;
-    font-size: 40px;
-    font-weight: 900;
-    color: var(--gold);
-    line-height: 1;
-    margin-bottom: 10px;
-    text-shadow: 0 0 20px #c8a84b44;
+  /* Card index badge */
+  .card-index {
+    font-family:'Cinzel',serif; font-size:11px; font-weight:700;
+    color:var(--gold-dark); letter-spacing:2px;
+    margin-bottom:10px; display:block;
   }
   .card-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
+    font-family:'Cinzel',serif; font-size:16px; font-weight:900;
+    color:var(--text); letter-spacing:1px; text-transform:uppercase;
+    margin-bottom:6px; line-height:1.2;
   }
   .card-info {
-    font-size: 11px;
-    color: var(--text-muted);
+    font-size:11px; color:var(--text-muted); letter-spacing:.5px;
   }
+  /* Stats row */
+  .card-stats {
+    display:flex; gap:12px; margin-top:14px; padding-top:12px;
+    border-top:1px solid var(--border);
+  }
+  .card-stat { display:flex; flex-direction:column; gap:1px; }
+  .card-stat-val { font-family:'Cinzel',serif; font-size:18px; font-weight:900; color:var(--gold); line-height:1; }
+  .card-stat-lbl { font-size:9px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
+
+  /* Add card */
   .card-add {
-    border-style: dashed;
-    border-color: var(--border);
-    opacity: .6;
+    border-style: dashed; border-color: var(--border);
+    background: transparent;
+    display:flex; align-items:center; justify-content:center;
+    min-height:120px;
   }
-  .card-add .card-num { color: var(--text-muted); font-size: 32px; }
-  .card-add:hover { opacity: 1; }
-  .selector-logout {
-    margin-top: 40px;
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    padding: 8px 20px;
-    text-transform: uppercase;
-    transition: .2s;
+  .card-add-inner { text-align:center; }
+  .card-add-icon { font-size:28px; color:var(--border); line-height:1; margin-bottom:6px; transition:.2s; }
+  .card-add-label { font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; transition:.2s; }
+  .card-add:hover .card-add-icon { color:var(--gold); }
+  .card-add:hover .card-add-label { color:var(--gold); }
+  .card-add:hover { border-color:var(--gold-dark); }
+
+  /* Card actions */
+  .card-actions { position:absolute; top:10px; right:10px; display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+  .compo-card:hover .card-actions { opacity:1; }
+  .card-action-btn {
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:4px;
+    color:var(--text-muted); cursor:pointer; font-size:11px; line-height:1;
+    padding:3px 5px; transition:all .15s;
   }
-  .selector-logout:hover { border-color: var(--dps); color: var(--dps); }
+  .card-action-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .card-action-btn.del:hover { border-color:var(--dps); color:var(--dps); }
+
+  .selector-logout { display:none; } /* moved to topbar */
 
   /* ===== MAIN APP SCREEN ===== */
   #appScreen { flex-direction: column; }
@@ -394,18 +461,13 @@
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 1px;
-    padding: 5px 14px;
+    padding: 5px 12px;
     text-transform: uppercase;
     transition: all .15s;
     white-space: nowrap;
   }
-  .compo-tab:hover { border-color: var(--gold-dark); color: var(--text); background: var(--bg-hover); }
-  .compo-tab.active {
-    background: var(--gold-dark);
-    border-color: var(--gold);
-    color: var(--gold-light);
-    box-shadow: 0 0 10px #c8a84b33;
-  }
+  .compo-tab:hover { border-color: var(--gold-dark); color: var(--text); }
+  .compo-tab.active { background: var(--gold-dark); border-color: var(--gold); color: var(--gold-light); }
   .header-actions {
     display: flex;
     gap: 8px;
@@ -530,43 +592,13 @@
     align-items: center;
     gap: 7px;
     margin-bottom: 3px;
-    padding: 5px 6px 5px 8px;
+    padding: 6px 8px;
     transition: all .15s;
     user-select: none;
-    position: relative;
   }
   .player-chip:hover { background: var(--bg-hover); border-color: var(--gold-dark); }
   .player-chip.dragging { opacity: .35; }
-  .player-chip.assigned { opacity: .5; border-style: dashed; }
-
-  /* Neon X remove button */
-  .player-remove-btn {
-    margin-left: auto;
-    background: none;
-    border: 1px solid transparent;
-    border-radius: 3px;
-    color: var(--border);
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 900;
-    line-height: 1;
-    padding: 2px 4px;
-    flex-shrink: 0;
-    transition: all .15s;
-    display: none;
-  }
-  .player-chip:hover .player-remove-btn { display: block; }
-  .player-remove-btn:hover {
-    color: var(--dps);
-    border-color: var(--dps);
-    background: #e0555515;
-    box-shadow: 0 0 8px #e0555555;
-    text-shadow: 0 0 6px #e05555cc;
-  }
-
-  /* Viewer: no drag, no remove */
-  body.viewer-mode .player-chip { cursor: default; pointer-events: none; }
-  body.viewer-mode .player-chip .player-remove-btn { display: none !important; }
+  .player-chip.assigned { opacity: .3; border-style: dashed; }
   .player-avatar {
     width: 24px; height: 24px; border-radius: 50%;
     background: linear-gradient(135deg, var(--gold-dark), var(--gold));
@@ -799,24 +831,7 @@
   .weapon-input:focus { outline:none; border-bottom-color:var(--gold); background:var(--bg-deep); }
 
 
-  /* SELECTOR BRAND */
-  .selector-brand {
-    display:flex; flex-direction:column; align-items:center; margin-bottom:16px;
-  }
-  .selector-logo {
-    width:72px; height:72px; border-radius:50%;
-    border:2px solid #c8a84b55;
-    box-shadow:0 0 30px #c8a84b44, 0 0 60px #c8a84b22;
-    object-fit:cover; margin-bottom:8px;
-    animation:logoPulse 4s ease-in-out infinite;
-  }
-  .selector-guild-name {
-    font-family:'Cinzel',serif; font-size:26px; font-weight:900;
-    letter-spacing:8px; text-transform:uppercase;
-    background:linear-gradient(180deg,#f0d080 0%,#c8a84b 50%,#7a6020 100%);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-    filter:drop-shadow(0 0 12px #c8a84b66);
-  }
+  /* selector-brand removed — replaced by sel-topbar */
 
   /* HEADER GUILD ICON */
   .header-guild-icon {
@@ -861,8 +876,6 @@
   .admin-only { display: flex; }
   body.viewer-mode .admin-only { display: none !important; }
   body.viewer-mode .compo-card { cursor: pointer; }
-  body.viewer-mode .player-slot.filled { cursor: default; pointer-events: none; }
-  body.viewer-mode .player-slot-remove { display: none; }
 
   /* REALTIME INDICATOR */
   .realtime-dot {
@@ -880,47 +893,14 @@
 
   /* VIEWER BANNER */
   .viewer-banner {
-    background: linear-gradient(90deg, #5865F211, #5865F233, #5865F211);
-    border-bottom: 1px solid #5865F266;
-    text-align: center; padding: 9px 16px;
-    font-family: 'Rajdhani', sans-serif; font-size: 13px;
-    color: #aab4f8; letter-spacing: 2px; font-weight: 700;
-    display: none; text-transform: uppercase;
+    background: linear-gradient(90deg, #5865F211, #5865F222, #5865F211);
+    border-bottom: 1px solid #5865F244;
+    text-align: center; padding: 5px;
+    font-family: 'Rajdhani', sans-serif; font-size: 11px;
+    color: #8891f2; letter-spacing: 2px; font-weight: 600;
+    display: none;
   }
   body.viewer-mode .viewer-banner { display: block; }
-
-
-  /* REFRESH BUTTON (viewer only) */
-  .refresh-fab {
-    position: fixed; bottom: 90px; right: 24px; z-index: 500;
-    background: linear-gradient(135deg, #1a3a1a, #00e676);
-    border: none; border-radius: 50%;
-    width: 54px; height: 54px; cursor: pointer;
-    box-shadow: 0 4px 20px #00e67655, 0 0 0 0 #00e67633;
-    display: none; align-items: center; justify-content: center;
-    transition: transform .2s, box-shadow .2s;
-    animation: refreshPing 4s ease-in-out infinite;
-    flex-direction: column; gap: 2px;
-  }
-  body.viewer-mode .refresh-fab { display: flex; }
-  .refresh-fab:hover { transform: scale(1.12) translateY(-2px); box-shadow: 0 8px 30px #00e67688; animation: none; }
-  .refresh-fab:active { transform: scale(.95); }
-  @keyframes refreshPing {
-    0%,80%,100% { box-shadow: 0 4px 20px #00e67655, 0 0 0 0 #00e67633; }
-    60% { box-shadow: 0 4px 20px #00e67655, 0 0 0 14px transparent; }
-  }
-  .refresh-fab svg { width: 24px; height: 24px; fill: #fff; transition: transform .4s; }
-  .refresh-fab:active svg { transform: rotate(180deg); }
-  .refresh-fab-tip {
-    position: absolute; right: 62px; bottom: 50%; transform: translateY(50%);
-    background: #0d2318; border: 1px solid #00e67644; border-radius: 6px;
-    color: #00e676; font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
-    letter-spacing: 1px; padding: 5px 10px; white-space: nowrap;
-    opacity: 0; pointer-events: none; transition: opacity .2s;
-  }
-  .refresh-fab:hover .refresh-fab-tip { opacity: 1; }
-  .refresh-fab.spinning svg { animation: spin .6s linear; }
-  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
 </style>
 </head>
@@ -938,10 +918,10 @@
   <div class="login-box" id="loginBox">
     <img class="login-guild-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake Logo">
     <div class="login-guild-name">MISTAKE</div>
-    <div class="login-guild-sub">Gremio Albion Online</div>
+    <div class="login-guild-sub">Albion Online · Guild</div>
     <div class="login-divider"></div>
-    <div class="login-subtitle">M I S T A K E @2026 - 2027</div>
-    <div style="font-size:9px;color:var(--text-muted);margin-top:-20px;margin-bottom:20px;letter-spacing:1px;opacity:.6;">MIEMBROS: pulsa acceder</div>
+    <div class="login-subtitle">⚔ ZvZ Composition Manager ⚔</div>
+    <div style="font-size:9px;color:var(--text-muted);margin-top:-20px;margin-bottom:20px;letter-spacing:1px;opacity:.6;">MIEMBROS: pulsa acceder · ADMIN: contraseña</div>
     <div class="login-field">
       <input class="login-input" id="loginInput" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')tryLogin()">
       <button class="login-eye" onclick="togglePwd()">👁</button>
@@ -953,19 +933,30 @@
 
 <!-- ===== SELECTOR SCREEN ===== -->
 <div id="selectorScreen" class="screen">
-  <div class="selector-brand">
-    <img class="selector-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
-    <div class="selector-guild-name">MISTAKE</div>
+  <!-- Top bar -->
+  <div class="sel-topbar">
+    <div class="sel-topbar-brand">
+      <img class="sel-topbar-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
+      <span class="sel-topbar-name">MISTAKE</span>
+    </div>
+    <button class="sel-topbar-logout admin-only" onclick="logout()">↩ Salir</button>
   </div>
-  <div class="selector-title">ZvZ COMPO</div>
-  <div class="selector-sub">Selecciona una composición</div>
+
+  <!-- Hero -->
+  <div class="sel-hero">
+    <div class="sel-hero-label">Albion Online · Guild</div>
+    <div class="sel-hero-title">ZvZ COMPO</div>
+    <div class="sel-hero-sub">Selecciona una composición</div>
+    <div class="sel-hero-line"></div>
+  </div>
+
+  <!-- Cards -->
   <div class="compo-cards" id="compoCards"></div>
-  <button class="selector-logout" onclick="logout()">↩ Cerrar sesión</button>
 </div>
 
 <!-- ===== APP SCREEN ===== -->
 <div id="appScreen" class="screen">
-  <div class="viewer-banner">👁 MODO ESPECTADOR — Los cambios se sincronizan pulsando el botón <span style="color:#00e676;font-weight:900">● verde</span> para refrescar ahora</div>
+  <div class="viewer-banner">👁 MODO ESPECTADOR — Los cambios se sincronizan en tiempo real</div>
   <header class="header">
     <div class="header-logo" onclick="goSelector()">
       <img class="header-guild-icon" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
@@ -980,7 +971,7 @@
         <button class="btn btn-ghost" onclick="clearDiscordPlayers()">🗑 Discord</button>
       </div>
       <button class="btn btn-save admin-only" onclick="saveCurrentCompo()">💾 Guardar</button>
-      <button class="btn btn-ghost admin-only" onclick="exportCompo()">📋 Exportar</button>
+      <button class="btn btn-ghost" onclick="exportCompo()">📋 Exportar</button>
     </div>
   </header>
   <div class="legend-bar">
@@ -994,10 +985,7 @@
     <aside class="sidebar">
       <div class="sidebar-title">
         Jugadores
-        <div style="display:flex;align-items:center;gap:6px">
-          <span class="player-count" id="playerCount">0</span>
-          <button class="admin-only" onclick="clearDiscordPlayers()" title="Limpiar jugadores" style="background:none;border:none;cursor:pointer;font-size:14px;line-height:1;color:var(--text-muted);padding:0;transition:color .15s" onmouseover="this.style.color='var(--dps)'" onmouseout="this.style.color='var(--text-muted)'">🗑</button>
-        </div>
+        <span class="player-count" id="playerCount">0</span>
       </div>
       <input class="player-search" id="playerSearch" placeholder="Buscar jugador..." oninput="filterPlayers(this.value)">
       <div class="players-list" id="playersList"></div>
@@ -1052,14 +1040,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
-<!-- Refresh FAB (viewer only) -->
-<button class="refresh-fab" id="refreshFab" onclick="manualRefresh()" title="Actualizar">
-  <span class="refresh-fab-tip">Actualizar ahora</span>
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-  </svg>
-</button>
 
 <!-- Discord FAB -->
 <a class="discord-fab" href="https://discord.gg/WZ4bbWtNn" target="_blank" rel="noopener" title="Únete al Discord">
@@ -1194,9 +1174,26 @@ function setViewerMode(isViewer){
 function enterApp(role){
   setViewerMode(role==='viewer');
   initCompos();
-  showScreen('selectorScreen');
-  renderSelector();
   connectRealtime();
+  // Go straight into compo 0 — skip selector
+  _openCompoDirectly(0);
+}
+
+function _openCompoDirectly(idx){
+  if(!compos.length) idx=0;
+  idx = Math.min(idx, compos.length-1);
+  currentCompo=idx;
+  if(!compos[idx].rows||!compos[idx].rows.length) compos[idx].rows=makeDefaultRows();
+  slotItems={...(compos[idx].slotItems||{})};
+  assignments={};
+  if(compos[idx].assignments){
+    Object.entries(compos[idx].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
+  }
+  showScreen('appScreen');
+  renderTabs();
+  renderCompo();
+  renderPlayers();
+  document.getElementById('currentCompoName').textContent=compos[idx].name;
 }
 
 function tryLogin(){
@@ -1220,7 +1217,7 @@ function tryLogin(){
 }
 
 
-// Auto-restore admin session on reload
+// Auto-restore admin session on reload (survives F5, clears on tab close)
 (function(){
   const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
@@ -1254,20 +1251,39 @@ function renderSelector(){
   compos.forEach((c,i)=>{
     const rowCount=(c.rows||[]).length||1;
     const itemCount=Object.keys(c.slotItems||{}).length;
+    const assigned=Object.keys(c.assignments||{}).length;
+    const isAdmin=userRole==='admin';
     html+=`<div class="compo-card" onclick="openCompo(${i})" style="animation-delay:${i*0.07}s">
-      <div class="card-actions" onclick="event.stopPropagation()">
+      ${isAdmin?`<div class="card-actions" onclick="event.stopPropagation()">
         <button class="card-action-btn" onclick="openSelectorRename(${i})" title="Renombrar">✏️</button>
         <button class="card-action-btn del" onclick="deleteCompo(${i})" title="Borrar">✕</button>
+      </div>`:''}
+      <div class="compo-card-inner">
+        <span class="card-index">COMPO ${String(i+1).padStart(2,'0')}</span>
+        <div class="card-name">${c.name}</div>
+        <div class="card-stats">
+          <div class="card-stat">
+            <div class="card-stat-val">${rowCount}</div>
+            <div class="card-stat-lbl">Filas</div>
+          </div>
+          <div class="card-stat">
+            <div class="card-stat-val">${itemCount}</div>
+            <div class="card-stat-lbl">Items</div>
+          </div>
+          ${assigned?`<div class="card-stat">
+            <div class="card-stat-val">${assigned}</div>
+            <div class="card-stat-lbl">Asig.</div>
+          </div>`:''}
+        </div>
       </div>
-      <div class="card-num">${i+1}</div>
-      <div class="card-name">${c.name}</div>
-      <div class="card-info">${rowCount} filas · ${itemCount} items</div>
     </div>`;
   });
-  if(compos.length<8){
+  if(compos.length<8&&userRole==='admin'){
     html+=`<div class="compo-card card-add" onclick="addCompo()" style="animation-delay:${compos.length*0.07}s">
-      <div class="card-num">+</div>
-      <div class="card-name">Nueva Compo</div>
+      <div class="card-add-inner">
+        <div class="card-add-icon">＋</div>
+        <div class="card-add-label">Nueva Compo</div>
+      </div>
     </div>`;
   }
   container.innerHTML=html;
@@ -1301,12 +1317,8 @@ function addCompo(){
 function openCompo(idx){
   currentCompo=idx;
   if(!compos[idx].rows||!compos[idx].rows.length) compos[idx].rows=makeDefaultRows();
-  slotItems={...(compos[idx].slotItems||{})};
-  // Restore saved assignments (string keys)
+  slotItems={...( compos[idx].slotItems||{})};
   assignments={};
-  if(compos[idx].assignments){
-    Object.entries(compos[idx].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
-  }
   showScreen('appScreen');
   renderTabs();
   renderCompo();
@@ -1330,11 +1342,7 @@ function renderTabs(){
 function switchCompo(idx){
   currentCompo=idx;
   slotItems={...(compos[idx].slotItems||{})};
-  // Restore saved assignments (string keys)
   assignments={};
-  if(compos[idx].assignments){
-    Object.entries(compos[idx].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
-  }
   renderTabs();
   renderCompo();
   renderPlayers();
@@ -1475,13 +1483,10 @@ function renderPlayers(){
   const assigned=new Set(Object.values(assignments));
   list.innerHTML=filtered.map(p=>{
     const isAssigned=assigned.has(p);
-    const safeP=p.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const isAdmin=userRole==='admin';
-    return `<div class="player-chip${isAssigned?' assigned':''}" data-player="${p}"
-      ${isAdmin?`draggable="true" ondragstart="onPlayerDragStart(event,'${safeP}')"`:'draggable="false"'}>
+    return `<div class="player-chip${isAssigned?' assigned':''}" data-player="${p}" draggable="true"
+      ondragstart="onPlayerDragStart(event,'${p.replace(/'/g,"\\'")}')">
       <div class="player-avatar">${p.charAt(0).toUpperCase()}</div>
       <span class="player-name">${p}</span>
-      ${isAdmin?`<button class="player-remove-btn" onclick="removePlayer('${safeP}',event)" title="Eliminar">✕</button>`:''}
     </div>`;
   }).join('');
 }
@@ -1516,19 +1521,6 @@ function addPlayer(){
   renderPlayers(); autoPush();
 }
 function removeAssignment(rowNum){ delete assignments[String(rowNum)]; renderCompo(); renderPlayers(); autoPush(); }
-
-function removePlayer(name, e){
-  e.stopPropagation(); // don't trigger drag
-  // Remove from list
-  players = players.filter(p => p !== name);
-  // Also remove any assignment for this player
-  Object.keys(assignments).forEach(k => {
-    if(assignments[k] === name) delete assignments[k];
-  });
-  renderPlayers();
-  renderCompo();
-  autoPush();
-}
 function clearAllPlayers(){ if(!confirm('¿Limpiar asignaciones?'))return; assignments={}; renderCompo(); renderPlayers(); showToast('Asignaciones limpiadas'); }
 function filterPlayers(){ renderPlayers(); }
 
@@ -1797,7 +1789,7 @@ function setRealtimeStatus(online){
   if(!dot) return;
   if(online){
     dot.classList.remove('offline');
-    label.textContent='DIRECTO';
+    label.textContent='EN VIVO';
   } else {
     dot.classList.add('offline');
     label.textContent='Sin conexión';
@@ -1806,22 +1798,17 @@ function setRealtimeStatus(online){
 
 async function pushToSupabase(){
   if(!sb || userRole!=='admin') return;
-  // Snapshot current state into compo object (so pull also works)
+  // Always save current slotItems into compo before pushing
   compos[currentCompo].slotItems={...slotItems};
-  // Store assignments with string keys in both places
-  const strAssignments={};
-  Object.entries(assignments).forEach(([k,v])=>{ strAssignments[String(k)]=v; });
-  compos[currentCompo].assignments=strAssignments;
+  compos[currentCompo].assignments={...assignments};
   try {
-    const {error} = await sb.from('zvz_state').upsert({
+    await sb.from('zvz_state').upsert({
       id: 1,
       compos: JSON.stringify(compos),
       players: JSON.stringify(players),
-      assignments: JSON.stringify(strAssignments),
+      assignments: JSON.stringify(assignments),
       updated_at: new Date().toISOString()
     });
-    if(error) console.warn('Supabase upsert error:', error);
-    else console.log('[Push] OK — players:', players.length, 'assignments:', Object.keys(strAssignments).length);
   } catch(e){ console.warn('Supabase push error:', e); }
 }
 
@@ -1883,13 +1870,6 @@ function applyRemoteState(data){
     }
   } catch(e){ console.warn('assignments parse error',e); }
 
-  // Also restore assignments from the saved compo if top-level assignments was empty
-  // (belt-and-suspenders: compos[i].assignments is also saved by admin)
-  if(Object.keys(assignments).length===0 && compos[currentCompo]?.assignments){
-    const saved=compos[currentCompo].assignments;
-    Object.entries(saved).forEach(([k,v])=>{ assignments[String(k)]=v; });
-  }
-
   // Refresh all visible UI
   const curScreen = document.querySelector('.screen.active')?.id;
   if(curScreen==='selectorScreen') renderSelector();
@@ -1922,11 +1902,12 @@ function connectRealtime(){
       payload => {
         // Both admin and viewer refresh from remote on any change
         // Admin already has latest state; viewer needs the update
-        // Always apply remote state (viewer sees updates, admin sees if another admin changes)
-        try {
-          applyRemoteState(payload.new);
-          if(userRole==='viewer') showToast('🔄 Actualizado');
-        } catch(e){ console.warn('Realtime apply error:', e); }
+        if(userRole==='viewer'){
+          try {
+            applyRemoteState(payload.new);
+            showToast('🔄 Actualizado');
+          } catch(e){}
+        }
       }
     )
     .subscribe(status => {
@@ -1936,22 +1917,6 @@ function connectRealtime(){
 
 // ==================== APP INIT ====================
 initSupabase();
-
-async function manualRefresh(){
-  const btn = document.getElementById('refreshFab');
-  btn.classList.add('spinning');
-  btn.style.pointerEvents = 'none';
-  try {
-    await pullFromSupabase();
-    showToast('✅ Actualizado');
-  } catch(e) {
-    showToast('❌ Error al actualizar');
-  }
-  setTimeout(()=>{
-    btn.classList.remove('spinning');
-    btn.style.pointerEvents = '';
-  }, 700);
-}
 
 </script>
 </body>
