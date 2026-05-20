@@ -991,13 +991,14 @@
 <script>
 // ==================== SUPABASE CONFIG ====================
 // 👇 RELLENA ESTOS DOS VALORES DESPUÉS DE CREAR TU PROYECTO EN SUPABASE
-const SUPABASE_URL = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
+const SUPABASE_URL = 'TU_SUPABASE_URL';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4Y25xa2Jkd3hlcXhxbnpqa3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNzEyODMsImV4cCI6MjA5NDg0NzI4M30.XuSJMmqlkTP2Ryy--r4-WO9liA-XFgoqy6cQ57cbAuk';
+
 let sb = null;
 let realtimeChannel = null;
 
 function initSupabase(){
-  if(SUPABASE_URL === 'TU_SUPABASE_URL') return; // not configured yet
+  // Supabase configured
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
@@ -1254,11 +1255,10 @@ function switchCompo(idx){
 // ==================== SAVE ====================
 function saveCurrentCompo(){
   compos[currentCompo].slotItems={...slotItems};
-  // Also sync current assignments into the compo object so viewers see them
-  compos[currentCompo].assignments = {...assignments};
+  compos[currentCompo].assignments={...assignments};
   saveStorage();
   pushToSupabase();
-  showToast('💾 Compo guardada y sincronizada');
+  showToast('💾 Guardado y sincronizado');
   renderSelector();
 }
 
@@ -1279,7 +1279,8 @@ function buildSlotHtml(rowNum,slotType){
 }
 
 function buildPlayerSlotHtml(rowNum){
-  const name=assignments[rowNum];
+  // assignments keys may be strings after JSON parse, coerce both sides
+  const name=assignments[rowNum] || assignments[String(rowNum)];
   if(name){
     return `<div class="player-slot filled" data-row="${rowNum}" draggable="true"
       ondragstart="onPlayerSlotDragStart(event,${rowNum})"
@@ -1408,7 +1409,7 @@ function onSlotDrop(e,rowNum){
   e.preventDefault(); e.currentTarget.classList.remove('drag-over');
   if(!draggedPlayer) return;
   if(dragSourceRow!==null&&dragSourceRow!==rowNum) delete assignments[dragSourceRow];
-  assignments[rowNum]=draggedPlayer;
+  assignments[String(rowNum)]=draggedPlayer;
   draggedPlayer=null; dragSourceRow=null;
   renderCompo(); renderPlayers(); autoPush();
 }
@@ -1422,7 +1423,7 @@ function addPlayer(){
   players.push(name); input.value='';
   renderPlayers(); autoPush();
 }
-function removeAssignment(rowNum){ delete assignments[rowNum]; renderCompo(); renderPlayers(); autoPush(); }
+function removeAssignment(rowNum){ delete assignments[String(rowNum)]; renderCompo(); renderPlayers(); autoPush(); }
 function clearAllPlayers(){ if(!confirm('¿Limpiar asignaciones?'))return; assignments={}; renderCompo(); renderPlayers(); showToast('Asignaciones limpiadas'); }
 function filterPlayers(){ renderPlayers(); }
 
@@ -1759,13 +1760,15 @@ function applyRemoteState(data){
     }
   } catch(e){ console.warn('players parse error',e); }
 
-  // assignments
+  // assignments — normalize all keys to strings
   try {
     const raw = data.assignments != null
       ? (typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments)
       : null;
     if(raw && typeof raw === 'object' && !Array.isArray(raw)){
-      assignments = raw;
+      // Ensure keys are strings (rowNum as string)
+      assignments = {};
+      Object.entries(raw).forEach(([k,v])=>{ assignments[String(k)]=v; });
       console.log('[Realtime] assignments applied:', assignments);
     }
   } catch(e){ console.warn('assignments parse error',e); }
@@ -1798,7 +1801,7 @@ function connectRealtime(){
   realtimeChannel = sb
     .channel('zvz_state_changes')
     .on('postgres_changes',
-      {event:'*', schema:'public', table:'zvz_state'},
+      {event:'*', schema:'public', table:'zvz_state', filter:'id=eq.1'},
       payload => {
         // Both admin and viewer refresh from remote on any change
         // Admin already has latest state; viewer needs the update
