@@ -1843,10 +1843,10 @@ function setRealtimeStatus(online){
   if(!dot) return;
   if(online){
     dot.classList.remove('offline');
-    label.textContent='EN VIVO';
+    label.textContent='DISPONIBLE';
   } else {
     dot.classList.add('offline');
-    label.textContent='Sin conexión';
+    label.textContent='Sin conexión REINICIAR';
   }
 }
 
@@ -1959,7 +1959,7 @@ function connectRealtime(){
         if(userRole==='viewer'){
           try {
             applyRemoteState(payload.new);
-            showToast('🔄 Actualizado');
+            showToast('Actualizado');
           } catch(e){}
         }
       }
@@ -1979,9 +1979,9 @@ async function manualRefresh(){
   btn.style.pointerEvents='none';
   try{
     await pullFromSupabase();
-    showToast('✅ Actualizado');
+    showToast('Actualizado');
   }catch(e){
-    showToast('❌ Error al actualizar');
+    showToast('Error al actualizar');
   }
   setTimeout(()=>{ btn.classList.remove('spinning'); btn.style.pointerEvents=''; }, 700);
 }
