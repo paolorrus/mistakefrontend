@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mistake Compos</title>
+<title>ZvZ Compo — Albion Online</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -870,8 +870,8 @@
     <div class="login-guild-name">MISTAKE</div>
     <div class="login-guild-sub">Albion Online · Guild</div>
     <div class="login-divider"></div>
-    <div class="login-subtitle">@cotomariquita 2026-2027</div>
-    <div style="font-size:9px;color:var(--text-muted);margin-top:-20px;margin-bottom:20px;letter-spacing:1px;opacity:.6;">LA CONTRASEÑA ES SOLO PARA ADMIN</div>
+    <div class="login-subtitle">⚔ ZvZ Composition Manager ⚔</div>
+    <div style="font-size:9px;color:var(--text-muted);margin-top:-20px;margin-bottom:20px;letter-spacing:1px;opacity:.6;">MIEMBROS: pulsa acceder · ADMIN: contraseña</div>
     <div class="login-field">
       <input class="login-input" id="loginInput" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')tryLogin()">
       <button class="login-eye" onclick="togglePwd()">👁</button>
@@ -991,8 +991,8 @@
 <script>
 // ==================== SUPABASE CONFIG ====================
 // 👇 RELLENA ESTOS DOS VALORES DESPUÉS DE CREAR TU PROYECTO EN SUPABASE
-const SUPABASE_URL = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4Y25xa2Jkd3hlcXhxbnpqa3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNzEyODMsImV4cCI6MjA5NDg0NzI4M30.XuSJMmqlkTP2Ryy--r4-WO9liA-XFgoqy6cQ57cbAuk';
+const SUPABASE_URL = 'TU_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';
 
 let sb = null;
 let realtimeChannel = null;
@@ -1206,6 +1206,7 @@ function deleteCompo(idx){
   if(currentCompo>=compos.length) currentCompo=compos.length-1;
   saveStorage();
   renderSelector();
+  autoPush();
   showToast('🗑 Compo borrada');
 }
 
@@ -1349,28 +1350,28 @@ function getNextRowNum(){
 function addRow(){
   const num=getNextRowNum();
   compos[currentCompo].rows.push({role:'DPS', num, weapon:'Nuevo rol', group:0});
-  renderCompo();
+  renderCompo(); autoPush();
 }
 
 function deleteRow(num){
   const rows=compos[currentCompo].rows;
   if(rows.length<=1){showToast('Debe quedar al menos 1 fila');return;}
   compos[currentCompo].rows=rows.filter(r=>r.num!==num);
-  // Clean up items and assignments for this row
   SLOT_TYPES.forEach(s=>delete slotItems[`${num}-${s}`]);
   delete assignments[num];
-  renderCompo(); renderPlayers();
+  renderCompo(); renderPlayers(); autoPush();
 }
 
 function changeRowRole(num, role){
   const row=compos[currentCompo].rows.find(r=>r.num===num);
   if(row) row.role=role;
-  renderCompo();
+  renderCompo(); autoPush();
 }
 
 function changeRowWeapon(num, weapon){
   const row=compos[currentCompo].rows.find(r=>r.num===num);
   if(row) row.weapon=weapon;
+  autoPush();
 }
 
 function renderPlayers(){
@@ -1410,7 +1411,7 @@ function onSlotDrop(e,rowNum){
   if(dragSourceRow!==null&&dragSourceRow!==rowNum) delete assignments[dragSourceRow];
   assignments[rowNum]=draggedPlayer;
   draggedPlayer=null; dragSourceRow=null;
-  renderCompo(); renderPlayers();
+  renderCompo(); renderPlayers(); autoPush();
 }
 
 // ==================== PLAYERS ====================
@@ -1420,9 +1421,9 @@ function addPlayer(){
   if(!name) return;
   if(players.includes(name)){showToast('Jugador ya existe');return;}
   players.push(name); input.value='';
-  renderPlayers();
+  renderPlayers(); autoPush();
 }
-function removeAssignment(rowNum){ delete assignments[rowNum]; renderCompo(); renderPlayers(); }
+function removeAssignment(rowNum){ delete assignments[rowNum]; renderCompo(); renderPlayers(); autoPush(); }
 function clearAllPlayers(){ if(!confirm('¿Limpiar asignaciones?'))return; assignments={}; renderCompo(); renderPlayers(); showToast('Asignaciones limpiadas'); }
 function filterPlayers(){ renderPlayers(); }
 
@@ -1439,11 +1440,12 @@ async function loadDiscordPlayers(){
     const members=data.members||[];
     if(!members.length){showToast('⚠️ Canal vacío o no encontrado');return;}
     // Replace players list with Discord members (session only, never saved)
-    players=members; 
+    players=members;
     discordPlayers=members;
     assignments={};
     renderPlayers();
     renderCompo();
+    autoPush();
     showToast(`✅ ${members.length} jugadores cargados`);
   }catch(e){
     console.error('Discord load error:',e);
@@ -1618,13 +1620,13 @@ function confirmItem(){
   if(!modalCtx) return;
   const key=`${modalCtx.rowNum}-${modalCtx.slotType}`;
   if(modalSelectedItem) slotItems[key]={...modalSelectedItem,swap:modalSelectedSwap};
-  closeModal(); renderCompo();
+  closeModal(); renderCompo(); autoPush();
 }
 
 function clearSlot(){
   if(!modalCtx) return;
   delete slotItems[`${modalCtx.rowNum}-${modalCtx.slotType}`];
-  closeModal(); renderCompo();
+  closeModal(); renderCompo(); autoPush();
 }
 
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); modalCtx=null; }
@@ -1690,7 +1692,7 @@ function setRealtimeStatus(online){
   if(!dot) return;
   if(online){
     dot.classList.remove('offline');
-    label.textContent='Conectado';
+    label.textContent='EN VIVO';
   } else {
     dot.classList.add('offline');
     label.textContent='Sin conexión';
@@ -1698,7 +1700,10 @@ function setRealtimeStatus(online){
 }
 
 async function pushToSupabase(){
-  if(!sb) return;
+  if(!sb || userRole!=='admin') return;
+  // Always save current slotItems into compo before pushing
+  compos[currentCompo].slotItems={...slotItems};
+  compos[currentCompo].assignments={...assignments};
   try {
     await sb.from('zvz_state').upsert({
       id: 1,
@@ -1708,6 +1713,14 @@ async function pushToSupabase(){
       updated_at: new Date().toISOString()
     });
   } catch(e){ console.warn('Supabase push error:', e); }
+}
+
+// Debounced auto-push: fires 800ms after last change
+let _autoPushTimer = null;
+function autoPush(){
+  if(userRole!=='admin') return;
+  clearTimeout(_autoPushTimer);
+  _autoPushTimer = setTimeout(pushToSupabase, 800);
 }
 
 async function pullFromSupabase(){
@@ -1720,6 +1733,13 @@ async function pullFromSupabase(){
 }
 
 function applyRemoteState(data){
+  console.log('[Realtime] applyRemoteState', {
+    hasCompos: !!data.compos,
+    hasPlayers: !!data.players,
+    hasAssignments: !!data.assignments,
+    playersRaw: data.players
+  });
+
   // compos
   try {
     const remote = typeof data.compos === 'string' ? JSON.parse(data.compos) : data.compos;
@@ -1729,19 +1749,25 @@ function applyRemoteState(data){
     }
   } catch(e){ console.warn('compos parse error',e); }
 
-  // players — always apply even if empty array
+  // players — apply whenever data has the field (even empty array)
   try {
-    const raw = typeof data.players === 'string' ? JSON.parse(data.players) : data.players;
+    const raw = data.players != null
+      ? (typeof data.players === 'string' ? JSON.parse(data.players) : data.players)
+      : null;
     if(Array.isArray(raw)){
       players = raw;
+      console.log('[Realtime] players applied:', players);
     }
   } catch(e){ console.warn('players parse error',e); }
 
-  // assignments — keys are strings (rowNum), values are player names
+  // assignments
   try {
-    const raw = typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments;
+    const raw = data.assignments != null
+      ? (typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments)
+      : null;
     if(raw && typeof raw === 'object' && !Array.isArray(raw)){
       assignments = raw;
+      console.log('[Realtime] assignments applied:', assignments);
     }
   } catch(e){ console.warn('assignments parse error',e); }
 
