@@ -34,7 +34,7 @@
     --green: #00e676;
     --yellow: #ffeb3b;
     --blue-swap: #2979ff;
-    --slot-size: 56px;
+    --slot-size: 62px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -689,14 +689,8 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
   .item-slot:hover { border-color: var(--gold-dark); box-shadow: 0 0 10px #c8a84b22; }
-  .item-slot img { width: 100%; height: calc(100% - 14px); object-fit: contain; display: block; flex-shrink: 0; }
-  .item-slot .slot-label {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    font-size: 5px; text-align: center; color: #ffffff55;
-    font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
-    pointer-events: none; background: #000000aa; padding: 1px 0; line-height: 1.3;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .item-slot img { width: 100%; height: 100%; object-fit: contain; display: block; flex-shrink: 0; }
+  .item-slot .slot-label { display: none; }
   .item-slot.swap-obligatorio { border-color: var(--green) !important; box-shadow: 0 0 8px #00e67644 !important; }
   .item-slot.swap-posible     { border-color: var(--yellow) !important; box-shadow: 0 0 8px #ffeb3b44 !important; }
   .item-slot.swap-pve         { border-color: var(--blue-swap) !important; box-shadow: 0 0 8px #2979ff44 !important; }
