@@ -386,40 +386,25 @@
   }
   .compo-tab {
     background: var(--bg-card);
-    border: 2px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
     color: var(--text-muted);
     cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 2px;
-    padding: 7px 18px;
+    letter-spacing: 1px;
+    padding: 5px 14px;
     text-transform: uppercase;
-    transition: all .2s;
+    transition: all .15s;
     white-space: nowrap;
-    position: relative;
   }
-  .compo-tab:hover {
-    border-color: var(--gold-dark);
-    color: var(--gold-light);
-    background: var(--bg-hover);
-    transform: translateY(-1px);
-  }
+  .compo-tab:hover { border-color: var(--gold-dark); color: var(--text); background: var(--bg-hover); }
   .compo-tab.active {
-    background: linear-gradient(135deg, var(--gold-dark), #a07828);
+    background: var(--gold-dark);
     border-color: var(--gold);
     color: var(--gold-light);
-    box-shadow: 0 0 14px #c8a84b44, 0 2px 8px #00000066;
-    transform: translateY(-1px);
-    text-shadow: 0 0 10px #c8a84b88;
-  }
-  .compo-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -8px; left: 50%; transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: var(--gold);
+    box-shadow: 0 0 10px #c8a84b33;
   }
   .header-actions {
     display: flex;
@@ -1209,58 +1194,9 @@ function setViewerMode(isViewer){
 function enterApp(role){
   setViewerMode(role==='viewer');
   initCompos();
+  showScreen('selectorScreen');
+  renderSelector();
   connectRealtime();
-  // Animate logo then go straight to first compo
-  animateLoginAndEnter();
-}
-
-function animateLoginAndEnter(){
-  const logo = document.querySelector('.login-guild-logo');
-  const box  = document.getElementById('loginBox');
-  if(!logo || !box){ goDirectToCompo(); return; }
-
-  // Burst glow on logo
-  logo.style.transition = 'box-shadow .3s ease, transform .3s ease';
-  logo.style.transform  = 'scale(1.18)';
-  logo.style.boxShadow  = '0 0 80px #c8a84bcc, 0 0 160px #c8a84b66';
-
-  setTimeout(()=>{
-    // Fade out the whole box
-    box.style.transition = 'opacity .4s ease, transform .4s ease';
-    box.style.opacity    = '0';
-    box.style.transform  = 'scale(1.06) translateY(-20px)';
-  }, 320);
-
-  setTimeout(()=>{
-    goDirectToCompo();
-    // Reset box for next login
-    box.style.transition = '';
-    box.style.opacity    = '1';
-    box.style.transform  = '';
-    logo.style.transform = '';
-    logo.style.boxShadow = '';
-  }, 750);
-}
-
-function goDirectToCompo(){
-  // Skip selector — go straight into compo 1
-  if(compos.length > 0){
-    currentCompo = 0;
-    if(!compos[0].rows || !compos[0].rows.length) compos[0].rows = makeDefaultRows();
-    slotItems = {...(compos[0].slotItems || {})};
-    assignments = {};
-    if(compos[0].assignments){
-      Object.entries(compos[0].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
-    }
-    showScreen('appScreen');
-    renderTabs();
-    renderCompo();
-    renderPlayers();
-    document.getElementById('currentCompoName').textContent = compos[0].name;
-  } else {
-    showScreen('selectorScreen');
-    renderSelector();
-  }
 }
 
 function tryLogin(){
@@ -1284,15 +1220,11 @@ function tryLogin(){
 }
 
 
-// Auto-restore admin session on reload (survives F5, clears on tab close)
+// Auto-restore admin session on reload
 (function(){
   const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
-    // Skip animation on auto-restore (no login screen was shown)
-    setViewerMode(false);
-    initCompos();
-    connectRealtime();
-    goDirectToCompo();
+    enterApp('admin');
   }
 })();
 
