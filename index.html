@@ -1713,7 +1713,7 @@ async function pushToSupabase(){
 async function pullFromSupabase(){
   if(!sb) return;
   try {
-    const {data, error} = await sb.from('zvz_state').select('compos,players,assignments').eq('id',1).single();
+    const {data, error} = await sb.from('zvz_state').select('id,compos,players,assignments,updated_at').eq('id',1).single();
     if(error || !data) return;
     applyRemoteState(data);
   } catch(e){ console.warn('Supabase pull error:', e); }
@@ -1727,18 +1727,25 @@ function applyRemoteState(data){
       compos = remote;
       compos.forEach(c=>{ if(!c.rows||!c.rows.length) c.rows=makeDefaultRows(); });
     }
-  } catch(e){}
-  // players (viewer sees admin's player list)
+  } catch(e){ console.warn('compos parse error',e); }
+
+  // players — always apply even if empty array
   try {
-    const rp = typeof data.players === 'string' ? JSON.parse(data.players) : data.players;
-    if(Array.isArray(rp)) players = rp;
-  } catch(e){}
-  // assignments
+    const raw = typeof data.players === 'string' ? JSON.parse(data.players) : data.players;
+    if(Array.isArray(raw)){
+      players = raw;
+    }
+  } catch(e){ console.warn('players parse error',e); }
+
+  // assignments — keys are strings (rowNum), values are player names
   try {
-    const ra = typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments;
-    if(ra && typeof ra === 'object') assignments = ra;
-  } catch(e){}
-  // Refresh views
+    const raw = typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments;
+    if(raw && typeof raw === 'object' && !Array.isArray(raw)){
+      assignments = raw;
+    }
+  } catch(e){ console.warn('assignments parse error',e); }
+
+  // Refresh all visible UI
   const curScreen = document.querySelector('.screen.active')?.id;
   if(curScreen==='selectorScreen') renderSelector();
   if(curScreen==='appScreen'){
@@ -1766,13 +1773,14 @@ function connectRealtime(){
   realtimeChannel = sb
     .channel('zvz_state_changes')
     .on('postgres_changes',
-      {event:'UPDATE', schema:'public', table:'zvz_state'},
+      {event:'*', schema:'public', table:'zvz_state'},
       payload => {
-        // Only viewers react to remote changes automatically
+        // Both admin and viewer refresh from remote on any change
+        // Admin already has latest state; viewer needs the update
         if(userRole==='viewer'){
           try {
             applyRemoteState(payload.new);
-            showToast('🔄 Compo actualizada');
+            showToast('🔄 Actualizado');
           } catch(e){}
         }
       }
