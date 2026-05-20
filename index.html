@@ -54,171 +54,189 @@
 
   /* ===== LOGIN SCREEN ===== */
   #loginScreen {
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    background: radial-gradient(ellipse at 50% 0%, #1a1200 0%, #0a0c0f 55%);
+    align-items: center; justify-content: center; flex-direction: column;
+    position: relative; overflow: hidden;
+    background: #070a0d;
   }
-  .login-bg {
-    position: absolute; inset: 0; pointer-events: none;
-    background:
-      radial-gradient(ellipse at 50% -10%, #c8a84b22 0%, transparent 55%),
-      radial-gradient(ellipse at 15% 85%, #7a6020 0%, transparent 40%),
-      radial-gradient(ellipse at 85% 85%, #7a602015 0%, transparent 40%);
-  }
-  /* Animated horizontal scanlines */
-  .login-bg::after {
+  /* Animated noise grid */
+  #loginScreen::before {
     content:''; position:absolute; inset:0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, #c8a84b04 2px, #c8a84b04 4px);
-    animation: scanMove 8s linear infinite;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px; opacity:.12; pointer-events:none; z-index:0;
   }
-  @keyframes scanMove { 0%{background-position:0 0} 100%{background-position:0 200px} }
+  /* Gold orb glow */
+  #loginScreen::after {
+    content:''; position:absolute;
+    width:600px; height:600px; border-radius:50%;
+    background: radial-gradient(circle, #c8a84b18 0%, #c8a84b08 40%, transparent 70%);
+    top:50%; left:50%; transform:translate(-50%,-60%);
+    pointer-events:none; z-index:0;
+    animation: orbPulse 6s ease-in-out infinite;
+  }
+  @keyframes orbPulse {
+    0%,100%{opacity:.7; transform:translate(-50%,-60%) scale(1);}
+    50%{opacity:1; transform:translate(-50%,-60%) scale(1.1);}
+  }
 
-  .login-particles { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  /* Left decorative side bar */
+  .login-side-left, .login-side-right {
+    position:absolute; top:0; bottom:0; width:1px;
+    background:linear-gradient(180deg, transparent 0%, var(--gold-dark) 30%, var(--gold) 50%, var(--gold-dark) 70%, transparent 100%);
+    opacity:.3; z-index:0;
+  }
+  .login-side-left { left:60px; }
+  .login-side-right { right:60px; }
+
+  /* Top beam */
+  .login-beam {
+    position:absolute; top:0; left:0; right:0; height:1px; z-index:1;
+    background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent);
+    box-shadow: 0 0 20px 4px #c8a84b44;
+    animation: beamPulse 4s ease-in-out infinite;
+  }
+  @keyframes beamPulse { 0%,100%{opacity:.5;} 50%{opacity:1;} }
+
+  .login-particles { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
   .login-particles span {
     position:absolute; display:block; border-radius:50%;
     background:var(--gold); animation:float linear infinite; opacity:0;
   }
   @keyframes float {
-    0%   { transform:translateY(100vh) scale(0); opacity:0; }
-    10%  { opacity:.5; }
-    90%  { opacity:.2; }
-    100% { transform:translateY(-10vh) scale(1); opacity:0; }
+    0%{transform:translateY(100vh) scale(0);opacity:0;}
+    10%{opacity:.4;} 90%{opacity:.1;}
+    100%{transform:translateY(-10vh) scale(1);opacity:0;}
   }
 
-  /* Horizontal light beam at top */
-  .login-beam {
-    position:absolute; top:0; left:0; right:0; height:2px;
-    background: linear-gradient(90deg, transparent 0%, #c8a84b 40%, #f0d080 50%, #c8a84b 60%, transparent 100%);
-    box-shadow: 0 0 30px 8px #c8a84b55, 0 0 80px 20px #c8a84b22;
-    animation: beamPulse 3s ease-in-out infinite;
-  }
-  @keyframes beamPulse {
-    0%,100% { opacity:.7; } 50% { opacity:1; box-shadow:0 0 50px 15px #c8a84b88,0 0 120px 40px #c8a84b33; }
-  }
-
-  /* Corner decorations */
-  .login-corner { position:absolute; width:60px; height:60px; border-color:var(--gold-dark); border-style:solid; opacity:.4; }
-  .login-corner.tl { top:20px; left:20px; border-width:2px 0 0 2px; }
-  .login-corner.tr { top:20px; right:20px; border-width:2px 2px 0 0; }
-  .login-corner.bl { bottom:20px; left:20px; border-width:0 0 2px 2px; }
-  .login-corner.br { bottom:20px; right:20px; border-width:0 2px 2px 0; }
-
-  .login-box {
+  /* LOGIN SPLIT LAYOUT */
+  .login-wrap {
     position:relative; z-index:1;
-    background: linear-gradient(160deg, #161b22ee 0%, #0f1318ee 100%);
-    border:1px solid #c8a84b55;
+    display:flex; align-items:center; gap:0;
+    width:min(900px, 95vw);
+    background: linear-gradient(135deg, #0f1318f0 0%, #0a0d12f0 100%);
+    border:1px solid #c8a84b33;
     border-radius:20px;
-    padding:44px 52px 40px;
-    width:420px; max-width:95vw;
-    text-align:center;
-    box-shadow: 0 40px 100px #000000cc, 0 0 0 1px #c8a84b11, inset 0 1px 0 #c8a84b22;
-    animation: loginIn .6s cubic-bezier(.22,1,.36,1);
+    overflow:hidden;
+    box-shadow: 0 40px 100px #000000cc, 0 0 80px #c8a84b08;
+    animation: loginIn .7s cubic-bezier(.22,1,.36,1);
   }
-  @keyframes loginIn {
-    from { transform:translateY(40px) scale(.97); opacity:0; }
-    to   { transform:translateY(0) scale(1); opacity:1; }
-  }
+  @keyframes loginIn { from{transform:translateY(30px);opacity:0;} to{transform:translateY(0);opacity:1;} }
 
-  /* Guild logo */
+  /* Left panel — branding */
+  .login-brand-panel {
+    width:280px; flex-shrink:0;
+    background: linear-gradient(160deg, #0d1118 0%, #080c10 100%);
+    border-right:1px solid #c8a84b22;
+    padding:48px 32px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; position:relative; overflow:hidden;
+  }
+  .login-brand-panel::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 40%, #c8a84b14 0%, transparent 70%);
+    pointer-events:none;
+  }
   .login-guild-logo {
-    width:90px; height:90px; border-radius:50%;
-    border:2px solid #c8a84b66;
-    box-shadow: 0 0 30px #c8a84b44, 0 0 60px #c8a84b22;
-    margin:0 auto 16px;
-    display:block; object-fit:cover;
-    animation:logoPulse 4s ease-in-out infinite;
+    width:100px; height:100px; border-radius:50%;
+    border:2px solid #c8a84b55;
+    box-shadow:0 0 30px #c8a84b44, 0 0 60px #c8a84b18;
+    object-fit:cover; display:block; margin:0 auto 20px;
+    animation:logoPulse 4s ease-in-out infinite; position:relative; z-index:1;
   }
   @keyframes logoPulse {
-    0%,100%{box-shadow:0 0 30px #c8a84b44,0 0 60px #c8a84b22;}
-    50%{box-shadow:0 0 50px #c8a84b88,0 0 100px #c8a84b44;}
+    0%,100%{box-shadow:0 0 30px #c8a84b44,0 0 60px #c8a84b18;}
+    50%{box-shadow:0 0 50px #c8a84b88,0 0 100px #c8a84b33;}
   }
-
-  /* MISTAKE title */
   .login-guild-name {
-    font-family:'Cinzel',serif;
-    font-size:42px; font-weight:900;
-    letter-spacing:10px;
-    text-transform:uppercase;
-    margin-bottom:4px;
-    background: linear-gradient(180deg, #f0d080 0%, #c8a84b 40%, #7a6020 100%);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    background-clip:text;
-    filter:drop-shadow(0 0 20px #c8a84b88);
+    font-family:'Cinzel',serif; font-size:28px; font-weight:900;
+    letter-spacing:8px; text-transform:uppercase;
+    background:linear-gradient(180deg,#fff 0%,#f0d080 30%,#c8a84b 70%,#7a6020 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:8px; position:relative; z-index:1;
     animation:titleGlow 3s ease-in-out infinite;
   }
   @keyframes titleGlow {
-    0%,100%{filter:drop-shadow(0 0 15px #c8a84b66);}
-    50%{filter:drop-shadow(0 0 35px #f0d080cc);}
+    0%,100%{filter:drop-shadow(0 0 10px #c8a84b44);}
+    50%{filter:drop-shadow(0 0 25px #c8a84b88);}
   }
   .login-guild-sub {
-    font-family:'Rajdhani',sans-serif;
-    font-size:11px; font-weight:600;
-    letter-spacing:5px;
-    text-transform:uppercase;
-    color:#c8a84b88;
-    margin-bottom:6px;
+    font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:4px; color:#c8a84b66; text-transform:uppercase;
+    margin-bottom:28px; position:relative; z-index:1;
   }
-  .login-divider {
-    height:1px; margin:20px auto 24px;
-    background:linear-gradient(90deg,transparent,#c8a84b55,transparent);
-    width:80%;
+  .login-brand-divider {
+    width:40px; height:1px; margin:0 auto 20px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    position:relative; z-index:1;
   }
-  .login-subtitle {
-    font-size:10px; color:var(--text-muted);
-    letter-spacing:3px; text-transform:uppercase;
-    margin-bottom:28px; opacity:.7;
+  .login-brand-tag {
+    font-family:'Rajdhani',sans-serif; font-size:9px; font-weight:600;
+    letter-spacing:3px; color:var(--text-muted); text-transform:uppercase;
+    position:relative; z-index:1; opacity:.6;
+    border:1px solid var(--border); border-radius:20px; padding:4px 12px;
   }
-  .login-field { position:relative; margin-bottom:16px; }
+
+  /* Right panel — form */
+  .login-form-panel {
+    flex:1; padding:48px 40px;
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .login-form-title {
+    font-family:'Cinzel',serif; font-size:18px; font-weight:900;
+    color:var(--text); letter-spacing:2px; margin-bottom:6px;
+  }
+  .login-form-sub {
+    font-size:11px; color:var(--text-muted); letter-spacing:1px;
+    margin-bottom:32px;
+  }
+  .login-field { position:relative; margin-bottom:14px; }
   .login-input {
-    background:#0a0c0f; border:1px solid #c8a84b33;
+    background:#0a0c0f; border:1px solid var(--border);
     border-radius:8px; color:var(--text);
-    font-family:'Rajdhani',sans-serif; font-size:16px;
-    letter-spacing:4px; padding:14px 48px 14px 18px;
-    text-align:center; width:100%;
-    transition:border-color .2s,box-shadow .2s;
+    font-family:'Rajdhani',sans-serif; font-size:15px;
+    letter-spacing:3px; padding:13px 44px 13px 16px;
+    width:100%; transition:border-color .2s, box-shadow .2s;
   }
-  .login-input:focus {
-    outline:none; border-color:var(--gold);
-    box-shadow:0 0 25px #c8a84b33, inset 0 0 10px #c8a84b0a;
-  }
-  .login-input::placeholder { letter-spacing:1px; color:var(--text-muted); opacity:.5; }
+  .login-input:focus { outline:none; border-color:var(--gold); box-shadow:0 0 20px #c8a84b22; }
+  .login-input::placeholder { letter-spacing:1px; color:var(--text-muted); opacity:.4; font-size:13px; }
   .login-eye {
-    position:absolute; right:14px; top:50%; transform:translateY(-50%);
-    background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px;
+    position:absolute; right:13px; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px;
+  }
+  .login-hint {
+    font-size:10px; color:var(--text-muted); letter-spacing:1px;
+    margin-bottom:20px; opacity:.6;
   }
   .login-error {
-    color:#e05555; font-size:12px; margin-bottom:12px;
-    min-height:16px; font-weight:600; letter-spacing:.5px;
+    color:var(--dps); font-size:11px; margin-bottom:12px;
+    min-height:14px; font-weight:600; letter-spacing:.5px;
   }
   .login-btn {
-    background:linear-gradient(135deg, #5a3800, #c8a84b 40%, #f0d080 50%, #c8a84b 60%, #5a3800);
+    background:linear-gradient(135deg, #3a2200, var(--gold-dark) 35%, var(--gold) 50%, var(--gold-dark) 65%, #3a2200);
     background-size:200% auto;
-    border:none; border-radius:8px; color:#0a0c0f;
+    border:none; border-radius:8px; color:#080c10;
     cursor:pointer; font-family:'Cinzel',serif;
-    font-size:13px; font-weight:900; letter-spacing:5px;
+    font-size:12px; font-weight:900; letter-spacing:4px;
     padding:14px 32px; text-transform:uppercase; width:100%;
-    transition:all .3s; box-shadow:0 4px 20px #c8a84b44;
+    transition:all .3s; box-shadow:0 4px 20px #c8a84b33;
     position:relative; overflow:hidden;
   }
   .login-btn::after {
     content:''; position:absolute; inset:0;
-    background:linear-gradient(90deg,transparent 30%,#ffffff22 50%,transparent 70%);
-    transform:translateX(-100%); transition:transform .4s;
+    background:linear-gradient(90deg,transparent 30%,#ffffff18 50%,transparent 70%);
+    transform:translateX(-100%); transition:transform .5s;
   }
-  .login-btn:hover { background-position:right center; box-shadow:0 8px 40px #c8a84b66; transform:translateY(-2px); }
+  .login-btn:hover { background-position:right center; box-shadow:0 8px 40px #c8a84b55; transform:translateY(-1px); }
   .login-btn:hover::after { transform:translateX(100%); }
   .login-btn:active { transform:translateY(0); }
   .login-shake { animation:shake .4s ease; }
   @keyframes shake {
     0%,100%{transform:translateX(0)}
-    20%{transform:translateX(-8px)}
-    40%{transform:translateX(8px)}
-    60%{transform:translateX(-5px)}
-    80%{transform:translateX(5px)}
+    20%{transform:translateX(-8px)} 40%{transform:translateX(8px)}
+    60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
   }
+  /* hide old corner/bg elements */
+  .login-bg,.login-corner,.login-divider,.login-subtitle { display:none; }
 
   /* ── DISCORD FLOATING BUTTON ── */
   .discord-fab {
@@ -893,14 +911,44 @@
 
   /* VIEWER BANNER */
   .viewer-banner {
-    background: linear-gradient(90deg, #5865F211, #5865F222, #5865F211);
-    border-bottom: 1px solid #5865F244;
-    text-align: center; padding: 5px;
-    font-family: 'Rajdhani', sans-serif; font-size: 11px;
-    color: #8891f2; letter-spacing: 2px; font-weight: 600;
-    display: none;
+    background: linear-gradient(90deg, #5865F211, #5865F233, #5865F211);
+    border-bottom: 1px solid #5865F266;
+    text-align: center; padding: 9px 16px;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px;
+    color: #aab4f8; letter-spacing: 2px; font-weight: 700;
+    display: none; text-transform: uppercase;
   }
   body.viewer-mode .viewer-banner { display: block; }
+
+  /* REFRESH FAB (viewer only) */
+  .refresh-fab {
+    position: fixed; bottom: 90px; right: 24px; z-index: 500;
+    background: linear-gradient(135deg, #0d2a1a, #00e676);
+    border: none; border-radius: 50%;
+    width: 54px; height: 54px; cursor: pointer;
+    box-shadow: 0 4px 20px #00e67655;
+    display: none; align-items: center; justify-content: center;
+    transition: transform .2s, box-shadow .2s;
+    animation: refreshPing 4s ease-in-out infinite;
+  }
+  body.viewer-mode .refresh-fab { display: flex; }
+  .refresh-fab:hover { transform: scale(1.12) translateY(-2px); box-shadow: 0 8px 30px #00e67688; animation: none; }
+  .refresh-fab:active { transform: scale(.95); }
+  @keyframes refreshPing {
+    0%,80%,100% { box-shadow: 0 4px 20px #00e67655, 0 0 0 0 #00e67633; }
+    60% { box-shadow: 0 4px 20px #00e67655, 0 0 0 14px transparent; }
+  }
+  .refresh-fab svg { width: 24px; height: 24px; fill: #fff; }
+  .refresh-fab.spinning svg { animation: spinIcon .6s linear; }
+  @keyframes spinIcon { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .refresh-fab-tip {
+    position: absolute; right: 62px; bottom: 50%; transform: translateY(50%);
+    background: #0d2318; border: 1px solid #00e67644; border-radius: 6px;
+    color: #00e676; font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; padding: 5px 10px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .refresh-fab:hover .refresh-fab-tip { opacity: 1; }
 
 </style>
 </head>
@@ -908,29 +956,34 @@
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="loginScreen" class="screen active">
-  <div class="login-bg"></div>
   <div class="login-beam"></div>
-  <div class="login-corner tl"></div>
-  <div class="login-corner tr"></div>
-  <div class="login-corner bl"></div>
-  <div class="login-corner br"></div>
+  <div class="login-side-left"></div>
+  <div class="login-side-right"></div>
   <div class="login-particles" id="particles"></div>
-  <div class="login-box" id="loginBox">
-    <img class="login-guild-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake Logo">
-    <div class="login-guild-name">MISTAKE</div>
-    <div class="login-guild-sub">Albion Online · Guild</div>
-    <div class="login-divider"></div>
-    <div class="login-subtitle">⚔ ZvZ Composition Manager ⚔</div>
-    <div style="font-size:9px;color:var(--text-muted);margin-top:-20px;margin-bottom:20px;letter-spacing:1px;opacity:.6;">MIEMBROS: pulsa acceder · ADMIN: contraseña</div>
-    <div class="login-field">
-      <input class="login-input" id="loginInput" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')tryLogin()">
-      <button class="login-eye" onclick="togglePwd()">👁</button>
+
+  <div class="login-wrap" id="loginBox">
+    <!-- Left: branding -->
+    <div class="login-brand-panel">
+      <img class="login-guild-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake Logo">
+      <div class="login-guild-name">MISTAKE</div>
+      <div class="login-guild-sub">Gremio Albion Online</div>
+      <div class="login-brand-divider"></div>
+      <div class="login-brand-tag">ZvZ · 2026 – 2027</div>
     </div>
-    <div class="login-error" id="loginError"></div>
-    <button class="login-btn" onclick="tryLogin()">✦ Acceder ✦</button>
+
+    <!-- Right: form -->
+    <div class="login-form-panel">
+      <div class="login-form-title">Bienvenido</div>
+      <div class="login-form-sub">Admin: introduce contraseña · Miembros: pulsa acceder directamente</div>
+      <div class="login-field">
+        <input class="login-input" id="loginInput" type="password" placeholder="Contraseña de acceso" onkeydown="if(event.key==='Enter')tryLogin()">
+        <button class="login-eye" onclick="togglePwd()">👁</button>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button class="login-btn" onclick="tryLogin()">✦ Acceder ✦</button>
+    </div>
   </div>
 </div>
-
 <!-- ===== SELECTOR SCREEN ===== -->
 <div id="selectorScreen" class="screen">
   <!-- Top bar -->
@@ -1040,6 +1093,14 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Refresh FAB (viewer only) -->
+<button class="refresh-fab" id="refreshFab" onclick="manualRefresh()">
+  <span class="refresh-fab-tip">Actualizar ahora</span>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+  </svg>
+</button>
 
 <!-- Discord FAB -->
 <a class="discord-fab" href="https://discord.gg/WZ4bbWtNn" target="_blank" rel="noopener" title="Únete al Discord">
@@ -1917,6 +1978,20 @@ function connectRealtime(){
 
 // ==================== APP INIT ====================
 initSupabase();
+
+async function manualRefresh(){
+  const btn=document.getElementById('refreshFab');
+  if(!btn) return;
+  btn.classList.add('spinning');
+  btn.style.pointerEvents='none';
+  try{
+    await pullFromSupabase();
+    showToast('✅ Actualizado');
+  }catch(e){
+    showToast('❌ Error al actualizar');
+  }
+  setTimeout(()=>{ btn.classList.remove('spinning'); btn.style.pointerEvents=''; }, 700);
+}
 
 </script>
 </body>
