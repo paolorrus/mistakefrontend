@@ -890,10 +890,14 @@
   body.viewer-mode .add-player-area { display: none; }
   body.viewer-mode .player-drag { cursor: default; }
   body.viewer-mode .player-item { pointer-events: none; }
+  body.viewer-mode .player-chip { cursor: default !important; pointer-events: none !important; }
   body.viewer-mode .btn-save { display: none; }
   .admin-only { display: flex; }
   body.viewer-mode .admin-only { display: none !important; }
   body.viewer-mode .compo-card { cursor: pointer; }
+  body.viewer-mode .player-slot { pointer-events: none !important; }
+  body.viewer-mode .player-slot.filled { cursor: default !important; pointer-events: none !important; }
+  body.viewer-mode .player-slot-remove { display: none !important; }
 
   /* REALTIME INDICATOR */
   .realtime-dot {
@@ -949,6 +953,21 @@
     opacity: 0; pointer-events: none; transition: opacity .2s;
   }
   .refresh-fab:hover .refresh-fab-tip { opacity: 1; }
+
+
+  /* BACK TO SELECTOR BUTTON */
+  .header-back-btn {
+    font-size: 11px; letter-spacing: 1px; padding: 4px 10px;
+    flex-shrink: 0;
+  }
+  .back-to-selector {
+    padding: 8px 12px; border-top: 1px solid var(--border);
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase;
+    cursor: pointer; transition: color .15s, background .15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .back-to-selector:hover { color: var(--gold); background: var(--bg-hover); }
 
 </style>
 </head>
@@ -1015,7 +1034,7 @@
       <img class="header-guild-icon" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
       <span class="header-guild-text">MISTAKE <span class="header-guild-sub">ZvZ</span></span>
     </div>
-    <div class="compo-selector-bar" id="compoTabs"></div>
+    <button class="btn btn-ghost header-back-btn" onclick="goSelector()" title="Volver al selector">← Compos</button>
     <div class="header-actions">
       <div class="realtime-badge"><div class="realtime-dot offline" id="realtimeDot"></div><span id="realtimeLabel">Conectando...</span></div>
       <div class="admin-only" style="gap:6px;align-items:center">
@@ -1024,7 +1043,7 @@
         <button class="btn btn-ghost" onclick="clearDiscordPlayers()">🗑 Discord</button>
       </div>
       <button class="btn btn-save admin-only" onclick="saveCurrentCompo()">💾 Guardar</button>
-      <button class="btn btn-ghost" onclick="exportCompo()">📋 Exportar</button>
+      <button class="btn btn-ghost admin-only" onclick="exportCompo()">📋 Exportar</button>
     </div>
   </header>
   <div class="legend-bar">
@@ -1042,6 +1061,9 @@
       </div>
       <input class="player-search" id="playerSearch" placeholder="Buscar jugador..." oninput="filterPlayers(this.value)">
       <div class="players-list" id="playersList"></div>
+      <div class="back-to-selector admin-only" onclick="goSelector()" title="Volver al selector de compos">
+        ← Compos
+      </div>
       <div class="add-player-area">
         <input class="add-player-input" id="addPlayerInput" placeholder="Añadir jugador..." onkeydown="if(event.key==='Enter')addPlayer()">
         <button class="btn-add" onclick="addPlayer()">+</button>
@@ -1235,26 +1257,9 @@ function setViewerMode(isViewer){
 function enterApp(role){
   setViewerMode(role==='viewer');
   initCompos();
+  showScreen('selectorScreen');
+  renderSelector();
   connectRealtime();
-  // Go straight into compo 0 — skip selector
-  _openCompoDirectly(0);
-}
-
-function _openCompoDirectly(idx){
-  if(!compos.length) idx=0;
-  idx = Math.min(idx, compos.length-1);
-  currentCompo=idx;
-  if(!compos[idx].rows||!compos[idx].rows.length) compos[idx].rows=makeDefaultRows();
-  slotItems={...(compos[idx].slotItems||{})};
-  assignments={};
-  if(compos[idx].assignments){
-    Object.entries(compos[idx].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
-  }
-  showScreen('appScreen');
-  renderTabs();
-  renderCompo();
-  renderPlayers();
-  document.getElementById('currentCompoName').textContent=compos[idx].name;
 }
 
 function tryLogin(){
@@ -1395,6 +1400,7 @@ function goSelector(){
 // ==================== TABS ====================
 function renderTabs(){
   const bar=document.getElementById('compoTabs');
+  if(!bar) return; // tabs removed from header
   bar.innerHTML=compos.map((c,i)=>
     `<button class="compo-tab${i===currentCompo?' active':''}" onclick="switchCompo(${i})">${c.name}</button>`
   ).join('');
@@ -1791,16 +1797,7 @@ function closeModal(){ document.getElementById('modalOverlay').classList.remove(
 
 // ==================== RENAME (double click tab) ====================
 let renameIdx=null;
-document.getElementById('compoTabs').addEventListener('dblclick',e=>{
-  const tab=e.target.closest('.compo-tab');
-  if(!tab) return;
-  const idx=Array.from(document.querySelectorAll('.compo-tab')).indexOf(tab);
-  if(idx<0) return;
-  renameIdx=idx;
-  document.getElementById('renameInput').value=compos[idx].name;
-  document.getElementById('renameOverlay').classList.add('open');
-  setTimeout(()=>document.getElementById('renameInput').select(),50);
-});
+// Tab dblclick rename removed — tabs moved to selector screen
 function closeRename(){ document.getElementById('renameOverlay').classList.remove('open'); renameIdx=null; }
 function confirmRename(){
   const val=document.getElementById('renameInput').value.trim();
