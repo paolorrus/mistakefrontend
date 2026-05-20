@@ -843,12 +843,12 @@
 
   /* VIEWER BANNER */
   .viewer-banner {
-    background: linear-gradient(90deg, #5865F211, #5865F222, #5865F211);
-    border-bottom: 1px solid #5865F244;
-    text-align: center; padding: 5px;
-    font-family: 'Rajdhani', sans-serif; font-size: 11px;
-    color: #8891f2; letter-spacing: 2px; font-weight: 600;
-    display: none;
+    background: linear-gradient(90deg, #5865F211, #5865F233, #5865F211);
+    border-bottom: 1px solid #5865F266;
+    text-align: center; padding: 9px 16px;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px;
+    color: #aab4f8; letter-spacing: 2px; font-weight: 700;
+    display: none; text-transform: uppercase;
   }
   body.viewer-mode .viewer-banner { display: block; }
 
@@ -928,7 +928,7 @@
 
 <!-- ===== APP SCREEN ===== -->
 <div id="appScreen" class="screen">
-  <div class="viewer-banner">👁 MODO ESPECTADOR — Los cambios se sincronizan en tiempo real</div>
+  <div class="viewer-banner">👁 MODO ESPECTADOR — Los cambios se sincronizan en tiempo real &nbsp;·&nbsp; Pulsa el botón <span style="color:#00e676;font-weight:900">● verde</span> para refrescar ahora</div>
   <header class="header">
     <div class="header-logo" onclick="goSelector()">
       <img class="header-guild-icon" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
@@ -943,7 +943,7 @@
         <button class="btn btn-ghost" onclick="clearDiscordPlayers()">🗑 Discord</button>
       </div>
       <button class="btn btn-save admin-only" onclick="saveCurrentCompo()">💾 Guardar</button>
-      <button class="btn btn-ghost" onclick="exportCompo()">📋 Exportar</button>
+      <button class="btn btn-ghost admin-only" onclick="exportCompo()">📋 Exportar</button>
     </div>
   </header>
   <div class="legend-bar">
@@ -957,7 +957,10 @@
     <aside class="sidebar">
       <div class="sidebar-title">
         Jugadores
-        <span class="player-count" id="playerCount">0</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="player-count" id="playerCount">0</span>
+          <button class="admin-only" onclick="clearDiscordPlayers()" title="Limpiar jugadores" style="background:none;border:none;cursor:pointer;font-size:14px;line-height:1;color:var(--text-muted);padding:0;transition:color .15s" onmouseover="this.style.color='var(--dps)'" onmouseout="this.style.color='var(--text-muted)'">🗑</button>
+        </div>
       </div>
       <input class="player-search" id="playerSearch" placeholder="Buscar jugador..." oninput="filterPlayers(this.value)">
       <div class="players-list" id="playersList"></div>
