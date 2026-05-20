@@ -871,6 +871,7 @@
     <div class="login-guild-sub">Albion Online · Guild</div>
     <div class="login-divider"></div>
     <div class="login-subtitle">⚔ ZvZ Composition Manager ⚔</div>
+    <div style="font-size:9px;color:var(--text-muted);margin-top:-20px;margin-bottom:20px;letter-spacing:1px;opacity:.6;">MIEMBROS: pulsa acceder · ADMIN: contraseña</div>
     <div class="login-field">
       <input class="login-input" id="loginInput" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')tryLogin()">
       <button class="login-eye" onclick="togglePwd()">👁</button>
@@ -1109,20 +1110,24 @@ function setViewerMode(isViewer){
   }
 }
 
+function enterApp(role){
+  setViewerMode(role==='viewer');
+  initCompos();
+  showScreen('selectorScreen');
+  renderSelector();
+  connectRealtime();
+}
+
 function tryLogin(){
   const val=document.getElementById('loginInput').value.trim();
   if(val===PASSWORD_ADMIN){
-    setViewerMode(false);
-    initCompos();
-    showScreen('selectorScreen');
-    renderSelector();
-    connectRealtime();
-  } else if(val===PASSWORD_VIEWER){
-    setViewerMode(true);
-    initCompos();
-    showScreen('selectorScreen');
-    renderSelector();
-    connectRealtime();
+    // Save admin session in sessionStorage (survives refresh, clears on tab close)
+    sessionStorage.setItem('zvz_role','admin');
+    enterApp('admin');
+  } else if(val===PASSWORD_VIEWER || val===''){
+    // Viewers: empty password or 'mistake' → just enter as viewer
+    sessionStorage.removeItem('zvz_role');
+    enterApp('viewer');
   } else {
     document.getElementById('loginError').textContent='Contraseña incorrecta';
     const box=document.getElementById('loginBox');
@@ -1133,12 +1138,22 @@ function tryLogin(){
   }
 }
 
+
+// Auto-restore admin session on reload (survives F5, clears on tab close)
+(function(){
+  const savedRole = sessionStorage.getItem('zvz_role');
+  if(savedRole === 'admin'){
+    enterApp('admin');
+  }
+})();
+
 function logout(){
-  // Disconnect realtime
+  sessionStorage.removeItem('zvz_role');
   if(realtimeChannel && sb){ sb.removeChannel(realtimeChannel); realtimeChannel=null; }
   userRole=null;
   players=[];
   discordPlayers=[];
+  assignments={};
   document.getElementById('loginInput').value='';
   document.getElementById('loginError').textContent='';
   setRealtimeStatus(false);
@@ -1239,8 +1254,10 @@ function switchCompo(idx){
 // ==================== SAVE ====================
 function saveCurrentCompo(){
   compos[currentCompo].slotItems={...slotItems};
+  // Also sync current assignments into the compo object so viewers see them
+  compos[currentCompo].assignments = {...assignments};
   saveStorage();
-  pushToSupabase(); // sync to DB for viewers
+  pushToSupabase();
   showToast('💾 Compo guardada y sincronizada');
   renderSelector();
 }
@@ -1681,11 +1698,13 @@ function setRealtimeStatus(online){
 }
 
 async function pushToSupabase(){
-  if(!sb) return; // Supabase not configured
+  if(!sb) return;
   try {
     await sb.from('zvz_state').upsert({
       id: 1,
       compos: JSON.stringify(compos),
+      players: JSON.stringify(players),
+      assignments: JSON.stringify(assignments),
       updated_at: new Date().toISOString()
     });
   } catch(e){ console.warn('Supabase push error:', e); }
@@ -1694,23 +1713,41 @@ async function pushToSupabase(){
 async function pullFromSupabase(){
   if(!sb) return;
   try {
-    const {data, error} = await sb.from('zvz_state').select('compos').eq('id',1).single();
+    const {data, error} = await sb.from('zvz_state').select('compos,players,assignments').eq('id',1).single();
     if(error || !data) return;
-    const remote = JSON.parse(data.compos);
+    applyRemoteState(data);
+  } catch(e){ console.warn('Supabase pull error:', e); }
+}
+
+function applyRemoteState(data){
+  // compos
+  try {
+    const remote = typeof data.compos === 'string' ? JSON.parse(data.compos) : data.compos;
     if(remote && remote.length){
       compos = remote;
       compos.forEach(c=>{ if(!c.rows||!c.rows.length) c.rows=makeDefaultRows(); });
-      // Refresh current view
-      const curScreen = document.querySelector('.screen.active')?.id;
-      if(curScreen==='selectorScreen') renderSelector();
-      if(curScreen==='appScreen'){
-        slotItems={...(compos[currentCompo]?.slotItems||{})};
-        renderCompo();
-        renderTabs();
-        document.getElementById('currentCompoName').textContent=compos[currentCompo]?.name||'';
-      }
     }
-  } catch(e){ console.warn('Supabase pull error:', e); }
+  } catch(e){}
+  // players (viewer sees admin's player list)
+  try {
+    const rp = typeof data.players === 'string' ? JSON.parse(data.players) : data.players;
+    if(Array.isArray(rp)) players = rp;
+  } catch(e){}
+  // assignments
+  try {
+    const ra = typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments;
+    if(ra && typeof ra === 'object') assignments = ra;
+  } catch(e){}
+  // Refresh views
+  const curScreen = document.querySelector('.screen.active')?.id;
+  if(curScreen==='selectorScreen') renderSelector();
+  if(curScreen==='appScreen'){
+    slotItems={...(compos[currentCompo]?.slotItems||{})};
+    renderCompo();
+    renderTabs();
+    renderPlayers();
+    document.getElementById('currentCompoName').textContent=compos[currentCompo]?.name||'';
+  }
 }
 
 function connectRealtime(){
@@ -1731,23 +1768,11 @@ function connectRealtime(){
     .on('postgres_changes',
       {event:'UPDATE', schema:'public', table:'zvz_state'},
       payload => {
-        // Only viewers react to remote changes; admin pushed them
+        // Only viewers react to remote changes automatically
         if(userRole==='viewer'){
           try {
-            const remote=JSON.parse(payload.new.compos);
-            if(remote && remote.length){
-              compos=remote;
-              compos.forEach(c=>{ if(!c.rows||!c.rows.length) c.rows=makeDefaultRows(); });
-              const curScreen=document.querySelector('.screen.active')?.id;
-              if(curScreen==='selectorScreen') renderSelector();
-              if(curScreen==='appScreen'){
-                slotItems={...(compos[currentCompo]?.slotItems||{})};
-                renderCompo();
-                renderTabs();
-                document.getElementById('currentCompoName').textContent=compos[currentCompo]?.name||'';
-              }
-              showToast('🔄 Compo actualizada');
-            }
+            applyRemoteState(payload.new);
+            showToast('🔄 Compo actualizada');
           } catch(e){}
         }
       }
