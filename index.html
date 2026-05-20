@@ -852,6 +852,39 @@
   }
   body.viewer-mode .viewer-banner { display: block; }
 
+
+  /* REFRESH BUTTON (viewer only) */
+  .refresh-fab {
+    position: fixed; bottom: 90px; right: 24px; z-index: 500;
+    background: linear-gradient(135deg, #1a3a1a, #00e676);
+    border: none; border-radius: 50%;
+    width: 54px; height: 54px; cursor: pointer;
+    box-shadow: 0 4px 20px #00e67655, 0 0 0 0 #00e67633;
+    display: none; align-items: center; justify-content: center;
+    transition: transform .2s, box-shadow .2s;
+    animation: refreshPing 4s ease-in-out infinite;
+    flex-direction: column; gap: 2px;
+  }
+  body.viewer-mode .refresh-fab { display: flex; }
+  .refresh-fab:hover { transform: scale(1.12) translateY(-2px); box-shadow: 0 8px 30px #00e67688; animation: none; }
+  .refresh-fab:active { transform: scale(.95); }
+  @keyframes refreshPing {
+    0%,80%,100% { box-shadow: 0 4px 20px #00e67655, 0 0 0 0 #00e67633; }
+    60% { box-shadow: 0 4px 20px #00e67655, 0 0 0 14px transparent; }
+  }
+  .refresh-fab svg { width: 24px; height: 24px; fill: #fff; transition: transform .4s; }
+  .refresh-fab:active svg { transform: rotate(180deg); }
+  .refresh-fab-tip {
+    position: absolute; right: 62px; bottom: 50%; transform: translateY(50%);
+    background: #0d2318; border: 1px solid #00e67644; border-radius: 6px;
+    color: #00e676; font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 1px; padding: 5px 10px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .refresh-fab:hover .refresh-fab-tip { opacity: 1; }
+  .refresh-fab.spinning svg { animation: spin .6s linear; }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
 </style>
 </head>
 <body>
@@ -979,6 +1012,14 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Refresh FAB (viewer only) -->
+<button class="refresh-fab" id="refreshFab" onclick="manualRefresh()" title="Actualizar">
+  <span class="refresh-fab-tip">Actualizar ahora</span>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+  </svg>
+</button>
 
 <!-- Discord FAB -->
 <a class="discord-fab" href="https://discord.gg/WZ4bbWtNn" target="_blank" rel="noopener" title="Únete al Discord">
@@ -1839,6 +1880,22 @@ function connectRealtime(){
 
 // ==================== APP INIT ====================
 initSupabase();
+
+async function manualRefresh(){
+  const btn = document.getElementById('refreshFab');
+  btn.classList.add('spinning');
+  btn.style.pointerEvents = 'none';
+  try {
+    await pullFromSupabase();
+    showToast('✅ Actualizado');
+  } catch(e) {
+    showToast('❌ Error al actualizar');
+  }
+  setTimeout(()=>{
+    btn.classList.remove('spinning');
+    btn.style.pointerEvents = '';
+  }, 700);
+}
 
 </script>
 </body>
