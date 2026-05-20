@@ -386,21 +386,41 @@
   }
   .compo-tab {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 5px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
     color: var(--text-muted);
     cursor: pointer;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1px;
-    padding: 5px 12px;
+    letter-spacing: 2px;
+    padding: 7px 18px;
     text-transform: uppercase;
-    transition: all .15s;
+    transition: all .2s;
     white-space: nowrap;
+    position: relative;
   }
-  .compo-tab:hover { border-color: var(--gold-dark); color: var(--text); }
-  .compo-tab.active { background: var(--gold-dark); border-color: var(--gold); color: var(--gold-light); }
+  .compo-tab:hover {
+    border-color: var(--gold-dark);
+    color: var(--gold-light);
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+  }
+  .compo-tab.active {
+    background: linear-gradient(135deg, var(--gold-dark), #a07828);
+    border-color: var(--gold);
+    color: var(--gold-light);
+    box-shadow: 0 0 14px #c8a84b44, 0 2px 8px #00000066;
+    transform: translateY(-1px);
+    text-shadow: 0 0 10px #c8a84b88;
+  }
+  .compo-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--gold);
+  }
   .header-actions {
     display: flex;
     gap: 8px;
@@ -525,13 +545,43 @@
     align-items: center;
     gap: 7px;
     margin-bottom: 3px;
-    padding: 6px 8px;
+    padding: 5px 6px 5px 8px;
     transition: all .15s;
     user-select: none;
+    position: relative;
   }
   .player-chip:hover { background: var(--bg-hover); border-color: var(--gold-dark); }
   .player-chip.dragging { opacity: .35; }
-  .player-chip.assigned { opacity: .3; border-style: dashed; }
+  .player-chip.assigned { opacity: .5; border-style: dashed; }
+
+  /* Neon X remove button */
+  .player-remove-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+    padding: 2px 4px;
+    flex-shrink: 0;
+    transition: all .15s;
+    display: none;
+  }
+  .player-chip:hover .player-remove-btn { display: block; }
+  .player-remove-btn:hover {
+    color: var(--dps);
+    border-color: var(--dps);
+    background: #e0555515;
+    box-shadow: 0 0 8px #e0555555;
+    text-shadow: 0 0 6px #e05555cc;
+  }
+
+  /* Viewer: no drag, no remove */
+  body.viewer-mode .player-chip { cursor: default; pointer-events: none; }
+  body.viewer-mode .player-chip .player-remove-btn { display: none !important; }
   .player-avatar {
     width: 24px; height: 24px; border-radius: 50%;
     background: linear-gradient(135deg, var(--gold-dark), var(--gold));
@@ -826,6 +876,8 @@
   .admin-only { display: flex; }
   body.viewer-mode .admin-only { display: none !important; }
   body.viewer-mode .compo-card { cursor: pointer; }
+  body.viewer-mode .player-slot.filled { cursor: default; pointer-events: none; }
+  body.viewer-mode .player-slot-remove { display: none; }
 
   /* REALTIME INDICATOR */
   .realtime-dot {
@@ -1157,20 +1209,69 @@ function setViewerMode(isViewer){
 function enterApp(role){
   setViewerMode(role==='viewer');
   initCompos();
-  showScreen('selectorScreen');
-  renderSelector();
   connectRealtime();
+  // Animate logo then go straight to first compo
+  animateLoginAndEnter();
+}
+
+function animateLoginAndEnter(){
+  const logo = document.querySelector('.login-guild-logo');
+  const box  = document.getElementById('loginBox');
+  if(!logo || !box){ goDirectToCompo(); return; }
+
+  // Burst glow on logo
+  logo.style.transition = 'box-shadow .3s ease, transform .3s ease';
+  logo.style.transform  = 'scale(1.18)';
+  logo.style.boxShadow  = '0 0 80px #c8a84bcc, 0 0 160px #c8a84b66';
+
+  setTimeout(()=>{
+    // Fade out the whole box
+    box.style.transition = 'opacity .4s ease, transform .4s ease';
+    box.style.opacity    = '0';
+    box.style.transform  = 'scale(1.06) translateY(-20px)';
+  }, 320);
+
+  setTimeout(()=>{
+    goDirectToCompo();
+    // Reset box for next login
+    box.style.transition = '';
+    box.style.opacity    = '1';
+    box.style.transform  = '';
+    logo.style.transform = '';
+    logo.style.boxShadow = '';
+  }, 750);
+}
+
+function goDirectToCompo(){
+  // Skip selector — go straight into compo 1
+  if(compos.length > 0){
+    currentCompo = 0;
+    if(!compos[0].rows || !compos[0].rows.length) compos[0].rows = makeDefaultRows();
+    slotItems = {...(compos[0].slotItems || {})};
+    assignments = {};
+    if(compos[0].assignments){
+      Object.entries(compos[0].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
+    }
+    showScreen('appScreen');
+    renderTabs();
+    renderCompo();
+    renderPlayers();
+    document.getElementById('currentCompoName').textContent = compos[0].name;
+  } else {
+    showScreen('selectorScreen');
+    renderSelector();
+  }
 }
 
 function tryLogin(){
   const val=document.getElementById('loginInput').value.trim();
   if(val===PASSWORD_ADMIN){
     // Save admin session in sessionStorage (survives refresh, clears on tab close)
-    sessionStorage.setItem('zvz_role','admin');
+    localStorage.setItem('zvz_role','admin');
     enterApp('admin');
   } else if(val===PASSWORD_VIEWER || val===''){
     // Viewers: empty password or 'mistake' → just enter as viewer
-    sessionStorage.removeItem('zvz_role');
+    localStorage.removeItem('zvz_role');
     enterApp('viewer');
   } else {
     document.getElementById('loginError').textContent='Contraseña incorrecta';
@@ -1185,14 +1286,18 @@ function tryLogin(){
 
 // Auto-restore admin session on reload (survives F5, clears on tab close)
 (function(){
-  const savedRole = sessionStorage.getItem('zvz_role');
+  const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
-    enterApp('admin');
+    // Skip animation on auto-restore (no login screen was shown)
+    setViewerMode(false);
+    initCompos();
+    connectRealtime();
+    goDirectToCompo();
   }
 })();
 
 function logout(){
-  sessionStorage.removeItem('zvz_role');
+  localStorage.removeItem('zvz_role');
   if(realtimeChannel && sb){ sb.removeChannel(realtimeChannel); realtimeChannel=null; }
   userRole=null;
   players=[];
@@ -1438,10 +1543,13 @@ function renderPlayers(){
   const assigned=new Set(Object.values(assignments));
   list.innerHTML=filtered.map(p=>{
     const isAssigned=assigned.has(p);
-    return `<div class="player-chip${isAssigned?' assigned':''}" data-player="${p}" draggable="true"
-      ondragstart="onPlayerDragStart(event,'${p.replace(/'/g,"\\'")}')">
+    const safeP=p.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const isAdmin=userRole==='admin';
+    return `<div class="player-chip${isAssigned?' assigned':''}" data-player="${p}"
+      ${isAdmin?`draggable="true" ondragstart="onPlayerDragStart(event,'${safeP}')"`:'draggable="false"'}>
       <div class="player-avatar">${p.charAt(0).toUpperCase()}</div>
       <span class="player-name">${p}</span>
+      ${isAdmin?`<button class="player-remove-btn" onclick="removePlayer('${safeP}',event)" title="Eliminar">✕</button>`:''}
     </div>`;
   }).join('');
 }
@@ -1476,6 +1584,19 @@ function addPlayer(){
   renderPlayers(); autoPush();
 }
 function removeAssignment(rowNum){ delete assignments[String(rowNum)]; renderCompo(); renderPlayers(); autoPush(); }
+
+function removePlayer(name, e){
+  e.stopPropagation(); // don't trigger drag
+  // Remove from list
+  players = players.filter(p => p !== name);
+  // Also remove any assignment for this player
+  Object.keys(assignments).forEach(k => {
+    if(assignments[k] === name) delete assignments[k];
+  });
+  renderPlayers();
+  renderCompo();
+  autoPush();
+}
 function clearAllPlayers(){ if(!confirm('¿Limpiar asignaciones?'))return; assignments={}; renderCompo(); renderPlayers(); showToast('Asignaciones limpiadas'); }
 function filterPlayers(){ renderPlayers(); }
 
