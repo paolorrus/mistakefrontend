@@ -1220,8 +1220,12 @@ function addCompo(){
 function openCompo(idx){
   currentCompo=idx;
   if(!compos[idx].rows||!compos[idx].rows.length) compos[idx].rows=makeDefaultRows();
-  slotItems={...( compos[idx].slotItems||{})};
+  slotItems={...(compos[idx].slotItems||{})};
+  // Restore saved assignments (string keys)
   assignments={};
+  if(compos[idx].assignments){
+    Object.entries(compos[idx].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
+  }
   showScreen('appScreen');
   renderTabs();
   renderCompo();
@@ -1245,7 +1249,11 @@ function renderTabs(){
 function switchCompo(idx){
   currentCompo=idx;
   slotItems={...(compos[idx].slotItems||{})};
+  // Restore saved assignments (string keys)
   assignments={};
+  if(compos[idx].assignments){
+    Object.entries(compos[idx].assignments).forEach(([k,v])=>{ assignments[String(k)]=v; });
+  }
   renderTabs();
   renderCompo();
   renderPlayers();
@@ -1701,17 +1709,22 @@ function setRealtimeStatus(online){
 
 async function pushToSupabase(){
   if(!sb || userRole!=='admin') return;
-  // Always save current slotItems into compo before pushing
+  // Snapshot current state into compo object (so pull also works)
   compos[currentCompo].slotItems={...slotItems};
-  compos[currentCompo].assignments={...assignments};
+  // Store assignments with string keys in both places
+  const strAssignments={};
+  Object.entries(assignments).forEach(([k,v])=>{ strAssignments[String(k)]=v; });
+  compos[currentCompo].assignments=strAssignments;
   try {
-    await sb.from('zvz_state').upsert({
+    const {error} = await sb.from('zvz_state').upsert({
       id: 1,
       compos: JSON.stringify(compos),
       players: JSON.stringify(players),
-      assignments: JSON.stringify(assignments),
+      assignments: JSON.stringify(strAssignments),
       updated_at: new Date().toISOString()
     });
+    if(error) console.warn('Supabase upsert error:', error);
+    else console.log('[Push] OK — players:', players.length, 'assignments:', Object.keys(strAssignments).length);
   } catch(e){ console.warn('Supabase push error:', e); }
 }
 
@@ -1773,6 +1786,13 @@ function applyRemoteState(data){
     }
   } catch(e){ console.warn('assignments parse error',e); }
 
+  // Also restore assignments from the saved compo if top-level assignments was empty
+  // (belt-and-suspenders: compos[i].assignments is also saved by admin)
+  if(Object.keys(assignments).length===0 && compos[currentCompo]?.assignments){
+    const saved=compos[currentCompo].assignments;
+    Object.entries(saved).forEach(([k,v])=>{ assignments[String(k)]=v; });
+  }
+
   // Refresh all visible UI
   const curScreen = document.querySelector('.screen.active')?.id;
   if(curScreen==='selectorScreen') renderSelector();
@@ -1805,12 +1825,11 @@ function connectRealtime(){
       payload => {
         // Both admin and viewer refresh from remote on any change
         // Admin already has latest state; viewer needs the update
-        if(userRole==='viewer'){
-          try {
-            applyRemoteState(payload.new);
-            showToast('🔄 Actualizado');
-          } catch(e){}
-        }
+        // Always apply remote state (viewer sees updates, admin sees if another admin changes)
+        try {
+          applyRemoteState(payload.new);
+          if(userRole==='viewer') showToast('🔄 Actualizado');
+        } catch(e){ console.warn('Realtime apply error:', e); }
       }
     )
     .subscribe(status => {
