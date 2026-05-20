@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZvZ Compo — Albion Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --gold: #c8a84b;
+    --gold-light: #f0d080;
+    --gold-dark: #7a6020;
+    --bg-deep: #0a0c0f;
+    --bg-panel: #111418;
+    --bg-card: #161b22;
+    --bg-hover: #1e242e;
+    --border: #2a3040;
+    --border-gold: #c8a84b44;
+    --text: #d4c9b0;
+    --text-muted: #7a8090;
+    --tank: #4a90d9;
+    --tank-bg: #0d1e35;
+    --healer: #4caf7d;
+    --healer-bg: #0d2318;
+    --dps: #e05555;
+    --dps-bg: #2a0d0d;
+    --support: #c8a84b;
+    --support-bg: #2a2010;
+    --montura: #9b59b6;
+    --montura-bg: #1e0d2a;
+    --deftank: #5bb8d4;
+    --deftank-bg: #0d1e28;
+    --green: #00e676;
+    --yellow: #ffeb3b;
+    --blue-swap: #2979ff;
+    --slot-size: 56px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, #c8a84b08 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, #4a90d908 0%, transparent 50%);
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; width: 100%; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ===== LOGIN SCREEN ===== */
+  #loginScreen {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 0%, #1a1200 0%, #0a0c0f 55%);
+  }
+  .login-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 50% -10%, #c8a84b22 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 85%, #7a6020 0%, transparent 40%),
+      radial-gradient(ellipse at 85% 85%, #7a602015 0%, transparent 40%);
+  }
+  /* Animated horizontal scanlines */
+  .login-bg::after {
+    content:''; position:absolute; inset:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, #c8a84b04 2px, #c8a84b04 4px);
+    animation: scanMove 8s linear infinite;
+  }
+  @keyframes scanMove { 0%{background-position:0 0} 100%{background-position:0 200px} }
+
+  .login-particles { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .login-particles span {
+    position:absolute; display:block; border-radius:50%;
+    background:var(--gold); animation:float linear infinite; opacity:0;
+  }
+  @keyframes float {
+    0%   { transform:translateY(100vh) scale(0); opacity:0; }
+    10%  { opacity:.5; }
+    90%  { opacity:.2; }
+    100% { transform:translateY(-10vh) scale(1); opacity:0; }
+  }
+
+  /* Horizontal light beam at top */
+  .login-beam {
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent 0%, #c8a84b 40%, #f0d080 50%, #c8a84b 60%, transparent 100%);
+    box-shadow: 0 0 30px 8px #c8a84b55, 0 0 80px 20px #c8a84b22;
+    animation: beamPulse 3s ease-in-out infinite;
+  }
+  @keyframes beamPulse {
+    0%,100% { opacity:.7; } 50% { opacity:1; box-shadow:0 0 50px 15px #c8a84b88,0 0 120px 40px #c8a84b33; }
+  }
+
+  /* Corner decorations */
+  .login-corner { position:absolute; width:60px; height:60px; border-color:var(--gold-dark); border-style:solid; opacity:.4; }
+  .login-corner.tl { top:20px; left:20px; border-width:2px 0 0 2px; }
+  .login-corner.tr { top:20px; right:20px; border-width:2px 2px 0 0; }
+  .login-corner.bl { bottom:20px; left:20px; border-width:0 0 2px 2px; }
+  .login-corner.br { bottom:20px; right:20px; border-width:0 2px 2px 0; }
+
+  .login-box {
+    position:relative; z-index:1;
+    background: linear-gradient(160deg, #161b22ee 0%, #0f1318ee 100%);
+    border:1px solid #c8a84b55;
+    border-radius:20px;
+    padding:44px 52px 40px;
+    width:420px; max-width:95vw;
+    text-align:center;
+    box-shadow: 0 40px 100px #000000cc, 0 0 0 1px #c8a84b11, inset 0 1px 0 #c8a84b22;
+    animation: loginIn .6s cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes loginIn {
+    from { transform:translateY(40px) scale(.97); opacity:0; }
+    to   { transform:translateY(0) scale(1); opacity:1; }
+  }
+
+  /* Guild logo */
+  .login-guild-logo {
+    width:90px; height:90px; border-radius:50%;
+    border:2px solid #c8a84b66;
+    box-shadow: 0 0 30px #c8a84b44, 0 0 60px #c8a84b22;
+    margin:0 auto 16px;
+    display:block; object-fit:cover;
+    animation:logoPulse 4s ease-in-out infinite;
+  }
+  @keyframes logoPulse {
+    0%,100%{box-shadow:0 0 30px #c8a84b44,0 0 60px #c8a84b22;}
+    50%{box-shadow:0 0 50px #c8a84b88,0 0 100px #c8a84b44;}
+  }
+
+  /* MISTAKE title */
+  .login-guild-name {
+    font-family:'Cinzel',serif;
+    font-size:42px; font-weight:900;
+    letter-spacing:10px;
+    text-transform:uppercase;
+    margin-bottom:4px;
+    background: linear-gradient(180deg, #f0d080 0%, #c8a84b 40%, #7a6020 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+    filter:drop-shadow(0 0 20px #c8a84b88);
+    animation:titleGlow 3s ease-in-out infinite;
+  }
+  @keyframes titleGlow {
+    0%,100%{filter:drop-shadow(0 0 15px #c8a84b66);}
+    50%{filter:drop-shadow(0 0 35px #f0d080cc);}
+  }
+  .login-guild-sub {
+    font-family:'Rajdhani',sans-serif;
+    font-size:11px; font-weight:600;
+    letter-spacing:5px;
+    text-transform:uppercase;
+    color:#c8a84b88;
+    margin-bottom:6px;
+  }
+  .login-divider {
+    height:1px; margin:20px auto 24px;
+    background:linear-gradient(90deg,transparent,#c8a84b55,transparent);
+    width:80%;
+  }
+  .login-subtitle {
+    font-size:10px; color:var(--text-muted);
+    letter-spacing:3px; text-transform:uppercase;
+    margin-bottom:28px; opacity:.7;
+  }
+  .login-field { position:relative; margin-bottom:16px; }
+  .login-input {
+    background:#0a0c0f; border:1px solid #c8a84b33;
+    border-radius:8px; color:var(--text);
+    font-family:'Rajdhani',sans-serif; font-size:16px;
+    letter-spacing:4px; padding:14px 48px 14px 18px;
+    text-align:center; width:100%;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .login-input:focus {
+    outline:none; border-color:var(--gold);
+    box-shadow:0 0 25px #c8a84b33, inset 0 0 10px #c8a84b0a;
+  }
+  .login-input::placeholder { letter-spacing:1px; color:var(--text-muted); opacity:.5; }
+  .login-eye {
+    position:absolute; right:14px; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px;
+  }
+  .login-error {
+    color:#e05555; font-size:12px; margin-bottom:12px;
+    min-height:16px; font-weight:600; letter-spacing:.5px;
+  }
+  .login-btn {
+    background:linear-gradient(135deg, #5a3800, #c8a84b 40%, #f0d080 50%, #c8a84b 60%, #5a3800);
+    background-size:200% auto;
+    border:none; border-radius:8px; color:#0a0c0f;
+    cursor:pointer; font-family:'Cinzel',serif;
+    font-size:13px; font-weight:900; letter-spacing:5px;
+    padding:14px 32px; text-transform:uppercase; width:100%;
+    transition:all .3s; box-shadow:0 4px 20px #c8a84b44;
+    position:relative; overflow:hidden;
+  }
+  .login-btn::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg,transparent 30%,#ffffff22 50%,transparent 70%);
+    transform:translateX(-100%); transition:transform .4s;
+  }
+  .login-btn:hover { background-position:right center; box-shadow:0 8px 40px #c8a84b66; transform:translateY(-2px); }
+  .login-btn:hover::after { transform:translateX(100%); }
+  .login-btn:active { transform:translateY(0); }
+  .login-shake { animation:shake .4s ease; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-5px)}
+    80%{transform:translateX(5px)}
+  }
+
+  /* ── DISCORD FLOATING BUTTON ── */
+  .discord-fab {
+    position:fixed; bottom:24px; right:24px; z-index:500;
+    background:#5865F2; border:none; border-radius:50%;
+    width:54px; height:54px; cursor:pointer;
+    box-shadow:0 4px 20px #5865F255, 0 0 0 0 #5865F244;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .2s, box-shadow .2s;
+    animation:discordPing 3s ease-in-out infinite;
+    text-decoration:none;
+  }
+  .discord-fab:hover { transform:scale(1.12) translateY(-2px); box-shadow:0 8px 30px #5865F288; animation:none; }
+  @keyframes discordPing {
+    0%,90%,100%{ box-shadow:0 4px 20px #5865F255,0 0 0 0 #5865F244; }
+    70%{ box-shadow:0 4px 20px #5865F255,0 0 0 14px transparent; }
+  }
+  .discord-fab svg { width:28px; height:28px; fill:#fff; }
+  .discord-fab-tip {
+    position:absolute; right:62px; bottom:50%; transform:translateY(50%);
+    background:#1e2030; border:1px solid #5865F244; border-radius:6px;
+    color:#fff; font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600;
+    letter-spacing:.5px; padding:5px 10px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  .discord-fab:hover .discord-fab-tip { opacity:1; }
+
+  /* ===== SELECTOR SCREEN ===== */
+  #selectorScreen {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  .selector-title {
+    font-family: 'Cinzel', serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px #c8a84b44;
+    text-align: center;
+  }
+  .selector-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+  .compo-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+  }
+  .compo-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    padding: 28px 24px;
+    width: 160px;
+    text-align: center;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+    animation: cardIn .4s ease both;
+  }
+  .compo-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--gold) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .compo-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 40px #c8a84b22; }
+  .compo-card:hover::before { opacity: .04; }
+  @keyframes cardIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .card-num {
+    font-family: 'Cinzel', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px #c8a84b44;
+  }
+  .card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card-info {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .card-add {
+    border-style: dashed;
+    border-color: var(--border);
+    opacity: .6;
+  }
+  .card-add .card-num { color: var(--text-muted); font-size: 32px; }
+  .card-add:hover { opacity: 1; }
+  .selector-logout {
+    margin-top: 40px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 8px 20px;
+    text-transform: uppercase;
+    transition: .2s;
+  }
+  .selector-logout:hover { border-color: var(--dps); color: var(--dps); }
+
+  /* ===== MAIN APP SCREEN ===== */
+  #appScreen { flex-direction: column; }
+
+  .header {
+    background: linear-gradient(180deg, #0d1018 0%, var(--bg-panel) 100%);
+    border-bottom: 1px solid var(--border-gold);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+  .header-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 20px #c8a84b66;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .header-logo span { color: var(--text-muted); font-weight: 400; }
+  .compo-selector-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  .compo-tab {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    text-transform: uppercase;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .compo-tab:hover { border-color: var(--gold-dark); color: var(--text); }
+  .compo-tab.active { background: var(--gold-dark); border-color: var(--gold); color: var(--gold-light); }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+  }
+  .discord-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    padding: 6px 10px;
+    width: 220px;
+    transition: border-color .2s;
+  }
+  .discord-input:focus { outline: none; border-color: var(--gold); }
+  .discord-input::placeholder { color: var(--text-muted); }
+  .btn {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border: none;
+    border-radius: 6px;
+    color: #0a0c0f;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    text-transform: uppercase;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: transparent; filter: none; transform: none; }
+  .btn-save {
+    background: linear-gradient(135deg, #0d3520, #4caf7d);
+    color: #fff;
+  }
+  .btn-save:hover { filter: brightness(1.2); }
+
+  /* LEGEND */
+  .legend-bar {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 6px 16px;
+    background: #0d1018;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; border: 2px solid; flex-shrink: 0; }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 90px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    padding: 10px 12px 8px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .player-count { font-family: 'Rajdhani', sans-serif; font-size: 11px; color: var(--text-muted); font-weight: 400; letter-spacing: 0; }
+  .player-search {
+    background: var(--bg-card);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    padding: 7px 12px;
+    width: 100%;
+  }
+  .player-search:focus { outline: none; background: var(--bg-hover); }
+  .player-search::placeholder { color: var(--text-muted); }
+  .players-list { flex: 1; overflow-y: auto; padding: 5px; }
+  .players-list::-webkit-scrollbar { width: 3px; }
+  .players-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .player-chip {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 3px;
+    padding: 6px 8px;
+    transition: all .15s;
+    user-select: none;
+  }
+  .player-chip:hover { background: var(--bg-hover); border-color: var(--gold-dark); }
+  .player-chip.dragging { opacity: .35; }
+  .player-chip.assigned { opacity: .3; border-style: dashed; }
+  .player-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #0a0c0f; flex-shrink: 0;
+  }
+  .player-name { font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .add-player-area {
+    padding: 7px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 5px;
+  }
+  .add-player-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    padding: 5px 8px;
+    flex: 1;
+  }
+  .add-player-input:focus { outline: none; border-color: var(--gold); }
+  .btn-add {
+    background: var(--gold);
+    border: none;
+    border-radius: 4px;
+    color: #0a0c0f;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 9px;
+    transition: .15s;
+  }
+  .btn-add:hover { filter: brightness(1.2); }
+
+  /* MAIN */
+  .main { overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 0; }
+  .main::-webkit-scrollbar { width: 5px; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* COMPO TABLE */
+  .compo-table { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .compo-table-header {
+    display: grid;
+    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
+    background: #0d1018;
+    border-bottom: 1px solid var(--border-gold);
+    padding: 5px 10px;
+    gap: 6px;
+    align-items: center;
+  }
+  .col-header { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 700; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; }
+  .compo-row {
+    display: grid;
+    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
+    border-bottom: 1px solid var(--border);
+    gap: 6px;
+    padding: 4px 10px;
+    align-items: center;
+    transition: background .15s;
+  }
+  .compo-row:last-child { border-bottom: none; }
+  .compo-row:hover { background: #ffffff03; }
+  .compo-row.group-sep { border-top: 2px solid var(--border-gold); }
+  .role-badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 3px 6px; border-radius: 3px; text-align: center; text-transform: uppercase; }
+  .role-TANK    { background: var(--tank-bg);    color: var(--tank);    border: 1px solid var(--tank); }
+  .role-HEALER  { background: var(--healer-bg);  color: var(--healer);  border: 1px solid var(--healer); }
+  .role-DPS     { background: var(--dps-bg);     color: var(--dps);     border: 1px solid var(--dps); }
+  .role-SUPPORT { background: var(--support-bg); color: var(--support); border: 1px solid var(--support); }
+  .role-MONTURA { background: var(--montura-bg); color: var(--montura); border: 1px solid var(--montura); }
+  .role-DEFTANK { background: var(--deftank-bg); color: var(--deftank); border: 1px solid var(--deftank); }
+  .row-num { font-size: 12px; font-weight: 700; color: var(--text-muted); text-align: center; }
+  .weapon-name { font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: .5px; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .items-row { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
+  .item-slot {
+    width: var(--slot-size); height: var(--slot-size);
+    border-radius: 4px; background: var(--bg-deep); border: 1px solid var(--border);
+    position: relative; cursor: pointer; flex-shrink: 0; transition: border-color .15s; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .item-slot:hover { border-color: var(--gold); }
+  .item-slot img { width: 100%; height: calc(100% - 14px); object-fit: contain; display: block; flex-shrink: 0; }
+  .item-slot .slot-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    font-size: 6px; text-align: center; color: var(--text-muted);
+    font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
+    pointer-events: none; background: #000000bb; padding: 1px 0; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .item-slot.swap-obligatorio { border-color: var(--green) !important; box-shadow: 0 0 5px #00e67644; }
+  .item-slot.swap-posible     { border-color: var(--yellow) !important; box-shadow: 0 0 5px #ffeb3b44; }
+  .item-slot.swap-pve         { border-color: var(--blue-swap) !important; box-shadow: 0 0 5px #2979ff44; }
+  .player-slot {
+    min-height: 34px; border: 1.5px dashed var(--border); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3px 7px; transition: all .15s; position: relative; cursor: default;
+  }
+  .player-slot.drag-over { border-color: var(--gold); background: #c8a84b15; box-shadow: 0 0 10px #c8a84b33; }
+  .player-slot.filled { border-style: solid; border-color: var(--border); background: var(--bg-card); cursor: grab; }
+  .player-slot-name { font-size: 12px; font-weight: 600; color: var(--gold-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .player-slot-empty { font-size: 10px; color: var(--text-muted); font-style: italic; }
+  .player-slot-remove {
+    position: absolute; right: 3px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 12px; line-height: 1; padding: 2px; opacity: 0; transition: opacity .15s;
+  }
+  .player-slot:hover .player-slot-remove { opacity: 1; }
+  .player-slot-remove:hover { color: var(--dps); }
+
+  /* ITEM MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: #000000cc; z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-panel); border: 1px solid var(--border-gold); border-radius: 10px;
+    width: 680px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column;
+    box-shadow: 0 20px 60px #000000cc; animation: modalIn .2s ease;
+  }
+  @keyframes modalIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
+  .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; line-height: 1; transition: color .15s; }
+  .modal-close:hover { color: var(--dps); }
+  .modal-search { background: var(--bg-card); border: none; border-bottom: 1px solid var(--border); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 14px; padding: 9px 16px; width: 100%; }
+  .modal-search:focus { outline: none; }
+  .modal-search::placeholder { color: var(--text-muted); }
+  .modal-categories { display: flex; gap: 4px; padding: 7px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .cat-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 1px; padding: 3px 9px; text-transform: uppercase; transition: all .15s; }
+  .cat-btn:hover, .cat-btn.active { background: var(--gold-dark); border-color: var(--gold); color: var(--gold-light); }
+  .modal-grid { display: flex; flex-direction: column; gap: 0; overflow-y: auto; padding: 10px 16px; flex: 1; min-height: 200px; }
+  .modal-grid::-webkit-scrollbar { width: 3px; }
+  .modal-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .item-option { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 3px; transition: all .15s; }
+  .item-option:hover { border-color: var(--gold); background: var(--bg-hover); transform: scale(1.05); }
+  .item-option.selected { border-color: var(--gold); background: #c8a84b18; }
+  .item-option img { width: 44px; height: 44px; object-fit: contain; border-radius: 3px; }
+  .item-option-name { font-size: 8px; font-weight: 600; color: var(--text-muted); text-align: center; line-height: 1.2; letter-spacing: .3px; word-break: break-word; max-width: 56px; }
+  .swap-controls { display: flex; gap: 5px; padding: 7px 16px; border-top: 1px solid var(--border); align-items: center; flex-wrap: wrap; }
+  .swap-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+  .swap-btn { border: 1.5px solid; border-radius: 4px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 3px 8px; text-transform: uppercase; background: transparent; transition: .15s; }
+  .swap-btn[data-type="none"]        { border-color: var(--border);    color: var(--text-muted); }
+  .swap-btn[data-type="obligatorio"] { border-color: var(--green);     color: var(--green); }
+  .swap-btn[data-type="posible"]     { border-color: var(--yellow);    color: var(--yellow); }
+  .swap-btn[data-type="pve"]         { border-color: var(--blue-swap); color: var(--blue-swap); }
+  .swap-btn[data-type="none"].selected        { background: #ffffff18; }
+  .swap-btn[data-type="obligatorio"].selected { background: #00e67622; }
+  .swap-btn[data-type="posible"].selected     { background: #ffeb3b22; }
+  .swap-btn[data-type="pve"].selected         { background: #2979ff22; }
+  .modal-footer { padding: 8px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 7px; }
+
+  /* RENAME MODAL */
+  .rename-modal { background: var(--bg-panel); border: 1px solid var(--border-gold); border-radius: 10px; padding: 28px 32px; width: 360px; max-width: 95vw; box-shadow: 0 20px 60px #000000cc; animation: modalIn .2s ease; text-align: center; }
+  .rename-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold); margin-bottom: 20px; letter-spacing: 1px; }
+  .rename-input { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; padding: 10px 14px; width: 100%; margin-bottom: 16px; text-align: center; }
+  .rename-input:focus { outline: none; border-color: var(--gold); }
+  .rename-btns { display: flex; gap: 8px; justify-content: center; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--gold-light); z-index: 300; transform: translateY(80px); opacity: 0; transition: all .3s ease; pointer-events: none; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* SEARCH ROW */
+  .modal-search-row { display:flex; gap:0; border-bottom:1px solid var(--border); }
+  .modal-search { background:var(--bg-card); border:none; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:14px; padding:10px 16px; flex:1; }
+  .modal-search:focus { outline:none; }
+  .modal-search::placeholder { color:var(--text-muted); }
+  .modal-search-btn { border-radius:0; border-right:none; border-top:none; border-bottom:none; font-size:12px; padding:0 16px; flex-shrink:0; }
+  .modal-search-status { font-size:11px; color:var(--text-muted); padding:5px 16px; min-height:22px; font-weight:600; letter-spacing:.5px; }
+  .modal-hint { grid-column:1/-1; text-align:center; color:var(--text-muted); padding:30px 20px; font-size:13px; line-height:1.8; }
+  .tier-group { grid-column:1/-1; }
+  .tier-group-label { font-family:'Cinzel',serif; font-size:9px; color:var(--gold); letter-spacing:2px; text-transform:uppercase; padding:6px 2px 3px; border-bottom:1px solid var(--border); margin-bottom:6px; }
+  .tier-group-items { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px; }
+  .enchant-label { font-size:7px; font-weight:700; color:var(--gold-light); background:var(--gold-dark); border-radius:2px; padding:1px 3px; position:absolute; top:2px; right:2px; line-height:1; }
+
+
+  /* CARD ACTIONS */
+  .compo-card { position: relative; }
+  .card-actions { position:absolute; top:7px; right:7px; display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+  .compo-card:hover .card-actions { opacity:1; }
+  .card-action-btn {
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:4px;
+    color:var(--text-muted); cursor:pointer; font-size:11px; line-height:1;
+    padding:3px 5px; transition:all .15s;
+  }
+  .card-action-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .card-action-btn.del:hover { border-color:var(--dps); color:var(--dps); }
+
+  /* ADD ROW BUTTON */
+  .add-row-btn {
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    border:1.5px dashed var(--border); border-radius:6px; color:var(--text-muted);
+    cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:1px; padding:7px; text-transform:uppercase; transition:all .2s;
+    margin:4px 10px 6px;
+  }
+  .add-row-btn:hover { border-color:var(--gold); color:var(--gold); background:#c8a84b08; }
+
+  /* ROW DELETE */
+  .row-delete-btn {
+    background:none; border:none; color:var(--border); cursor:pointer;
+    font-size:14px; line-height:1; padding:2px 4px; transition:color .15s; flex-shrink:0;
+  }
+  .compo-row:hover .row-delete-btn { color:var(--text-muted); }
+  .row-delete-btn:hover { color:var(--dps) !important; }
+
+
+  /* INLINE ROW EDITING */
+  .role-select {
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:3px;
+    color:var(--text); cursor:pointer; font-family:'Rajdhani',sans-serif;
+    font-size:9px; font-weight:700; letter-spacing:1px; padding:3px 4px;
+    text-transform:uppercase; width:80px; transition:.15s;
+  }
+  .role-select:focus { outline:none; border-color:var(--gold); }
+  /* Color by role */
+  .role-select.roleTANK    { background:var(--tank-bg);    color:var(--tank);    border-color:var(--tank); }
+  .role-select.roleHEALER  { background:var(--healer-bg);  color:var(--healer);  border-color:var(--healer); }
+  .role-select.roleDPS     { background:var(--dps-bg);     color:var(--dps);     border-color:var(--dps); }
+  .role-select.roleSUPPORT { background:var(--support-bg); color:var(--support); border-color:var(--support); }
+  .role-select.roleMONTURA { background:var(--montura-bg); color:var(--montura); border-color:var(--montura); }
+  .role-select.roleDEFTANK { background:var(--deftank-bg); color:var(--deftank); border-color:var(--deftank); }
+  .weapon-input {
+    background:transparent; border:none; border-bottom:1px solid transparent;
+    color:var(--text); font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:.5px; padding:2px 4px; text-transform:uppercase; width:100%;
+    transition:border-color .15s;
+  }
+  .weapon-input:hover { border-bottom-color:var(--border); }
+  .weapon-input:focus { outline:none; border-bottom-color:var(--gold); background:var(--bg-deep); }
+
+
+  /* SELECTOR BRAND */
+  .selector-brand {
+    display:flex; flex-direction:column; align-items:center; margin-bottom:16px;
+  }
+  .selector-logo {
+    width:72px; height:72px; border-radius:50%;
+    border:2px solid #c8a84b55;
+    box-shadow:0 0 30px #c8a84b44, 0 0 60px #c8a84b22;
+    object-fit:cover; margin-bottom:8px;
+    animation:logoPulse 4s ease-in-out infinite;
+  }
+  .selector-guild-name {
+    font-family:'Cinzel',serif; font-size:26px; font-weight:900;
+    letter-spacing:8px; text-transform:uppercase;
+    background:linear-gradient(180deg,#f0d080 0%,#c8a84b 50%,#7a6020 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 12px #c8a84b66);
+  }
+
+  /* HEADER GUILD ICON */
+  .header-guild-icon {
+    width:28px; height:28px; border-radius:50%;
+    border:1px solid #c8a84b55; object-fit:cover; flex-shrink:0;
+  }
+  .header-guild-text {
+    font-family:'Cinzel',serif; font-size:15px; font-weight:900;
+    color:var(--gold); letter-spacing:2px; text-shadow:0 0 15px #c8a84b55;
+    display:flex; align-items:baseline; gap:6px;
+  }
+  .header-guild-sub {
+    font-size:10px; font-weight:400; color:var(--text-muted); letter-spacing:3px;
+  }
+  .header-logo { display:flex; align-items:center; gap:8px; cursor:pointer; }
+
+  /* LEGEND MISTAKE TITLE */
+  .legend-mistake {
+    position:absolute; left:50%; transform:translateX(-50%);
+    font-family:'Cinzel',serif; font-size:13px; font-weight:900;
+    letter-spacing:6px; text-transform:uppercase;
+    background:linear-gradient(180deg,#f0d080 0%,#c8a84b 60%,#7a602088 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 8px #c8a84b55);
+    pointer-events:none; white-space:nowrap;
+  }
+  .legend-bar { position:relative; }
+
+
+  /* VIEWER MODE */
+  body.viewer-mode .item-slot { cursor: default; pointer-events: none; }
+  body.viewer-mode .add-row-btn { display: none; }
+  body.viewer-mode .row-delete-btn { display: none; }
+  body.viewer-mode .card-actions { display: none; }
+  body.viewer-mode .selector-logout { display: none; }
+  body.viewer-mode .role-select { pointer-events: none; }
+  body.viewer-mode .weapon-input { pointer-events: none; }
+  body.viewer-mode .add-player-area { display: none; }
+  body.viewer-mode .player-drag { cursor: default; }
+  body.viewer-mode .player-item { pointer-events: none; }
+  body.viewer-mode .btn-save { display: none; }
+  .admin-only { display: flex; }
+  body.viewer-mode .admin-only { display: none !important; }
+  body.viewer-mode .compo-card { cursor: pointer; }
+
+  /* REALTIME INDICATOR */
+  .realtime-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #00e676; box-shadow: 0 0 8px #00e67688;
+    animation: rtPulse 2s ease-in-out infinite; flex-shrink: 0;
+  }
+  .realtime-dot.offline { background: #e05555; box-shadow: 0 0 8px #e0555588; animation: none; }
+  @keyframes rtPulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+  .realtime-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    color: var(--text-muted); letter-spacing: 1px; font-weight: 600;
+  }
+
+  /* VIEWER BANNER */
+  .viewer-banner {
+    background: linear-gradient(90deg, #5865F211, #5865F222, #5865F211);
+    border-bottom: 1px solid #5865F244;
+    text-align: center; padding: 5px;
+    font-family: 'Rajdhani', sans-serif; font-size: 11px;
+    color: #8891f2; letter-spacing: 2px; font-weight: 600;
+    display: none;
+  }
+  body.viewer-mode .viewer-banner { display: block; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen" class="screen active">
+  <div class="login-bg"></div>
+  <div class="login-beam"></div>
+  <div class="login-corner tl"></div>
+  <div class="login-corner tr"></div>
+  <div class="login-corner bl"></div>
+  <div class="login-corner br"></div>
+  <div class="login-particles" id="particles"></div>
+  <div class="login-box" id="loginBox">
+    <img class="login-guild-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake Logo">
+    <div class="login-guild-name">MISTAKE</div>
+    <div class="login-guild-sub">Albion Online · Guild</div>
+    <div class="login-divider"></div>
+    <div class="login-subtitle">⚔ ZvZ Composition Manager ⚔</div>
+    <div class="login-field">
+      <input class="login-input" id="loginInput" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')tryLogin()">
+      <button class="login-eye" onclick="togglePwd()">👁</button>
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" onclick="tryLogin()">✦ Acceder ✦</button>
+  </div>
+</div>
+
+<!-- ===== SELECTOR SCREEN ===== -->
+<div id="selectorScreen" class="screen">
+  <div class="selector-brand">
+    <img class="selector-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
+    <div class="selector-guild-name">MISTAKE</div>
+  </div>
+  <div class="selector-title">ZvZ COMPO</div>
+  <div class="selector-sub">Selecciona una composición</div>
+  <div class="compo-cards" id="compoCards"></div>
+  <button class="selector-logout" onclick="logout()">↩ Cerrar sesión</button>
+</div>
+
+<!-- ===== APP SCREEN ===== -->
+<div id="appScreen" class="screen">
+  <div class="viewer-banner">👁 MODO ESPECTADOR — Los cambios se sincronizan en tiempo real</div>
+  <header class="header">
+    <div class="header-logo" onclick="goSelector()">
+      <img class="header-guild-icon" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
+      <span class="header-guild-text">MISTAKE <span class="header-guild-sub">ZvZ</span></span>
+    </div>
+    <div class="compo-selector-bar" id="compoTabs"></div>
+    <div class="header-actions">
+      <div class="realtime-badge"><div class="realtime-dot offline" id="realtimeDot"></div><span id="realtimeLabel">Conectando...</span></div>
+      <div class="admin-only" style="gap:6px;align-items:center">
+        <input id="discordChannelId" class="discord-input" placeholder="ID Canal de Voz Discord..." type="text">
+        <button class="btn" onclick="loadDiscordPlayers()">📡 Cargar</button>
+        <button class="btn btn-ghost" onclick="clearDiscordPlayers()">🗑 Discord</button>
+      </div>
+      <button class="btn btn-save admin-only" onclick="saveCurrentCompo()">💾 Guardar</button>
+      <button class="btn btn-ghost" onclick="exportCompo()">📋 Exportar</button>
+    </div>
+  </header>
+  <div class="legend-bar">
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--green);background:#00e67622"></div>Swap Obligatorio</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--yellow);background:#ffeb3b22"></div>Swap Posible</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--blue-swap);background:#2979ff22"></div>PvE Swap</div>
+    <div class="legend-mistake">MISTAKE</div>
+    <span id="currentCompoName" style="margin-left:auto;font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:1px"></span>
+  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-title">
+        Jugadores
+        <span class="player-count" id="playerCount">0</span>
+      </div>
+      <input class="player-search" id="playerSearch" placeholder="Buscar jugador..." oninput="filterPlayers(this.value)">
+      <div class="players-list" id="playersList"></div>
+      <div class="add-player-area">
+        <input class="add-player-input" id="addPlayerInput" placeholder="Añadir jugador..." onkeydown="if(event.key==='Enter')addPlayer()">
+        <button class="btn-add" onclick="addPlayer()">+</button>
+      </div>
+    </aside>
+    <main class="main" id="mainCompo"></main>
+  </div>
+</div>
+
+<!-- ITEM PICKER MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Seleccionar Item</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-search-row">
+      <input class="modal-search" id="modalSearch" placeholder="Busca en inglés: Assassin Hood, Mace, Cleric..." onkeyup="onModalKeyup(event)">
+      <button class="btn modal-search-btn" onclick="doSearch()">🔍 Buscar</button>
+    </div>
+    <div id="modalSearchStatus" class="modal-search-status"></div>
+    <div class="modal-grid" id="modalGrid">
+      <div class="modal-hint">Escribe el nombre del item en inglés y pulsa Buscar.<br>Se mostrarán todos los tiers y encantamientos disponibles.</div>
+    </div>
+    <div class="swap-controls">
+      <span class="swap-label">Swap:</span>
+      <button class="swap-btn selected" data-type="none"        onclick="selectSwap('none')">Ninguno</button>
+      <button class="swap-btn"          data-type="obligatorio" onclick="selectSwap('obligatorio')">Obligatorio</button>
+      <button class="swap-btn"          data-type="posible"     onclick="selectSwap('posible')">Posible</button>
+      <button class="swap-btn"          data-type="pve"         onclick="selectSwap('pve')">PvE</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="clearSlot()">Quitar item</button>
+      <button class="btn" onclick="confirmItem()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENAME MODAL -->
+<div class="modal-overlay" id="renameOverlay" onclick="if(event.target===this)closeRename()">
+  <div class="rename-modal">
+    <div class="rename-title">Nombre de la Compo</div>
+    <input class="rename-input" id="renameInput" placeholder="Ej: Compo Full Melee" maxlength="30" onkeydown="if(event.key==='Enter')confirmRename()">
+    <div class="rename-btns">
+      <button class="btn btn-ghost" onclick="closeRename()">Cancelar</button>
+      <button class="btn" onclick="confirmRename()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Discord FAB -->
+<a class="discord-fab" href="https://discord.gg/WZ4bbWtNn" target="_blank" rel="noopener" title="Únete al Discord">
+  <span class="discord-fab-tip">Únete al Discord</span>
+  <svg viewBox="0 0 71 55" xmlns="http://www.w3.org/2000/svg">
+    <path d="M60.1 4.9A58.5 58.5 0 0 0 45.5.4a.2.2 0 0 0-.2.1 40.7 40.7 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A37.5 37.5 0 0 0 25.5.5a.2.2 0 0 0-.2-.1A58.4 58.4 0 0 0 10.7 4.9a.2.2 0 0 0-.1.1C1.6 17.8-.9 30.4.3 42.8a.2.2 0 0 0 .1.1 58.8 58.8 0 0 0 17.7 9 .2.2 0 0 0 .2-.1 42 42 0 0 0 3.6-5.9.2.2 0 0 0-.1-.3 38.7 38.7 0 0 1-5.5-2.6.2.2 0 0 1 0-.4c.4-.3.7-.6 1.1-.8a.2.2 0 0 1 .2 0c11.5 5.3 24 5.3 35.4 0a.2.2 0 0 1 .2 0l1.1.9a.2.2 0 0 1 0 .3 36 36 0 0 1-5.6 2.6.2.2 0 0 0-.1.3 47.1 47.1 0 0 0 3.6 5.9.2.2 0 0 0 .2.1 58.6 58.6 0 0 0 17.8-9 .2.2 0 0 0 .1-.1c1.5-15.3-2.5-28-10.6-39.5a.2.2 0 0 0-.1-.2zM23.7 35.2c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2zm23.7 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2z"/>
+  </svg>
+</a>
+
+<script>
+// ==================== SUPABASE CONFIG ====================
+// 👇 RELLENA ESTOS DOS VALORES DESPUÉS DE CREAR TU PROYECTO EN SUPABASE
+const SUPABASE_URL = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_GeZunZhpg866eW5dQ69fXQ_Zodl2l8r';
+
+let sb = null;
+let realtimeChannel = null;
+
+function initSupabase(){
+  if(SUPABASE_URL === 'TU_SUPABASE_URL') return; // not configured yet
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+// ==================== CONSTANTS ====================
+const PASSWORD_ADMIN  = 'cototonto'; // admin: puede editar todo
+const PASSWORD_VIEWER = 'mistake';   // viewer: solo lectura, sync realtime
+const STORAGE_KEY = 'zvz_compo_data_v3';
+
+const ROWS = [
+  { role:'TANK',    num:1,  weapon:'MONARCA',         group:0 },
+  { role:'TANK',    num:2,  weapon:'EQUILIBRIO',      group:0 },
+  { role:'HEALER',  num:3,  weapon:'FORGEBARK',       group:0 },
+  { role:'DPS',     num:4,  weapon:'CALAVERA',        group:0 },
+  { role:'DPS',     num:5,  weapon:'MARTILLOS FORJA', group:0 },
+  { role:'DPS',     num:6,  weapon:'ASTRAL',          group:0 },
+  { role:'DPS',     num:7,  weapon:'OSUNAS',          group:0 },
+  { role:'DPS',     num:8,  weapon:'PAJARO',          group:1 },
+  { role:'HEALER',  num:9,  weapon:'REDENCIÓN',       group:1 },
+  { role:'DEFTANK', num:10, weapon:'MAZA PESADA',     group:1 },
+  { role:'DPS',     num:11, weapon:'ARTICO',          group:2 },
+  { role:'DPS',     num:12, weapon:'DESINTEGRADORAS', group:2 },
+  { role:'SUPPORT', num:13, weapon:'OUTKEEPERS',      group:2 },
+  { role:'TANK',    num:14, weapon:'RAMPAGE',         group:2 },
+  { role:'HEALER',  num:15, weapon:'EXALTED',         group:2 },
+  { role:'MONTURA', num:16, weapon:'BASI FUEGO',      group:3 },
+  { role:'MONTURA', num:17, weapon:'ESCARABAJO',      group:3 },
+];
+
+const SLOT_TYPES  = ['main','helmet','chest','boots','gloves','offhand','cape','potion','mount','food'];
+const SLOT_LABELS = { main:'Arma', helmet:'Casco', chest:'Pecho', boots:'Botas', gloves:'Guantes', offhand:'Offhand', cape:'Capa', potion:'Poción', mount:'Montura', food:'Comida' };
+const ALBION_RENDER = 'https://render.albiononline.com/v1/item/';
+
+// ITEMS_DB removed - now using live Albion API search
+
+
+// ==================== STATE ====================
+let players       = [];
+let assignments   = {};   // rowNum -> playerName
+let slotItems     = {};   // `${rowNum}-${slotType}` -> {id, name, swap}
+let currentCompo  = 0;    // index
+let compos        = [];   // array of {name, slotItems, rows}
+let userRole      = null; // 'admin' | 'viewer'
+let discordPlayers = []; // Discord players (session-only, NOT persisted)
+
+let modalCtx           = null;
+let modalSelectedItem  = null;
+let modalSelectedSwap  = 'none';
+
+// ==================== STORAGE (localStorage fallback) ====================
+function loadStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+function saveStorage() {
+  // Only save compos. Players are session-only (Discord players reset on reload).
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ compos }));
+}
+const DEFAULT_ROW = {role:'DPS', weapon:'Arma', group:0};
+
+function makeDefaultRows(){
+  // Start with just 1 row
+  return [{role:'DPS', num:1, weapon:'Nuevo rol', group:0}];
+}
+
+function initCompos() {
+  const saved = loadStorage();
+  if (saved && saved.compos && saved.compos.length) {
+    compos = saved.compos;
+    compos.forEach(c=>{ if(!c.rows||!c.rows.length) c.rows=makeDefaultRows(); });
+  } else {
+    compos = [
+      { name:'Compo 1', slotItems:{}, rows:makeDefaultRows() },
+      { name:'Compo 2', slotItems:{}, rows:makeDefaultRows() },
+      { name:'Compo 3', slotItems:{}, rows:makeDefaultRows() },
+    ];
+  }
+  players = []; // always start with empty players list
+}
+
+// ==================== LOGIN ====================
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const s=document.createElement('span');
+    s.style.left=Math.random()*100+'%';
+    s.style.animationDuration=(6+Math.random()*10)+'s';
+    s.style.animationDelay=(Math.random()*8)+'s';
+    s.style.width=s.style.height=(1+Math.random()*3)+'px';
+    c.appendChild(s);
+  }
+})();
+
+function togglePwd(){
+  const i=document.getElementById('loginInput');
+  i.type=i.type==='password'?'text':'password';
+}
+
+function setViewerMode(isViewer){
+  if(isViewer){
+    document.body.classList.add('viewer-mode');
+    userRole='viewer';
+  } else {
+    document.body.classList.remove('viewer-mode');
+    userRole='admin';
+  }
+}
+
+function tryLogin(){
+  const val=document.getElementById('loginInput').value.trim();
+  if(val===PASSWORD_ADMIN){
+    setViewerMode(false);
+    initCompos();
+    showScreen('selectorScreen');
+    renderSelector();
+    connectRealtime();
+  } else if(val===PASSWORD_VIEWER){
+    setViewerMode(true);
+    initCompos();
+    showScreen('selectorScreen');
+    renderSelector();
+    connectRealtime();
+  } else {
+    document.getElementById('loginError').textContent='Contraseña incorrecta';
+    const box=document.getElementById('loginBox');
+    box.classList.remove('login-shake');
+    void box.offsetWidth;
+    box.classList.add('login-shake');
+    document.getElementById('loginInput').value='';
+  }
+}
+
+function logout(){
+  // Disconnect realtime
+  if(realtimeChannel && sb){ sb.removeChannel(realtimeChannel); realtimeChannel=null; }
+  userRole=null;
+  players=[];
+  discordPlayers=[];
+  document.getElementById('loginInput').value='';
+  document.getElementById('loginError').textContent='';
+  setRealtimeStatus(false);
+  showScreen('loginScreen');
+}
+
+// ==================== SCREENS ====================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ==================== SELECTOR ====================
+function renderSelector(){
+  const container=document.getElementById('compoCards');
+  let html='';
+  compos.forEach((c,i)=>{
+    const rowCount=(c.rows||[]).length||1;
+    const itemCount=Object.keys(c.slotItems||{}).length;
+    html+=`<div class="compo-card" onclick="openCompo(${i})" style="animation-delay:${i*0.07}s">
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="card-action-btn" onclick="openSelectorRename(${i})" title="Renombrar">✏️</button>
+        <button class="card-action-btn del" onclick="deleteCompo(${i})" title="Borrar">✕</button>
+      </div>
+      <div class="card-num">${i+1}</div>
+      <div class="card-name">${c.name}</div>
+      <div class="card-info">${rowCount} filas · ${itemCount} items</div>
+    </div>`;
+  });
+  if(compos.length<8){
+    html+=`<div class="compo-card card-add" onclick="addCompo()" style="animation-delay:${compos.length*0.07}s">
+      <div class="card-num">+</div>
+      <div class="card-name">Nueva Compo</div>
+    </div>`;
+  }
+  container.innerHTML=html;
+}
+
+function openSelectorRename(idx){
+  renameIdx=idx;
+  document.getElementById('renameInput').value=compos[idx].name;
+  document.getElementById('renameOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('renameInput').select(),50);
+}
+
+function deleteCompo(idx){
+  if(compos.length<=1){showToast('Debe quedar al menos 1 compo');return;}
+  if(!confirm(`¿Borrar "${compos[idx].name}"?`))return;
+  compos.splice(idx,1);
+  if(currentCompo>=compos.length) currentCompo=compos.length-1;
+  saveStorage();
+  renderSelector();
+  showToast('🗑 Compo borrada');
+}
+
+function addCompo(){
+  compos.push({name:`Compo ${compos.length+1}`,slotItems:{}});
+  saveStorage();
+  renderSelector();
+  showToast('✅ Compo creada');
+}
+
+function openCompo(idx){
+  currentCompo=idx;
+  if(!compos[idx].rows||!compos[idx].rows.length) compos[idx].rows=makeDefaultRows();
+  slotItems={...( compos[idx].slotItems||{})};
+  assignments={};
+  showScreen('appScreen');
+  renderTabs();
+  renderCompo();
+  renderPlayers();
+  document.getElementById('currentCompoName').textContent=compos[idx].name;
+}
+
+function goSelector(){
+  showScreen('selectorScreen');
+  renderSelector();
+}
+
+// ==================== TABS ====================
+function renderTabs(){
+  const bar=document.getElementById('compoTabs');
+  bar.innerHTML=compos.map((c,i)=>
+    `<button class="compo-tab${i===currentCompo?' active':''}" onclick="switchCompo(${i})">${c.name}</button>`
+  ).join('');
+}
+
+function switchCompo(idx){
+  currentCompo=idx;
+  slotItems={...(compos[idx].slotItems||{})};
+  assignments={};
+  renderTabs();
+  renderCompo();
+  renderPlayers();
+  document.getElementById('currentCompoName').textContent=compos[idx].name;
+}
+
+// ==================== SAVE ====================
+function saveCurrentCompo(){
+  compos[currentCompo].slotItems={...slotItems};
+  saveStorage();
+  pushToSupabase(); // sync to DB for viewers
+  showToast('💾 Compo guardada y sincronizada');
+  renderSelector();
+}
+
+// ==================== RENDER COMPO ====================
+function getItemUrl(id){ return `${ALBION_RENDER}${id}.png`; }
+
+function buildSlotHtml(rowNum,slotType){
+  const key=`${rowNum}-${slotType}`;
+  const item=slotItems[key];
+  let swapClass=item?.swap?`swap-${item.swap}`:'';
+  const label=SLOT_LABELS[slotType]||slotType;
+  let inner=item
+    ?`<img src="${getItemUrl(item.id)}" alt="${item.name}" title="${item.name}" onerror="this.style.display='none'">`
+    :'';
+  // Label always shown at bottom
+  inner+=`<span class="slot-label">${label}</span>`;
+  return `<div class="item-slot ${swapClass}" data-row="${rowNum}" data-slot="${slotType}" onclick="openModal(${rowNum},'${slotType}')" title="${label}">${inner}</div>`;
+}
+
+function buildPlayerSlotHtml(rowNum){
+  const name=assignments[rowNum];
+  if(name){
+    return `<div class="player-slot filled" data-row="${rowNum}" draggable="true"
+      ondragstart="onPlayerSlotDragStart(event,${rowNum})"
+      ondragover="event.preventDefault()" ondrop="onSlotDrop(event,${rowNum})">
+      <span class="player-slot-name">👤 ${name}</span>
+      <button class="player-slot-remove" onclick="removeAssignment(${rowNum})">✕</button>
+    </div>`;
+  }
+  return `<div class="player-slot" data-row="${rowNum}"
+    ondragover="onSlotDragOver(event)" ondragleave="onSlotDragLeave(event)" ondrop="onSlotDrop(event,${rowNum})">
+    <span class="player-slot-empty">Arrastra jugador</span>
+  </div>`;
+}
+
+// Role options for inline editing
+const ROLES=['TANK','HEALER','DPS','SUPPORT','DEFTANK','MONTURA'];
+
+function renderCompo(){
+  const main=document.getElementById('mainCompo');
+  const rows=compos[currentCompo].rows||[];
+
+  let html=`<div class="compo-table">
+    <div class="compo-table-header">
+      <div class="col-header">Rol</div>
+      <div class="col-header">#</div>
+      <div class="col-header">Arma / Descripción</div>
+      <div class="col-header">Items</div>
+      <div class="col-header">Jugador</div>
+      <div class="col-header"></div>
+    </div>`;
+
+  let lastGroup=-1;
+  rows.forEach((r,idx)=>{
+    const sep=r.group!==lastGroup&&lastGroup!==-1?' group-sep':'';
+    lastGroup=r.group;
+    const roleClass=r.role.replace(/\s/g,'');
+    const itemsHtml=SLOT_TYPES.map(s=>buildSlotHtml(r.num,s)).join('');
+    const roleOptions=ROLES.map(ro=>`<option value="${ro}"${ro===r.role?' selected':''}>${ro}</option>`).join('');
+    html+=`<div class="compo-row${sep}" data-rownum="${r.num}">
+      <div>
+        <select class="role-select role-${roleClass}" onchange="changeRowRole(${r.num},this.value)">
+          ${roleOptions}
+        </select>
+      </div>
+      <div class="row-num">${idx+1}</div>
+      <div>
+        <input class="weapon-input" value="${r.weapon}" onchange="changeRowWeapon(${r.num},this.value)" placeholder="Arma / Rol">
+      </div>
+      <div class="items-row">${itemsHtml}</div>
+      <div>${buildPlayerSlotHtml(r.num)}</div>
+      <div>
+        <button class="row-delete-btn" onclick="deleteRow(${r.num})" title="Borrar fila">✕</button>
+      </div>
+    </div>`;
+  });
+
+  html+=`</div>
+  <button class="add-row-btn" onclick="addRow()">＋ Añadir fila</button>`;
+  main.innerHTML=html;
+}
+
+function getNextRowNum(){
+  const rows=compos[currentCompo].rows||[];
+  return rows.length ? Math.max(...rows.map(r=>r.num))+1 : 1;
+}
+
+function addRow(){
+  const num=getNextRowNum();
+  compos[currentCompo].rows.push({role:'DPS', num, weapon:'Nuevo rol', group:0});
+  renderCompo();
+}
+
+function deleteRow(num){
+  const rows=compos[currentCompo].rows;
+  if(rows.length<=1){showToast('Debe quedar al menos 1 fila');return;}
+  compos[currentCompo].rows=rows.filter(r=>r.num!==num);
+  // Clean up items and assignments for this row
+  SLOT_TYPES.forEach(s=>delete slotItems[`${num}-${s}`]);
+  delete assignments[num];
+  renderCompo(); renderPlayers();
+}
+
+function changeRowRole(num, role){
+  const row=compos[currentCompo].rows.find(r=>r.num===num);
+  if(row) row.role=role;
+  renderCompo();
+}
+
+function changeRowWeapon(num, weapon){
+  const row=compos[currentCompo].rows.find(r=>r.num===num);
+  if(row) row.weapon=weapon;
+}
+
+function renderPlayers(){
+  const list=document.getElementById('playersList');
+  const q=(document.getElementById('playerSearch')?.value||'').toLowerCase();
+  const filtered=players.filter(p=>p.toLowerCase().includes(q));
+  document.getElementById('playerCount').textContent=players.length;
+  if(!filtered.length){
+    list.innerHTML=`<div style="padding:14px;text-align:center;color:var(--text-muted);font-size:11px">Sin jugadores.<br>Añade o carga desde Discord.</div>`;
+    return;
+  }
+  const assigned=new Set(Object.values(assignments));
+  list.innerHTML=filtered.map(p=>{
+    const isAssigned=assigned.has(p);
+    return `<div class="player-chip${isAssigned?' assigned':''}" data-player="${p}" draggable="true"
+      ondragstart="onPlayerDragStart(event,'${p.replace(/'/g,"\\'")}')">
+      <div class="player-avatar">${p.charAt(0).toUpperCase()}</div>
+      <span class="player-name">${p}</span>
+    </div>`;
+  }).join('');
+}
+
+// ==================== DRAG & DROP ====================
+let draggedPlayer=null, dragSourceRow=null;
+function onPlayerDragStart(e,name){
+  draggedPlayer=name; dragSourceRow=null; e.dataTransfer.effectAllowed='move';
+  setTimeout(()=>document.querySelectorAll(`.player-chip[data-player="${name}"]`).forEach(el=>el.classList.add('dragging')),0);
+}
+function onPlayerSlotDragStart(e,rowNum){
+  dragSourceRow=rowNum; draggedPlayer=assignments[rowNum]; e.dataTransfer.effectAllowed='move';
+}
+function onSlotDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function onSlotDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function onSlotDrop(e,rowNum){
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if(!draggedPlayer) return;
+  if(dragSourceRow!==null&&dragSourceRow!==rowNum) delete assignments[dragSourceRow];
+  assignments[rowNum]=draggedPlayer;
+  draggedPlayer=null; dragSourceRow=null;
+  renderCompo(); renderPlayers();
+}
+
+// ==================== PLAYERS ====================
+function addPlayer(){
+  const input=document.getElementById('addPlayerInput');
+  const name=input.value.trim();
+  if(!name) return;
+  if(players.includes(name)){showToast('Jugador ya existe');return;}
+  players.push(name); input.value='';
+  renderPlayers();
+}
+function removeAssignment(rowNum){ delete assignments[rowNum]; renderCompo(); renderPlayers(); }
+function clearAllPlayers(){ if(!confirm('¿Limpiar asignaciones?'))return; assignments={}; renderCompo(); renderPlayers(); showToast('Asignaciones limpiadas'); }
+function filterPlayers(){ renderPlayers(); }
+
+// ==================== DISCORD ====================
+async function loadDiscordPlayers(){
+  const channelId=document.getElementById('discordChannelId').value.trim();
+  if(!channelId){showToast('Introduce el ID del canal');return;}
+  showToast('Conectando con Discord...');
+  try{
+    const res=await fetch(`${BACKEND_URL}/voice/${channelId}`);
+    const data=await res.json();
+    if(data.error) throw new Error(data.error);
+    const newPlayers=data.members.filter(m=>!players.includes(m));
+    players.push(...newPlayers);
+    renderPlayers();
+    showToast(`✅ ${data.members.length} jugadores cargados`);
+  }catch(e){
+    showToast('❌ Error: '+e.message);
+  }
+}
+
+function clearDiscordPlayers(){
+  // Clears Discord-loaded players from memory (they're never persisted anyway)
+  players = players.filter(p => !p.fromDiscord);
+  discordPlayers = [];
+  renderPlayers();
+  showToast('🗑 Jugadores de Discord borrados');
+}
+
+// ==================== ITEM MODAL ====================
+// ---- Item database: loaded once from GitHub raw JSON ----
+let ALBION_ITEMS = null;      // [{UniqueName, LocalizedNames}]
+let ALBION_ITEMS_LOADING = false;
+let ALBION_ITEMS_CALLBACKS = [];
+
+async function loadItemDB(){
+  if(ALBION_ITEMS) return ALBION_ITEMS;
+  if(ALBION_ITEMS_LOADING){
+    return new Promise(res=>ALBION_ITEMS_CALLBACKS.push(res));
+  }
+  ALBION_ITEMS_LOADING=true;
+  try{
+    const r=await fetch('https://raw.githubusercontent.com/broderickhyman/ao-bin-dumps/master/formatted/items.json');
+    const data=await r.json();
+    // Only keep items that have an EN-US name and a UniqueName (filter junk)
+    ALBION_ITEMS=data.filter(i=>i.UniqueName&&i.LocalizedNames&&i.LocalizedNames['EN-US']);
+    ALBION_ITEMS_CALLBACKS.forEach(cb=>cb(ALBION_ITEMS));
+    ALBION_ITEMS_CALLBACKS=[];
+    return ALBION_ITEMS;
+  }catch(e){
+    ALBION_ITEMS_LOADING=false;
+    throw e;
+  }
+}
+
+function openModal(rowNum,slotType){
+  modalCtx={rowNum,slotType};
+  const key=`${rowNum}-${slotType}`;
+  const current=slotItems[key];
+  modalSelectedItem=current||null;
+  modalSelectedSwap=current?.swap||'none';
+  document.getElementById('modalTitle').textContent=`${SLOT_LABELS[slotType]||slotType} — Fila ${rowNum}`;
+  const searchEl=document.getElementById('modalSearch');
+  searchEl.value='';
+  setModalStatus('');
+  document.getElementById('modalGrid').innerHTML='<div class="modal-hint">Escribe el nombre en inglés y pulsa Buscar.<br>Ejemplo: <b>Assassin Hood</b>, <b>Mace</b>, <b>Cleric Robe</b></div>';
+  updateSwapButtons();
+  document.getElementById('modalOverlay').classList.add('open');
+
+  // Pre-load DB silently
+  if(!ALBION_ITEMS && !ALBION_ITEMS_LOADING){
+    setModalStatus('Cargando base de datos de items...');
+    loadItemDB().then(()=>setModalStatus('✅ Base de datos lista')).catch(()=>setModalStatus('⚠️ Error cargando DB'));
+  }
+  setTimeout(()=>searchEl.focus(),100);
+}
+
+function setModalStatus(msg){ document.getElementById('modalSearchStatus').textContent=msg; }
+
+let _searchTimer=null;
+function onModalKeyup(e){
+  if(e.key==='Enter'){doSearch();return;}
+  clearTimeout(_searchTimer);
+  if(e.target.value.length>=3) _searchTimer=setTimeout(doSearch,400);
+}
+
+async function doSearch(){
+  const q=document.getElementById('modalSearch').value.trim().toLowerCase();
+  if(!q){setModalStatus('Escribe al menos 1 carácter');return;}
+  const grid=document.getElementById('modalGrid');
+  setModalStatus('Buscando...');
+  grid.innerHTML='<div class="modal-hint">⏳ Cargando...</div>';
+
+  let db;
+  try{
+    db=await loadItemDB();
+  }catch(e){
+    setModalStatus('❌ Error cargando items. Comprueba tu conexión.');
+    grid.innerHTML='<div class="modal-hint">Error de conexión</div>';
+    return;
+  }
+
+  // Search by english name
+  const results=db.filter(i=>i.LocalizedNames['EN-US'].toLowerCase().includes(q));
+
+  // Group by base name (without tier prefix T4_, T5_…)
+  // A "base" item is: strip leading T\d+_ from UniqueName, then group items that share the same stripped name
+  const groups={};
+  results.forEach(i=>{
+    const stripped=i.UniqueName.replace(/^T\d+_/,'').replace(/@\d+$/,'');
+    const name=i.LocalizedNames['EN-US'].replace(/@\d+$/,'');
+    if(!groups[stripped]) groups[stripped]={name, items:[]};
+    groups[stripped].items.push(i);
+  });
+
+  const groupList=Object.values(groups).slice(0,20); // max 20 groups
+  if(!groupList.length){
+    setModalStatus('Sin resultados. Intenta otro nombre en inglés.');
+    grid.innerHTML='<div class="modal-hint">Sin resultados</div>';
+    return;
+  }
+
+  setModalStatus(`${results.length} variante(s) — ${groupList.length} item(s) base`);
+  renderGroups(groupList);
+}
+
+function renderGroups(groups){
+  const grid=document.getElementById('modalGrid');
+  let html='';
+  groups.forEach(g=>{
+    const items=g.items;
+    html+=`<div class="tier-group">
+      <div class="tier-group-label">📦 ${g.name}</div>
+      <div class="tier-group-items">`;
+    items.forEach(i=>{
+      const sel=modalSelectedItem?.id===i.UniqueName;
+      const label=formatItemLabel(i.UniqueName);
+      const safeId=i.UniqueName.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      const safeName=(i.LocalizedNames['EN-US']||i.UniqueName).replace(/'/g,"\\'");
+      const enchantMatch=i.UniqueName.match(/@(\d+)$/);
+      const enchantBadge=enchantMatch?`<span class="enchant-label">.${enchantMatch[1]}</span>`:'';
+      html+=`<div class="item-option${sel?' selected':''}"
+        onclick="selectItem('${safeId}','${safeName}')"
+        title="${i.LocalizedNames['EN-US']||''} (${i.UniqueName})">
+        <img src="${getItemUrl(i.UniqueName)}" alt="${label}"
+          onerror="this.parentElement.style.display='none'">
+        ${enchantBadge}
+        <span class="item-option-name">${label}</span>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  grid.innerHTML=html;
+}
+
+function formatItemLabel(id){
+  const tierMatch=id.match(/^T(\d+)_/);
+  const enchantMatch=id.match(/@(\d+)$/);
+  if(tierMatch){
+    const t=tierMatch[1];
+    const e=enchantMatch?`.${enchantMatch[1]}`:'';
+    return `T${t}${e}`;
+  }
+  return id;
+}
+
+function selectItem(id,name){
+  modalSelectedItem={id,name,swap:modalSelectedSwap};
+  document.querySelectorAll('.item-option').forEach(el=>el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function selectSwap(type){
+  modalSelectedSwap=type;
+  if(modalSelectedItem) modalSelectedItem.swap=type;
+  updateSwapButtons();
+}
+
+function updateSwapButtons(){
+  document.querySelectorAll('.swap-btn').forEach(b=>b.classList.toggle('selected',b.dataset.type===modalSelectedSwap));
+}
+
+function confirmItem(){
+  if(!modalCtx) return;
+  const key=`${modalCtx.rowNum}-${modalCtx.slotType}`;
+  if(modalSelectedItem) slotItems[key]={...modalSelectedItem,swap:modalSelectedSwap};
+  closeModal(); renderCompo();
+}
+
+function clearSlot(){
+  if(!modalCtx) return;
+  delete slotItems[`${modalCtx.rowNum}-${modalCtx.slotType}`];
+  closeModal(); renderCompo();
+}
+
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); modalCtx=null; }
+
+// ==================== RENAME (double click tab) ====================
+let renameIdx=null;
+document.getElementById('compoTabs').addEventListener('dblclick',e=>{
+  const tab=e.target.closest('.compo-tab');
+  if(!tab) return;
+  const idx=Array.from(document.querySelectorAll('.compo-tab')).indexOf(tab);
+  if(idx<0) return;
+  renameIdx=idx;
+  document.getElementById('renameInput').value=compos[idx].name;
+  document.getElementById('renameOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('renameInput').select(),50);
+});
+function closeRename(){ document.getElementById('renameOverlay').classList.remove('open'); renameIdx=null; }
+function confirmRename(){
+  const val=document.getElementById('renameInput').value.trim();
+  if(!val||renameIdx===null){closeRename();return;}
+  compos[renameIdx].name=val;
+  saveStorage();
+  renderTabs();
+  renderSelector();
+  document.getElementById('currentCompoName').textContent=compos[currentCompo].name;
+  closeRename();
+  showToast('✅ Nombre guardado');
+}
+
+// ==================== EXPORT ====================
+function exportCompo(){
+  let out=`📋 ${compos[currentCompo].name.toUpperCase()}\n`+'='.repeat(40)+'\n\n';
+  let lastGroup=-1;
+  ROWS.forEach(r=>{
+    if(r.group!==lastGroup){out+='\n';lastGroup=r.group;}
+    const player=assignments[r.num]||'[ VACÍO ]';
+    out+=`[${r.role.padEnd(8)}] #${String(r.num).padStart(2)} ${r.weapon.padEnd(18)} → ${player}\n`;
+  });
+  navigator.clipboard.writeText(out).then(()=>showToast('✅ Copiado al portapapeles'));
+}
+
+// ==================== TOAST ====================
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ==================== KEYBOARD ====================
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ closeModal(); closeRename(); }
+});
+
+// ==================== INIT ====================
+initCompos();
+
+
+// ==================== SUPABASE REALTIME ====================
+function setRealtimeStatus(online){
+  const dot=document.getElementById('realtimeDot');
+  const label=document.getElementById('realtimeLabel');
+  if(!dot) return;
+  if(online){
+    dot.classList.remove('offline');
+    label.textContent='EN VIVO';
+  } else {
+    dot.classList.add('offline');
+    label.textContent='Sin conexión';
+  }
+}
+
+async function pushToSupabase(){
+  if(!sb) return; // Supabase not configured
+  try {
+    await sb.from('zvz_state').upsert({
+      id: 1,
+      compos: JSON.stringify(compos),
+      updated_at: new Date().toISOString()
+    });
+  } catch(e){ console.warn('Supabase push error:', e); }
+}
+
+async function pullFromSupabase(){
+  if(!sb) return;
+  try {
+    const {data, error} = await sb.from('zvz_state').select('compos').eq('id',1).single();
+    if(error || !data) return;
+    const remote = JSON.parse(data.compos);
+    if(remote && remote.length){
+      compos = remote;
+      compos.forEach(c=>{ if(!c.rows||!c.rows.length) c.rows=makeDefaultRows(); });
+      // Refresh current view
+      const curScreen = document.querySelector('.screen.active')?.id;
+      if(curScreen==='selectorScreen') renderSelector();
+      if(curScreen==='appScreen'){
+        slotItems={...(compos[currentCompo]?.slotItems||{})};
+        renderCompo();
+        renderTabs();
+        document.getElementById('currentCompoName').textContent=compos[currentCompo]?.name||'';
+      }
+    }
+  } catch(e){ console.warn('Supabase pull error:', e); }
+}
+
+function connectRealtime(){
+  setRealtimeStatus(false);
+  if(!sb){
+    // Supabase not configured: just mark as local mode
+    document.getElementById('realtimeLabel').textContent='Modo local';
+    return;
+  }
+
+  // Pull latest state first
+  pullFromSupabase().then(()=>setRealtimeStatus(true));
+
+  // Subscribe to changes
+  if(realtimeChannel) sb.removeChannel(realtimeChannel);
+  realtimeChannel = sb
+    .channel('zvz_state_changes')
+    .on('postgres_changes',
+      {event:'UPDATE', schema:'public', table:'zvz_state'},
+      payload => {
+        // Only viewers react to remote changes; admin pushed them
+        if(userRole==='viewer'){
+          try {
+            const remote=JSON.parse(payload.new.compos);
+            if(remote && remote.length){
+              compos=remote;
+              compos.forEach(c=>{ if(!c.rows||!c.rows.length) c.rows=makeDefaultRows(); });
+              const curScreen=document.querySelector('.screen.active')?.id;
+              if(curScreen==='selectorScreen') renderSelector();
+              if(curScreen==='appScreen'){
+                slotItems={...(compos[currentCompo]?.slotItems||{})};
+                renderCompo();
+                renderTabs();
+                document.getElementById('currentCompoName').textContent=compos[currentCompo]?.name||'';
+              }
+              showToast('🔄 Compo actualizada');
+            }
+          } catch(e){}
+        }
+      }
+    )
+    .subscribe(status => {
+      setRealtimeStatus(status==='SUBSCRIBED');
+    });
+}
+
+// ==================== APP INIT ====================
+initSupabase();
+
+</script>
+</body>
+</html>
