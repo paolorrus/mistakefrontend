@@ -1137,7 +1137,7 @@ let sb = null;
 let realtimeChannel = null;
 
 function initSupabase(){
-  // Supabase configured
+  if(sb) return; // ya inicializado, no crear doble cliente
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
@@ -1282,6 +1282,7 @@ function tryLogin(){
 (function(){
   const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
+    initSupabase(); // CRÍTICO: debe estar antes de connectRealtime dentro de enterApp
     enterApp('admin');
   }
 })();
@@ -2003,7 +2004,7 @@ function connectRealtime(){
   setRealtimeStatus(false);
   if(!sb){
     // Supabase not configured: just mark as local mode
-    document.getElementById('realtimeLabel').textContent='CERRAR SESION REINICIAR';
+    document.getElementById('realtimeLabel').textContent='Sin conexión';
     return;
   }
 
