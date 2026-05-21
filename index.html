@@ -232,13 +232,14 @@
 
 <script>
 // ==================== CONFIG ====================
-const SUPABASE_URL      = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4Y25xa2Jkd3hlcXhxbnpqa3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNzEyODMsImV4cCI6MjA5NDg0NzI4M30.XuSJMmqlkTP2Ryy--r4-WO9liA-XFgoqy6cQ57cbAuk';
-const PASSWORD_ADMIN    = 'cototonto';
-const STORAGE_KEY       = 'zvz_compo_data_v3';
-const BACKEND_URL       = 'https://zvz-backend.onrender.com';
-const ALBION_RENDER     = 'https://render.albiononline.com/v1/item/';
-const STORAGE_BUCKET    = 'zvz-custom-items'; // Supabase Storage bucket name
+const SUPABASE_URL          = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
+const SUPABASE_ANON_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4Y25xa2Jkd3hlcXhxbnpqa3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNzEyODMsImV4cCI6MjA5NDg0NzI4M30.XuSJMmqlkTP2Ryy--r4-WO9liA-XFgoqy6cQ57cbAuk';
+const SUPABASE_SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4Y25xa2Jkd3hlcXhxbnpqa3p6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTI3MTI4MywiZXhwIjoyMDk0ODQ3MjgzfQ.hVu4gq7TlFgmyVhJC3_2hc3Qtwl3jBxgn8Mi0UIXP0I';
+const PASSWORD_ADMIN        = 'cototonto';
+const STORAGE_KEY           = 'zvz_compo_data_v3';
+const BACKEND_URL           = 'https://zvz-backend.onrender.com';
+const ALBION_RENDER         = 'https://render.albiononline.com/v1/item/';
+const STORAGE_BUCKET        = 'zvz-custom-items';
 
 const SLOT_TYPES      = ['main','helmet','chest','boots','gloves','offhand','cape','potion','mount'];
 const SWAP_SLOT_TYPES = ['swap1','swap2','swap3','swap4','swap5'];
@@ -257,10 +258,18 @@ let draggedItem = null;   // {item, fromKey} for item drag
 let lastRemoteTs = null;  // for polling dedup
 
 // ==================== SUPABASE ====================
+let sbAdmin = null; // service_role client — solo para subir imágenes (admin)
+
 function initSupabase(){
   if(sb) return;
   try{ sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
   catch(e){ console.error('Supabase init failed',e); }
+}
+
+function initSupabaseAdmin(){
+  if(sbAdmin) return;
+  try{ sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY); }
+  catch(e){ console.error('Supabase admin init failed',e); }
 }
 
 // ==================== STORAGE ====================
@@ -299,6 +308,7 @@ function tryLogin(){
   const val=document.getElementById('loginInput').value.trim();
   if(val===PASSWORD_ADMIN){
     localStorage.setItem('zvz_role','admin');
+    initSupabaseAdmin(); // service role para Storage
     enterApp('admin');
   } else if(val==='mistake'||val===''){
     localStorage.removeItem('zvz_role');
@@ -314,7 +324,7 @@ function tryLogin(){
 // Auto-login si sesión admin guardada
 (function(){
   const saved=localStorage.getItem('zvz_role');
-  if(saved==='admin') enterApp('admin');
+  if(saved==='admin'){ initSupabaseAdmin(); enterApp('admin'); }
 })();
 
 function logout(){
@@ -600,15 +610,19 @@ async function loadDiscordPlayers(){
 function clearDiscordPlayers(){ players=[];assignments={};renderPlayers();renderCompo();autoPush();showToast('🗑 Jugadores borrados'); }
 
 // ==================== CUSTOM IMAGE UPLOAD ====================
-// Images go to Supabase Storage (bucket: zvz-custom-items, public)
-// If Storage not available, fallback to localStorage base64
+// Admin sube con service_role (sbAdmin) → sin restricciones de permisos
+// La URL pública queda guardada en slotItems y es visible para todos
 
 async function uploadImageToStorage(file, filename){
-  if(!sb) throw new Error('No sb');
-  const {data,error}=await sb.storage.from(STORAGE_BUCKET).upload(filename, file, {upsert:true, contentType:file.type});
-  if(error) throw error;
-  const {data:{publicUrl}}=sb.storage.from(STORAGE_BUCKET).getPublicUrl(filename);
-  return publicUrl;
+  if(!sbAdmin) throw new Error('No admin client');
+  // subir archivo
+  const {error: upErr} = await sbAdmin.storage
+    .from(STORAGE_BUCKET)
+    .upload(filename, file, {upsert: true, contentType: file.type});
+  if(upErr) throw upErr;
+  // obtener URL pública
+  const {data} = sbAdmin.storage.from(STORAGE_BUCKET).getPublicUrl(filename);
+  return data.publicUrl;
 }
 
 function saveImageLocally(file, name){
@@ -637,37 +651,33 @@ function getLocalImage(name){
 async function processImageFile(file){
   if(!file||!file.type.startsWith('image/'))return;
   const safeName=`custom_${Date.now()}_${file.name.replace(/[^a-z0-9._-]/gi,'_')}`;
+  const displayName=file.name.replace(/\.[^.]+$/,'');
 
-  setModalStatus('⏳ Subiendo imagen...');
+  setModalStatus('⏳ Subiendo imagen al servidor...');
+  const zone=document.getElementById('customUploadZone');
 
   let url=null;
   try{
-    // try Supabase Storage first
     url=await uploadImageToStorage(file, safeName);
-    setModalStatus('✅ Imagen subida al servidor');
+    setModalStatus('✅ Imagen subida correctamente');
   }catch(e){
-    console.warn('Storage upload failed, using localStorage fallback:', e);
+    console.warn('Storage upload failed, fallback localStorage:', e);
     try{
       url=await saveImageLocally(file, safeName);
-      setModalStatus('⚠️ Guardada localmente (Storage no configurado)');
+      setModalStatus('⚠️ Guardada solo en este navegador — revisa el bucket de Supabase');
     }catch(e2){
-      setModalStatus('❌ Error al subir imagen');
+      setModalStatus('❌ Error al procesar la imagen');
       return;
     }
   }
 
-  // Select this as the current item
-  const displayName=file.name.replace(/\.[^.]+$/,'');
   modalSelectedItem={id: safeName, name: displayName, customUrl: url};
 
-  // Update preview in upload zone
-  const zone=document.getElementById('customUploadZone');
   zone.innerHTML=`<img class="cuz-preview" src="${url}" alt="${displayName}">
     <div class="cuz-name">${displayName}</div>
-    <div class="cuz-sub" style="font-size:10px;color:var(--green)">✓ Seleccionado</div>`;
+    <div class="cuz-sub" style="font-size:10px;color:var(--green)">✓ Lista — pulsa Confirmar</div>`;
 
-  // Clear search results to avoid confusion
-  document.getElementById('modalGrid').innerHTML=`<div class="modal-hint" style="color:var(--green)">✓ Imagen personalizada lista para confirmar.</div>`;
+  document.getElementById('modalGrid').innerHTML=`<div class="modal-hint" style="color:var(--green)">✓ Imagen personalizada seleccionada.</div>`;
 }
 
 function handleImageFile(file){ processImageFile(file); }
