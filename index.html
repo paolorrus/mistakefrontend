@@ -58,14 +58,12 @@
     position: relative; overflow: hidden;
     background: #070a0d;
   }
-  /* Animated noise grid */
   #loginScreen::before {
     content:''; position:absolute; inset:0;
     background-image: linear-gradient(var(--border) 1px, transparent 1px),
       linear-gradient(90deg, var(--border) 1px, transparent 1px);
     background-size: 80px 80px; opacity:.12; pointer-events:none; z-index:0;
   }
-  /* Gold orb glow */
   #loginScreen::after {
     content:''; position:absolute;
     width:600px; height:600px; border-radius:50%;
@@ -79,7 +77,6 @@
     50%{opacity:1; transform:translate(-50%,-60%) scale(1.1);}
   }
 
-  /* Left decorative side bar */
   .login-side-left, .login-side-right {
     position:absolute; top:0; bottom:0; width:1px;
     background:linear-gradient(180deg, transparent 0%, var(--gold-dark) 30%, var(--gold) 50%, var(--gold-dark) 70%, transparent 100%);
@@ -88,7 +85,6 @@
   .login-side-left { left:60px; }
   .login-side-right { right:60px; }
 
-  /* Top beam */
   .login-beam {
     position:absolute; top:0; left:0; right:0; height:1px; z-index:1;
     background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent);
@@ -108,7 +104,6 @@
     100%{transform:translateY(-10vh) scale(1);opacity:0;}
   }
 
-  /* LOGIN SPLIT LAYOUT */
   .login-wrap {
     position:relative; z-index:1;
     display:flex; align-items:center; gap:0;
@@ -122,7 +117,6 @@
   }
   @keyframes loginIn { from{transform:translateY(30px);opacity:0;} to{transform:translateY(0);opacity:1;} }
 
-  /* Left panel — branding */
   .login-brand-panel {
     width:280px; flex-shrink:0;
     background: linear-gradient(160deg, #0d1118 0%, #080c10 100%);
@@ -176,7 +170,6 @@
     border:1px solid var(--border); border-radius:20px; padding:4px 12px;
   }
 
-  /* Right panel — form */
   .login-form-panel {
     flex:1; padding:48px 40px;
     display:flex; flex-direction:column; justify-content:center;
@@ -235,7 +228,6 @@
     20%{transform:translateX(-8px)} 40%{transform:translateX(8px)}
     60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
   }
-  /* hide old corner/bg elements */
   .login-bg,.login-corner,.login-divider,.login-subtitle { display:none; }
 
   /* ── DISCORD FLOATING BUTTON ── */
@@ -278,7 +270,6 @@
     position: relative;
     overflow: hidden;
   }
-  /* Animated grid background */
   #selectorScreen::before {
     content:'';
     position:absolute; inset:0;
@@ -290,7 +281,6 @@
     pointer-events:none;
   }
 
-  /* Top bar with logo */
   .sel-topbar {
     position: absolute; top: 0; left: 0; right: 0;
     display: flex; align-items: center; justify-content: space-between;
@@ -318,7 +308,6 @@
   }
   .sel-topbar-logout:hover { border-color:var(--dps); color:var(--dps); }
 
-  /* Center hero */
   .sel-hero {
     position: relative; z-index: 2;
     display: flex; flex-direction: column; align-items: center;
@@ -347,7 +336,6 @@
     background:linear-gradient(90deg,transparent,var(--gold),transparent);
   }
 
-  /* Compo grid — horizontal list */
   .compo-cards {
     display: flex;
     gap: 14px;
@@ -373,7 +361,6 @@
   .compo-card-inner {
     padding: 22px 20px 18px;
   }
-  /* Accent bar top */
   .compo-card::before {
     content:'';
     position:absolute; top:0; left:0; right:0; height:2px;
@@ -386,7 +373,6 @@
     from { transform: translateY(30px) scale(.96); opacity: 0; }
     to   { transform: translateY(0) scale(1); opacity: 1; }
   }
-  /* Card index badge */
   .card-index {
     font-family:'Cinzel',serif; font-size:11px; font-weight:700;
     color:var(--gold-dark); letter-spacing:2px;
@@ -400,7 +386,6 @@
   .card-info {
     font-size:11px; color:var(--text-muted); letter-spacing:.5px;
   }
-  /* Stats row */
   .card-stats {
     display:flex; gap:12px; margin-top:14px; padding-top:12px;
     border-top:1px solid var(--border);
@@ -409,7 +394,6 @@
   .card-stat-val { font-family:'Cinzel',serif; font-size:18px; font-weight:900; color:var(--gold); line-height:1; }
   .card-stat-lbl { font-size:9px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; }
 
-  /* Add card */
   .card-add {
     border-style: dashed; border-color: var(--border);
     background: transparent;
@@ -423,7 +407,6 @@
   .card-add:hover .card-add-label { color:var(--gold); }
   .card-add:hover { border-color:var(--gold-dark); }
 
-  /* Card actions */
   .card-actions { position:absolute; top:10px; right:10px; display:flex; gap:4px; opacity:0; transition:opacity .15s; }
   .compo-card:hover .card-actions { opacity:1; }
   .card-action-btn {
@@ -434,13 +417,11 @@
   .card-action-btn:hover { border-color:var(--gold); color:var(--gold); }
   .card-action-btn.del:hover { border-color:var(--dps); color:var(--dps); }
 
-  .selector-logout { display:none; } /* moved to topbar */
+  .selector-logout { display:none; }
 
-  /* ===== MAIN APP SCREEN ===== */
   /* ===== APP SCREEN ===== */
   #appScreen { flex-direction: column; background: #070a0d; }
 
-  /* HEADER */
   .header {
     background: linear-gradient(180deg, #0a0d12 0%, #0d1018 100%);
     border-bottom: 1px solid #c8a84b22;
@@ -450,7 +431,6 @@
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 2px 20px #00000088;
   }
-  /* Subtle top gold line on header */
   .header::before {
     content:''; position:absolute; top:0; left:0; right:0; height:1px;
     background: linear-gradient(90deg, transparent, var(--gold-dark) 30%, var(--gold) 50%, var(--gold-dark) 70%, transparent);
@@ -496,7 +476,6 @@
   .discord-input:focus { outline: none; border-color: var(--gold); }
   .discord-input::placeholder { color: var(--text-muted); opacity: .5; }
 
-  /* BUTTONS */
   .btn {
     background: linear-gradient(135deg, var(--gold-dark), var(--gold));
     border: none; border-radius: 6px; color: #080c10;
@@ -512,10 +491,7 @@
     box-shadow: none;
   }
   .btn-ghost:hover { border-color: var(--gold-dark); color: var(--gold); background: #c8a84b08; filter: none; transform: none; box-shadow: none; }
-  .btn-save { background: linear-gradient(135deg, #0a2a18, #2d8f5a, #4caf7d); color: #fff; }
-  .btn-save:hover { filter: brightness(1.15); box-shadow: 0 4px 15px #4caf7d33; }
 
-  /* REALTIME BADGE */
   .realtime-badge {
     display: flex; align-items: center; gap: 5px;
     font-family: 'Rajdhani', sans-serif; font-size: 10px;
@@ -529,7 +505,6 @@
   .realtime-dot.offline { background: var(--dps); box-shadow: 0 0 6px var(--dps); animation: none; }
   @keyframes rtPulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
-  /* LEGEND BAR */
   .legend-bar {
     display: flex; gap: 16px; align-items: center;
     padding: 5px 20px;
@@ -552,13 +527,11 @@
     filter: drop-shadow(0 0 8px #c8a84b44); pointer-events: none; white-space: nowrap;
   }
 
-  /* LAYOUT */
   .layout {
     display: grid; grid-template-columns: 220px 1fr;
     flex: 1; overflow: hidden; height: calc(100vh - 82px);
   }
 
-  /* SIDEBAR */
   .sidebar {
     background: #0a0d12;
     border-right: 1px solid var(--border);
@@ -591,7 +564,6 @@
   .players-list::-webkit-scrollbar { width: 2px; }
   .players-list::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
 
-  /* PLAYER CHIP */
   .player-chip {
     background: #0d1018; border: 1px solid var(--border);
     border-radius: 6px; cursor: grab;
@@ -618,7 +590,7 @@
   .add-player-input {
     background: #0d1018; border: 1px solid var(--border); border-radius: 5px;
     color: var(--text); font-family: 'Rajdhani', sans-serif;
-    font-size: 12px; padding: 6px 8px; flex: 1; transition: border-color .15s;
+    font-size: 12px; padding: 6px 8px; flex: 1; transition: border-color .15px;
   }
   .add-player-input:focus { outline: none; border-color: var(--gold-dark); }
   .add-player-input::placeholder { color: var(--text-muted); opacity: .5; }
@@ -630,12 +602,10 @@
   }
   .btn-add:hover { filter: brightness(1.2); transform: scale(1.05); }
 
-  /* MAIN AREA */
   .main { overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 0; background: #070a0d; }
   .main::-webkit-scrollbar { width: 4px; }
   .main::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
 
-  /* COMPO TABLE */
   .compo-table {
     background: #0a0d12; border: 1px solid var(--border);
     border-radius: 10px; overflow: hidden;
@@ -670,7 +640,6 @@
     color: var(--border-gold); text-align: center;
   }
 
-  /* ROLE BADGES */
   .role-badge { font-size: 8px; font-weight: 800; letter-spacing: 1px; padding: 3px 6px; border-radius: 3px; text-align: center; text-transform: uppercase; }
   .role-TANK    { background: var(--tank-bg);    color: var(--tank);    border: 1px solid var(--tank);    box-shadow: 0 0 6px #4a90d922; }
   .role-HEALER  { background: var(--healer-bg);  color: var(--healer);  border: 1px solid var(--healer);  box-shadow: 0 0 6px #4caf7d22; }
@@ -679,7 +648,6 @@
   .role-MONTURA { background: var(--montura-bg); color: var(--montura); border: 1px solid var(--montura); box-shadow: 0 0 6px #9b59b622; }
   .role-DEFTANK { background: var(--deftank-bg); color: var(--deftank); border: 1px solid var(--deftank); box-shadow: 0 0 6px #5bb8d422; }
 
-  /* ITEMS ROW */
   .items-row { display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; }
   .item-slot {
     width: var(--slot-size); height: var(--slot-size);
@@ -701,7 +669,6 @@
   .item-slot.swap-posible     { border-color: var(--yellow) !important; box-shadow: 0 0 8px #ffeb3b44 !important; }
   .item-slot.swap-pve         { border-color: var(--blue-swap) !important; box-shadow: 0 0 8px #2979ff44 !important; }
 
-  /* PLAYER SLOT IN ROW */
   .player-slot {
     min-height: 36px; border: 1px dashed #1a1f28; border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
@@ -724,7 +691,6 @@
   .player-slot:hover .player-slot-remove { opacity: 1; }
   .player-slot-remove:hover { color: var(--dps); text-shadow: 0 0 6px #e0555566; }
 
-  /* ITEM MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: #000000cc; z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal {
@@ -764,18 +730,15 @@
   .swap-btn[data-type="pve"].selected         { background: #2979ff22; }
   .modal-footer { padding: 8px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 7px; }
 
-  /* RENAME MODAL */
   .rename-modal { background: var(--bg-panel); border: 1px solid var(--border-gold); border-radius: 10px; padding: 28px 32px; width: 360px; max-width: 95vw; box-shadow: 0 20px 60px #000000cc; animation: modalIn .2s ease; text-align: center; }
   .rename-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold); margin-bottom: 20px; letter-spacing: 1px; }
   .rename-input { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; padding: 10px 14px; width: 100%; margin-bottom: 16px; text-align: center; }
   .rename-input:focus { outline: none; border-color: var(--gold); }
   .rename-btns { display: flex; gap: 8px; justify-content: center; }
 
-  /* TOAST */
   .toast { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--gold-light); z-index: 300; transform: translateY(80px); opacity: 0; transition: all .3s ease; pointer-events: none; }
   .toast.show { transform: translateY(0); opacity: 1; }
 
-  /* SEARCH ROW */
   .modal-search-row { display:flex; gap:0; border-bottom:1px solid var(--border); }
   .modal-search { background:var(--bg-card); border:none; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:14px; padding:10px 16px; flex:1; }
   .modal-search:focus { outline:none; }
@@ -788,20 +751,6 @@
   .tier-group-items { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px; }
   .enchant-label { font-size:7px; font-weight:700; color:var(--gold-light); background:var(--gold-dark); border-radius:2px; padding:1px 3px; position:absolute; top:2px; right:2px; line-height:1; }
 
-
-  /* CARD ACTIONS */
-  .compo-card { position: relative; }
-  .card-actions { position:absolute; top:7px; right:7px; display:flex; gap:4px; opacity:0; transition:opacity .15s; }
-  .compo-card:hover .card-actions { opacity:1; }
-  .card-action-btn {
-    background:var(--bg-deep); border:1px solid var(--border); border-radius:4px;
-    color:var(--text-muted); cursor:pointer; font-size:11px; line-height:1;
-    padding:3px 5px; transition:all .15s;
-  }
-  .card-action-btn:hover { border-color:var(--gold); color:var(--gold); }
-  .card-action-btn.del:hover { border-color:var(--dps); color:var(--dps); }
-
-  /* ADD ROW BUTTON */
   .add-row-btn {
     display:flex; align-items:center; justify-content:center; gap:6px;
     border:1.5px dashed var(--border); border-radius:6px; color:var(--text-muted);
@@ -811,7 +760,6 @@
   }
   .add-row-btn:hover { border-color:var(--gold); color:var(--gold); background:#c8a84b08; }
 
-  /* ROW DELETE */
   .row-delete-btn {
     background:none; border:none; color:var(--border); cursor:pointer;
     font-size:14px; line-height:1; padding:2px 4px; transition:color .15s; flex-shrink:0;
@@ -819,8 +767,6 @@
   .compo-row:hover .row-delete-btn { color:var(--text-muted); }
   .row-delete-btn:hover { color:var(--dps) !important; }
 
-
-  /* INLINE ROW EDITING */
   .role-select {
     background:var(--bg-deep); border:1px solid var(--border); border-radius:3px;
     color:var(--text); cursor:pointer; font-family:'Rajdhani',sans-serif;
@@ -828,7 +774,6 @@
     text-transform:uppercase; width:80px; transition:.15s;
   }
   .role-select:focus { outline:none; border-color:var(--gold); }
-  /* Color by role */
   .role-select.roleTANK    { background:var(--tank-bg);    color:var(--tank);    border-color:var(--tank); }
   .role-select.roleHEALER  { background:var(--healer-bg);  color:var(--healer);  border-color:var(--healer); }
   .role-select.roleDPS     { background:var(--dps-bg);     color:var(--dps);     border-color:var(--dps); }
@@ -844,10 +789,6 @@
   .weapon-input:hover { border-bottom-color:var(--border); }
   .weapon-input:focus { outline:none; border-bottom-color:var(--gold); background:var(--bg-deep); }
 
-
-  /* selector-brand removed — replaced by sel-topbar */
-
-  /* HEADER GUILD ICON */
   .header-guild-icon {
     width:28px; height:28px; border-radius:50%;
     border:1px solid #c8a84b55; object-fit:cover; flex-shrink:0;
@@ -862,7 +803,6 @@
   }
   .header-logo { display:flex; align-items:center; gap:8px; cursor:pointer; }
 
-  /* LEGEND MISTAKE TITLE */
   .legend-mistake {
     position:absolute; left:50%; transform:translateX(-50%);
     font-family:'Cinzel',serif; font-size:13px; font-weight:900;
@@ -873,7 +813,6 @@
     pointer-events:none; white-space:nowrap;
   }
   .legend-bar { position:relative; }
-
 
   /* VIEWER MODE */
   body.viewer-mode .item-slot { cursor: default; pointer-events: none; }
@@ -887,15 +826,13 @@
   body.viewer-mode .player-drag { cursor: default; }
   body.viewer-mode .player-item { pointer-events: none; }
   body.viewer-mode .player-chip { cursor: default !important; pointer-events: none !important; }
-  body.viewer-mode .btn-save { display: none; }
-  .admin-only { display: flex; }
-  body.viewer-mode .admin-only { display: none !important; }
   body.viewer-mode .compo-card { cursor: pointer; }
   body.viewer-mode .player-slot { pointer-events: none !important; }
   body.viewer-mode .player-slot.filled { cursor: default !important; pointer-events: none !important; }
   body.viewer-mode .player-slot-remove { display: none !important; }
+  .admin-only { display: flex; }
+  body.viewer-mode .admin-only { display: none !important; }
 
-  /* REALTIME INDICATOR */
   .realtime-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: #00e676; box-shadow: 0 0 8px #00e67688;
@@ -909,7 +846,6 @@
     color: var(--text-muted); letter-spacing: 1px; font-weight: 600;
   }
 
-  /* VIEWER BANNER */
   .viewer-banner {
     background: linear-gradient(90deg, #5865F211, #5865F233, #5865F211);
     border-bottom: 1px solid #5865F266;
@@ -920,7 +856,6 @@
   }
   body.viewer-mode .viewer-banner { display: block; }
 
-  /* REFRESH FAB (viewer only) */
   .refresh-fab {
     position: fixed; bottom: 90px; right: 24px; z-index: 500;
     background: linear-gradient(135deg, #0d2a1a, #00e676);
@@ -950,8 +885,6 @@
   }
   .refresh-fab:hover .refresh-fab-tip { opacity: 1; }
 
-
-  /* BACK TO SELECTOR BUTTON */
   .header-back-btn {
     font-size: 11px; letter-spacing: 1px; padding: 4px 10px;
     flex-shrink: 0;
@@ -965,8 +898,6 @@
   }
   .back-to-selector:hover { color: var(--gold); background: var(--bg-hover); }
 
-
-  /* ROW ROLE AURAS — colored left border + subtle bg tint */
   .compo-row.row-role-TANK {
     border-left: 3px solid var(--tank);
     background: linear-gradient(90deg, #4a90d90a 0%, transparent 15%);
@@ -998,7 +929,6 @@
   }
   .compo-row.row-role-DEFTANK:hover { background: linear-gradient(90deg, #5bb8d418 0%, #0d1118 15%); }
 
-  /* SWAP COLUMN SEPARATOR */
   .swap-col-sep {
     width: 2px; flex-shrink: 0; align-self: stretch;
     background: linear-gradient(180deg, transparent 0%, var(--gold-dark) 15%, var(--gold) 50%, var(--gold-dark) 85%, transparent 100%);
@@ -1015,6 +945,19 @@
     text-shadow: 0 0 8px var(--gold);
   }
 
+  /* AUTO-SAVE INDICATOR */
+  .autosave-indicator {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+    opacity: 0; transition: opacity .3s;
+  }
+  .autosave-indicator.saving { opacity: 1; color: var(--gold); }
+  .autosave-indicator.saved  { opacity: 1; color: var(--healer); }
+  .autosave-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+  }
 </style>
 </head>
 <body>
@@ -1027,7 +970,6 @@
   <div class="login-particles" id="particles"></div>
 
   <div class="login-wrap" id="loginBox">
-    <!-- Left: branding -->
     <div class="login-brand-panel">
       <img class="login-guild-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake Logo">
       <div class="login-guild-name">MISTAKE</div>
@@ -1036,7 +978,6 @@
       <div class="login-brand-tag">ZvZ · 2026 – 2027</div>
     </div>
 
-    <!-- Right: form -->
     <div class="login-form-panel">
       <div class="login-form-title">Bienvenido</div>
       <div class="login-form-sub">Admin: introduce contraseña · Miembros: pulsa acceder directamente</div>
@@ -1049,9 +990,9 @@
     </div>
   </div>
 </div>
+
 <!-- ===== SELECTOR SCREEN ===== -->
 <div id="selectorScreen" class="screen">
-  <!-- Top bar -->
   <div class="sel-topbar">
     <div class="sel-topbar-brand">
       <img class="sel-topbar-logo" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
@@ -1060,7 +1001,6 @@
     <button class="sel-topbar-logout admin-only" onclick="logout()">↩ Salir</button>
   </div>
 
-  <!-- Hero -->
   <div class="sel-hero">
     <div class="sel-hero-label">Albion Online · Guild</div>
     <div class="sel-hero-title">ZvZ COMPO</div>
@@ -1068,13 +1008,12 @@
     <div class="sel-hero-line"></div>
   </div>
 
-  <!-- Cards -->
   <div class="compo-cards" id="compoCards"></div>
 </div>
 
 <!-- ===== APP SCREEN ===== -->
 <div id="appScreen" class="screen">
-  <div class="viewer-banner">👁 MODO ESPECTADOR — Los cambios no se sincronizan en tiempo real pulsa el boton verde</div>
+  <div class="viewer-banner">👁 MODO ESPECTADOR — Pulsa el botón verde para actualizar</div>
   <header class="header">
     <div class="header-logo" onclick="goSelector()">
       <img class="header-guild-icon" src="data:image/webp;base64,UklGRlYCAABXRUJQVlA4IEoCAAAQDACdASooACgAPm0yk0ekIyGhJypIgA2JYgCzlQWu2vecf+uwQbdIm0Zc7yzqBdx9YGjm87LNt9D+wZ0XvRA/TlX39dm8WDSy0SrJkf9fL5Md5NzFiz/Lx0j8AH7G7QwgmsnCD92x20AA/v+HoZUjQR9EyEuQlKtWQtHF6CJZn/tR3eEFlFWaO6Y9BrVCNUP/6nEz4QHhKAjf3e+0In+LeCzegxH43UZilzFlm8+v5+nPoL4ymFUkyCUqkbjRy4CyWXf3IUek1wPGG3smi7qOvvdnzQ6aTwaOjDNYHIMAIhOlPTg0f/ywwaaLhoxIBJpxuGeWnd9asSRlNPFDDE8tBkab0mHJS2lQdRAfK88GmT1uOq8jAAaCoikkhUTJktOiGx8JOCpKfsLVjf+0F3THgSdBYFcaJrW//fyK7zkTGx3O0JD6KNPvUGzeEvwNZe8rnw+ZCZPHGGIzpiaHsaK9SkBoHs0NxuTH1dy4PAkdD6Cf8xNIRDZtaNpBNPNLxvxNMcEsKObx6MctaF8uze59O5EzeGV/4rz8l8sDaTJae1VF6XpwvH1torEzCUTqqg8PUk9NwYSc5a+ziaUzaQPhJHRx/EZ39wBVNweNWkKKVQAQtlcjnXAjEVVJI13XeEyP/7AUX8EfwGDVIwRk4Wp4qtzFSyWEou1zytlosM5nxM4ylhcnf1vx+tRaTAXv6uF9VgL6IKanOsgqmnVS30AYVw9Nsds6+9j02vlfKc8Z+daozL9XaNAGLoADBtVIbOXPQYkrU8kfoAAA" alt="Mistake">
@@ -1083,12 +1022,16 @@
     <button class="btn btn-ghost header-back-btn" onclick="goSelector()" title="Volver al selector">← Compos</button>
     <div class="header-actions">
       <div class="realtime-badge"><div class="realtime-dot offline" id="realtimeDot"></div><span id="realtimeLabel">Conectando...</span></div>
+      <!-- AUTO-SAVE INDICATOR (admin only) -->
+      <div class="autosave-indicator admin-only" id="autosaveIndicator">
+        <div class="autosave-dot"></div>
+        <span id="autosaveLabel">Guardando...</span>
+      </div>
       <div class="admin-only" style="gap:6px;align-items:center">
         <input id="discordChannelId" class="discord-input" placeholder="ID Canal de Voz Discord..." type="text">
         <button class="btn" onclick="loadDiscordPlayers()">Conectar</button>
         <button class="btn btn-ghost" onclick="clearDiscordPlayers()">Borrar</button>
       </div>
-      <button class="btn btn-save admin-only" onclick="saveCurrentCompo()">Guardar</button>
       <button class="btn btn-ghost admin-only" onclick="exportCompo()">Exportar</button>
     </div>
   </header>
@@ -1180,7 +1123,6 @@
 
 <script>
 // ==================== SUPABASE CONFIG ====================
-// 👇 RELLENA ESTOS DOS VALORES DESPUÉS DE CREAR TU PROYECTO EN SUPABASE
 const SUPABASE_URL = 'https://kxcnqkbdwxeqxqnzjkzz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4Y25xa2Jkd3hlcXhxbnpqa3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNzEyODMsImV4cCI6MjA5NDg0NzI4M30.XuSJMmqlkTP2Ryy--r4-WO9liA-XFgoqy6cQ57cbAuk';
 
@@ -1193,53 +1135,30 @@ function initSupabase(){
 }
 
 // ==================== CONSTANTS ====================
-const PASSWORD_ADMIN  = 'cototonto'; // admin: puede editar todo
-const PASSWORD_VIEWER = 'mistake';   // viewer: solo lectura, sync realtime
+const PASSWORD_ADMIN  = 'cototonto';
+const PASSWORD_VIEWER = 'mistake';
 const STORAGE_KEY = 'zvz_compo_data_v3';
-const BACKEND_URL = 'https://zvz-backend.onrender.com'; // Bot de Discord
-
-const ROWS = [
-  { role:'TANK',    num:1,  weapon:'MONARCA',         group:0 },
-  { role:'TANK',    num:2,  weapon:'EQUILIBRIO',      group:0 },
-  { role:'HEALER',  num:3,  weapon:'FORGEBARK',       group:0 },
-  { role:'DPS',     num:4,  weapon:'CALAVERA',        group:0 },
-  { role:'DPS',     num:5,  weapon:'MARTILLOS FORJA', group:0 },
-  { role:'DPS',     num:6,  weapon:'ASTRAL',          group:0 },
-  { role:'DPS',     num:7,  weapon:'OSUNAS',          group:0 },
-  { role:'DPS',     num:8,  weapon:'PAJARO',          group:1 },
-  { role:'HEALER',  num:9,  weapon:'REDENCIÓN',       group:1 },
-  { role:'DEFTANK', num:10, weapon:'MAZA PESADA',     group:1 },
-  { role:'DPS',     num:11, weapon:'ARTICO',          group:2 },
-  { role:'DPS',     num:12, weapon:'DESINTEGRADORAS', group:2 },
-  { role:'SUPPORT', num:13, weapon:'OUTKEEPERS',      group:2 },
-  { role:'TANK',    num:14, weapon:'RAMPAGE',         group:2 },
-  { role:'HEALER',  num:15, weapon:'EXALTED',         group:2 },
-  { role:'MONTURA', num:16, weapon:'BASI FUEGO',      group:3 },
-  { role:'MONTURA', num:17, weapon:'ESCARABAJO',      group:3 },
-];
+const BACKEND_URL = 'https://zvz-backend.onrender.com';
 
 const SLOT_TYPES  = ['main','helmet','chest','boots','gloves','offhand','cape','potion','mount'];
 const SWAP_SLOT_TYPES = ['swap1','swap2','swap3','swap4','swap5'];
 const SLOT_LABELS = { main:'Arma', helmet:'Casco', chest:'Pecho', boots:'Botas', gloves:'Guantes', offhand:'Offhand', cape:'Capa', potion:'Poción', mount:'Montura', swap1:'Swap', swap2:'Swap', swap3:'Swap', swap4:'Swap', swap5:'Swap' };
 const ALBION_RENDER = 'https://render.albiononline.com/v1/item/';
 
-// ITEMS_DB removed - now using live Albion API search
-
-
 // ==================== STATE ====================
 let players       = [];
-let assignments   = {};   // rowNum -> playerName
-let slotItems     = {};   // `${rowNum}-${slotType}` -> {id, name, swap}
-let currentCompo  = 0;    // index
-let compos        = [];   // array of {name, slotItems, rows}
-let userRole      = null; // 'admin' | 'viewer'
-let discordPlayers = []; // Discord players (session-only, NOT persisted)
+let assignments   = {};
+let slotItems     = {};
+let currentCompo  = 0;
+let compos        = [];
+let userRole      = null;
+let discordPlayers = [];
 
 let modalCtx           = null;
 let modalSelectedItem  = null;
 let modalSelectedSwap  = 'none';
 
-// ==================== STORAGE (localStorage fallback) ====================
+// ==================== STORAGE ====================
 function loadStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -1248,13 +1167,11 @@ function loadStorage() {
   return null;
 }
 function saveStorage() {
-  // Only save compos. Players are session-only (Discord players reset on reload).
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ compos }));
 }
 const DEFAULT_ROW = {role:'DPS', weapon:'Arma', group:0};
 
 function makeDefaultRows(){
-  // Start with just 1 row
   return [{role:'DPS', num:1, weapon:'Nuevo rol', group:0}];
 }
 
@@ -1270,7 +1187,7 @@ function initCompos() {
       { name:'Compo 3', slotItems:{}, rows:makeDefaultRows() },
     ];
   }
-  players = []; // always start with empty players list
+  players = [];
 }
 
 // ==================== LOGIN ====================
@@ -1312,11 +1229,9 @@ function enterApp(role){
 function tryLogin(){
   const val=document.getElementById('loginInput').value.trim();
   if(val===PASSWORD_ADMIN){
-    // Save admin session in sessionStorage (survives refresh, clears on tab close)
     localStorage.setItem('zvz_role','admin');
     enterApp('admin');
   } else if(val===PASSWORD_VIEWER || val===''){
-    // Viewers: empty password or 'mistake' → just enter as viewer
     localStorage.removeItem('zvz_role');
     enterApp('viewer');
   } else {
@@ -1329,8 +1244,6 @@ function tryLogin(){
   }
 }
 
-
-// Auto-restore admin session on reload (survives F5, clears on tab close)
 (function(){
   const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
@@ -1422,16 +1335,17 @@ function deleteCompo(idx){
 }
 
 function addCompo(){
-  compos.push({name:`Compo ${compos.length+1}`,slotItems:{}});
+  compos.push({name:`Compo ${compos.length+1}`,slotItems:{},rows:makeDefaultRows()});
   saveStorage();
   renderSelector();
+  autoPush();
   showToast('✅ Compo creada');
 }
 
 function openCompo(idx){
   currentCompo=idx;
   if(!compos[idx].rows||!compos[idx].rows.length) compos[idx].rows=makeDefaultRows();
-  slotItems={...( compos[idx].slotItems||{})};
+  slotItems={...(compos[idx].slotItems||{})};
   assignments={};
   showScreen('appScreen');
   renderTabs();
@@ -1448,7 +1362,7 @@ function goSelector(){
 // ==================== TABS ====================
 function renderTabs(){
   const bar=document.getElementById('compoTabs');
-  if(!bar) return; // tabs removed from header
+  if(!bar) return;
   bar.innerHTML=compos.map((c,i)=>
     `<button class="compo-tab${i===currentCompo?' active':''}" onclick="switchCompo(${i})">${c.name}</button>`
   ).join('');
@@ -1464,14 +1378,22 @@ function switchCompo(idx){
   document.getElementById('currentCompoName').textContent=compos[idx].name;
 }
 
-// ==================== SAVE ====================
-function saveCurrentCompo(){
-  compos[currentCompo].slotItems={...slotItems};
-  compos[currentCompo].assignments={...assignments};
-  saveStorage();
-  pushToSupabase();
-  showToast('💾 Guardado y sincronizado');
-  renderSelector();
+// ==================== AUTO-SAVE INDICATOR ====================
+let _autosaveTimer = null;
+function showAutosaveState(state) {
+  const el = document.getElementById('autosaveIndicator');
+  const lbl = document.getElementById('autosaveLabel');
+  if(!el || userRole !== 'admin') return;
+  el.classList.remove('saving','saved');
+  if(state === 'saving'){
+    el.classList.add('saving');
+    lbl.textContent = 'Guardando...';
+  } else if(state === 'saved'){
+    el.classList.add('saved');
+    lbl.textContent = '✓ Guardado';
+    clearTimeout(_autosaveTimer);
+    _autosaveTimer = setTimeout(()=>{ el.classList.remove('saved'); }, 2500);
+  }
 }
 
 // ==================== RENDER COMPO ====================
@@ -1485,13 +1407,11 @@ function buildSlotHtml(rowNum,slotType){
   let inner=item
     ?`<img src="${getItemUrl(item.id)}" alt="${item.name}" title="${item.name}" onerror="this.style.display='none'">`
     :'';
-  // Label always shown at bottom
   inner+=`<span class="slot-label">${label}</span>`;
   return `<div class="item-slot ${swapClass}" data-row="${rowNum}" data-slot="${slotType}" onclick="openModal(${rowNum},'${slotType}')" title="${label}">${inner}</div>`;
 }
 
 function buildPlayerSlotHtml(rowNum){
-  // assignments keys may be strings after JSON parse, coerce both sides
   const name=assignments[rowNum] || assignments[String(rowNum)];
   if(name){
     return `<div class="player-slot filled" data-row="${rowNum}" draggable="true"
@@ -1507,7 +1427,6 @@ function buildPlayerSlotHtml(rowNum){
   </div>`;
 }
 
-// Role options for inline editing
 const ROLES=['TANK','HEALER','DPS','SUPPORT','DEFTANK','MONTURA'];
 
 function renderCompo(){
@@ -1615,14 +1534,14 @@ function onPlayerDragStart(e,name){
   setTimeout(()=>document.querySelectorAll(`.player-chip[data-player="${name}"]`).forEach(el=>el.classList.add('dragging')),0);
 }
 function onPlayerSlotDragStart(e,rowNum){
-  dragSourceRow=rowNum; draggedPlayer=assignments[rowNum]; e.dataTransfer.effectAllowed='move';
+  dragSourceRow=rowNum; draggedPlayer=assignments[rowNum]||assignments[String(rowNum)]; e.dataTransfer.effectAllowed='move';
 }
 function onSlotDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
 function onSlotDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
 function onSlotDrop(e,rowNum){
   e.preventDefault(); e.currentTarget.classList.remove('drag-over');
   if(!draggedPlayer) return;
-  if(dragSourceRow!==null&&dragSourceRow!==rowNum) delete assignments[dragSourceRow];
+  if(dragSourceRow!==null&&dragSourceRow!==rowNum) delete assignments[String(dragSourceRow)];
   assignments[String(rowNum)]=draggedPlayer;
   draggedPlayer=null; dragSourceRow=null;
   renderCompo(); renderPlayers(); autoPush();
@@ -1638,10 +1557,10 @@ function addPlayer(){
   renderPlayers(); autoPush();
 }
 function removeAssignment(rowNum){ delete assignments[String(rowNum)]; renderCompo(); renderPlayers(); autoPush(); }
-function clearAllPlayers(){ if(!confirm('¿Limpiar asignaciones?'))return; assignments={}; renderCompo(); renderPlayers(); showToast('Asignaciones limpiadas'); }
 function filterPlayers(){ renderPlayers(); }
 
 // ==================== DISCORD ====================
+// ── FIX 1: Cargar Discord conservando asignaciones de jugadores que siguen en el canal ──
 async function loadDiscordPlayers(){
   const channelId=document.getElementById('discordChannelId').value.trim();
   if(!channelId){showToast('Introduce el ID del canal');return;}
@@ -1653,10 +1572,22 @@ async function loadDiscordPlayers(){
     if(data.error) throw new Error(data.error);
     const members=data.members||[];
     if(!members.length){showToast('⚠️ Canal vacío o no encontrado');return;}
-    // Replace players list with Discord members (session only, never saved)
-    players=members;
-    discordPlayers=members;
-    assignments={};
+
+    const memberSet = new Set(members);
+
+    // Conservar asignaciones de jugadores que siguen en el canal.
+    // Eliminar asignaciones de jugadores que ya no están en el canal.
+    const newAssignments = {};
+    Object.entries(assignments).forEach(([rowNum, playerName]) => {
+      if(memberSet.has(playerName)){
+        newAssignments[rowNum] = playerName;
+      }
+    });
+    assignments = newAssignments;
+
+    players = members;
+    discordPlayers = members;
+
     renderPlayers();
     renderCompo();
     autoPush();
@@ -1668,18 +1599,17 @@ async function loadDiscordPlayers(){
 }
 
 function clearDiscordPlayers(){
-  // Clear ALL players from the list (Discord players are never persisted)
   players = [];
   discordPlayers = [];
   assignments = {};
   renderPlayers();
   renderCompo();
+  autoPush();
   showToast('🗑 Jugadores borrados');
 }
 
 // ==================== ITEM MODAL ====================
-// ---- Item database: loaded once from GitHub raw JSON ----
-let ALBION_ITEMS = null;      // [{UniqueName, LocalizedNames}]
+let ALBION_ITEMS = null;
 let ALBION_ITEMS_LOADING = false;
 let ALBION_ITEMS_CALLBACKS = [];
 
@@ -1692,7 +1622,6 @@ async function loadItemDB(){
   try{
     const r=await fetch('https://raw.githubusercontent.com/broderickhyman/ao-bin-dumps/master/formatted/items.json');
     const data=await r.json();
-    // Only keep items that have an EN-US name and a UniqueName (filter junk)
     ALBION_ITEMS=data.filter(i=>i.UniqueName&&i.LocalizedNames&&i.LocalizedNames['EN-US']);
     ALBION_ITEMS_CALLBACKS.forEach(cb=>cb(ALBION_ITEMS));
     ALBION_ITEMS_CALLBACKS=[];
@@ -1717,7 +1646,6 @@ function openModal(rowNum,slotType){
   updateSwapButtons();
   document.getElementById('modalOverlay').classList.add('open');
 
-  // Pre-load DB silently
   if(!ALBION_ITEMS && !ALBION_ITEMS_LOADING){
     setModalStatus('Cargando base de datos de items...');
     loadItemDB().then(()=>setModalStatus('✅ Base de datos lista')).catch(()=>setModalStatus('⚠️ Error cargando DB'));
@@ -1750,11 +1678,8 @@ async function doSearch(){
     return;
   }
 
-  // Search by english name
   const results=db.filter(i=>i.LocalizedNames['EN-US'].toLowerCase().includes(q));
 
-  // Group by base name (without tier prefix T4_, T5_…)
-  // A "base" item is: strip leading T\d+_ from UniqueName, then group items that share the same stripped name
   const groups={};
   results.forEach(i=>{
     const stripped=i.UniqueName.replace(/^T\d+_/,'').replace(/@\d+$/,'');
@@ -1763,7 +1688,7 @@ async function doSearch(){
     groups[stripped].items.push(i);
   });
 
-  const groupList=Object.values(groups).slice(0,20); // max 20 groups
+  const groupList=Object.values(groups).slice(0,20);
   if(!groupList.length){
     setModalStatus('Sin resultados. Intenta otro nombre en inglés.');
     grid.innerHTML='<div class="modal-hint">Sin resultados</div>';
@@ -1845,9 +1770,8 @@ function clearSlot(){
 
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); modalCtx=null; }
 
-// ==================== RENAME (double click tab) ====================
+// ==================== RENAME ====================
 let renameIdx=null;
-// Tab dblclick rename removed — tabs moved to selector screen
 function closeRename(){ document.getElementById('renameOverlay').classList.remove('open'); renameIdx=null; }
 function confirmRename(){
   const val=document.getElementById('renameInput').value.trim();
@@ -1858,17 +1782,17 @@ function confirmRename(){
   renderSelector();
   document.getElementById('currentCompoName').textContent=compos[currentCompo].name;
   closeRename();
+  autoPush();
   showToast('✅ Nombre guardado');
 }
 
 // ==================== EXPORT ====================
 function exportCompo(){
+  const rows = compos[currentCompo].rows || [];
   let out=`📋 ${compos[currentCompo].name.toUpperCase()}\n`+'='.repeat(40)+'\n\n';
-  let lastGroup=-1;
-  ROWS.forEach(r=>{
-    if(r.group!==lastGroup){out+='\n';lastGroup=r.group;}
-    const player=assignments[r.num]||'[ VACÍO ]';
-    out+=`[${r.role.padEnd(8)}] #${String(r.num).padStart(2)} ${r.weapon.padEnd(18)} → ${player}\n`;
+  rows.forEach((r,idx)=>{
+    const player=assignments[r.num]||assignments[String(r.num)]||'[ VACÍO ]';
+    out+=`[${r.role.padEnd(8)}] #${String(idx+1).padStart(2)} ${r.weapon.padEnd(18)} → ${player}\n`;
   });
   navigator.clipboard.writeText(out).then(()=>showToast('✅ Copiado al portapapeles'));
 }
@@ -1889,7 +1813,6 @@ document.addEventListener('keydown',e=>{
 // ==================== INIT ====================
 initCompos();
 
-
 // ==================== SUPABASE REALTIME ====================
 function setRealtimeStatus(online){
   const dot=document.getElementById('realtimeDot');
@@ -1904,9 +1827,11 @@ function setRealtimeStatus(online){
   }
 }
 
+// ── FIX 2: Auto-push on every change, no manual save needed ──
 async function pushToSupabase(){
   if(!sb || userRole!=='admin') return;
-  // Ensure all custom items have their base64 embedded (survives browser changes)
+  showAutosaveState('saving');
+
   const enrichedSlots = {...slotItems};
   try {
     const customs = JSON.parse(localStorage.getItem('zvz_custom_items')||'{}');
@@ -1916,9 +1841,12 @@ async function pushToSupabase(){
       }
     });
   } catch(e){}
+
   compos[currentCompo].slotItems = enrichedSlots;
-  slotItems = enrichedSlots; // keep local in sync
-  compos[currentCompo].assignments={...assignments};
+  slotItems = enrichedSlots;
+  compos[currentCompo].assignments = {...assignments};
+  saveStorage(); // also persist locally
+
   try {
     await sb.from('zvz_state').upsert({
       id: 1,
@@ -1927,7 +1855,11 @@ async function pushToSupabase(){
       assignments: JSON.stringify(assignments),
       updated_at: new Date().toISOString()
     });
-  } catch(e){ console.warn('Supabase push error:', e); }
+    showAutosaveState('saved');
+  } catch(e){
+    console.warn('Supabase push error:', e);
+    showAutosaveState('saved'); // still show saved locally
+  }
 }
 
 // Debounced auto-push: fires 800ms after last change
@@ -1948,14 +1880,6 @@ async function pullFromSupabase(){
 }
 
 function applyRemoteState(data){
-  console.log('[Realtime] applyRemoteState', {
-    hasCompos: !!data.compos,
-    hasPlayers: !!data.players,
-    hasAssignments: !!data.assignments,
-    playersRaw: data.players
-  });
-
-  // compos
   try {
     const remote = typeof data.compos === 'string' ? JSON.parse(data.compos) : data.compos;
     if(remote && remote.length){
@@ -1964,31 +1888,23 @@ function applyRemoteState(data){
     }
   } catch(e){ console.warn('compos parse error',e); }
 
-  // players — apply whenever data has the field (even empty array)
   try {
     const raw = data.players != null
       ? (typeof data.players === 'string' ? JSON.parse(data.players) : data.players)
       : null;
-    if(Array.isArray(raw)){
-      players = raw;
-      console.log('[Realtime] players applied:', players);
-    }
+    if(Array.isArray(raw)) players = raw;
   } catch(e){ console.warn('players parse error',e); }
 
-  // assignments — normalize all keys to strings
   try {
     const raw = data.assignments != null
       ? (typeof data.assignments === 'string' ? JSON.parse(data.assignments) : data.assignments)
       : null;
     if(raw && typeof raw === 'object' && !Array.isArray(raw)){
-      // Ensure keys are strings (rowNum as string)
       assignments = {};
       Object.entries(raw).forEach(([k,v])=>{ assignments[String(k)]=v; });
-      console.log('[Realtime] assignments applied:', assignments);
     }
   } catch(e){ console.warn('assignments parse error',e); }
 
-  // Refresh all visible UI
   const curScreen = document.querySelector('.screen.active')?.id;
   if(curScreen==='selectorScreen') renderSelector();
   if(curScreen==='appScreen'){
@@ -2003,23 +1919,18 @@ function applyRemoteState(data){
 function connectRealtime(){
   setRealtimeStatus(false);
   if(!sb){
-    // Supabase not configured: just mark as local mode
     document.getElementById('realtimeLabel').textContent='CERRAR SESION REINICIAR';
     return;
   }
 
-  // Pull latest state first
   pullFromSupabase().then(()=>setRealtimeStatus(true));
 
-  // Subscribe to changes
   if(realtimeChannel) sb.removeChannel(realtimeChannel);
   realtimeChannel = sb
     .channel('zvz_state_changes')
     .on('postgres_changes',
       {event:'*', schema:'public', table:'zvz_state', filter:'id=eq.1'},
       payload => {
-        // Both admin and viewer refresh from remote on any change
-        // Admin already has latest state; viewer needs the update
         if(userRole==='viewer'){
           try {
             applyRemoteState(payload.new);
@@ -2034,18 +1945,13 @@ function connectRealtime(){
 }
 
 // ==================== APP INIT ====================
-// ==================== APP INIT ====================
 initSupabase();
 
-// ── KEEP-ALIVE: evita que Render hiberne el bot ──
+// Keep-alive bot
 (function keepBotAlive() {
-    const BACKEND_URL = 'https://zvz-backend.onrender.com';
     setInterval(async () => {
-        try {
-            await fetch(`${BACKEND_URL}/health`);
-            console.log('[keep-alive] bot pinged');
-        } catch(e) {}
-    }, 4 * 60 * 1000); // cada 4 minutos
+        try { await fetch(`${BACKEND_URL}/health`); } catch(e) {}
+    }, 4 * 60 * 1000);
 })();
 
 async function manualRefresh(){
@@ -2061,7 +1967,6 @@ async function manualRefresh(){
   }
   setTimeout(()=>{ btn.classList.remove('spinning'); btn.style.pointerEvents=''; }, 700);
 }
-
 </script>
 </body>
 </html>
