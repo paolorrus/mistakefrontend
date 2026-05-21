@@ -62,7 +62,7 @@
 <body>
 
 <!-- ===== LOGIN ===== -->
-<div id="loginScreen" class="screen active">
+<div id="loginScreen" class="screen">
   <div class="login-bg-mesh"></div>
   <div class="login-lines"></div>
   <div class="login-orb login-orb-1"></div>
@@ -310,52 +310,95 @@ function initCompos(){
 }
 
 // ==================== LOGIN ====================
-function togglePwd(){ const i=document.getElementById('loginInput');i.type=i.type==='password'?'text':'password'; }
-function setViewerMode(v){ document.body.classList.toggle('viewer-mode',v); userRole=v?'viewer':'admin'; }
+
+function togglePwd(){
+  const i=document.getElementById('loginInput');
+  i.type=i.type==='password'?'text':'password';
+}
+
+function setViewerMode(v){
+  document.body.classList.toggle('viewer-mode',v);
+  userRole=v?'viewer':'admin';
+}
 
 function enterApp(role){
+
   setViewerMode(role==='viewer');
+
   initCompos();
+
   showScreen('selectorScreen');
+
   renderSelector();
-  initSupabase(); // always init before connectRealtime
+
+  initSupabase();
+
   connectRealtime();
 }
 
 function tryLogin(){
+
   const val=document.getElementById('loginInput').value.trim();
+
   if(val===PASSWORD_ADMIN){
+
     localStorage.setItem('zvz_role','admin');
-    initSupabaseAdmin(); // service role para Storage
+
+    initSupabaseAdmin();
+
     enterApp('admin');
-  } else if(val==='mistake'||val===''){
-    localStorage.removeItem('zvz_role');
-    enterApp('viewer');
-  } else {
-    document.getElementById('loginError').textContent='Contraseña incorrecta';
-    const box=document.getElementById('loginBox');
-    box.classList.remove('login-shake');void box.offsetWidth;box.classList.add('login-shake');
-    document.getElementById('loginInput').value='';
+
+    return;
   }
-}
 
-// Auto-login si sesión admin guardada
-(function(){
-  const saved=localStorage.getItem('zvz_role');
-  if(saved==='admin'){ initSupabaseAdmin(); enterApp('admin'); }
-})();
+  if(val==='mistake'||val===''){
 
-function logout(){
-  localStorage.removeItem('zvz_role');
-  stopPolling();
-  if(realtimeChannel&&sb){try{sb.removeChannel(realtimeChannel);}catch(e){} realtimeChannel=null;}
-  userRole=null;players=[];assignments={};
+    localStorage.removeItem('zvz_role');
+
+    enterApp('viewer');
+
+    return;
+  }
+
+  document.getElementById('loginError').textContent='Contraseña incorrecta';
+
+  const box=document.getElementById('loginBox');
+
+  box.classList.remove('login-shake');
+
+  void box.offsetWidth;
+
+  box.classList.add('login-shake');
+
   document.getElementById('loginInput').value='';
-  document.getElementById('loginError').textContent='';
-  setRealtimeStatus(false);
-  showScreen('loginScreen');
 }
 
+
+// ==================== ROUTER ====================
+
+(function(){
+
+  const path=window.location.pathname.toLowerCase();
+
+  const saved=localStorage.getItem('zvz_role');
+
+  if(path==='/admin'){
+
+    showScreen('loginScreen');
+
+    if(saved==='admin'){
+
+      initSupabaseAdmin();
+
+      enterApp('admin');
+    }
+
+    return;
+  }
+
+  enterApp('viewer');
+
+})();
 // ==================== SCREENS ====================
 function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active'); }
 
