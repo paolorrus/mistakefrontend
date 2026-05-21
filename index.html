@@ -1188,7 +1188,7 @@ let sb = null;
 let realtimeChannel = null;
 
 function initSupabase(){
-  // Supabase configured
+  if(sb) return;
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
@@ -1334,6 +1334,7 @@ function tryLogin(){
 (function(){
   const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
+    initSupabase();
     enterApp('admin');
   }
 })();
