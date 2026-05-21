@@ -34,7 +34,7 @@
     --green: #00e676;
     --yellow: #ffeb3b;
     --blue-swap: #2979ff;
-    --slot-size: 62px;
+    --slot-size: 56px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -531,18 +531,18 @@
 
   /* LEGEND BAR */
   .legend-bar {
-    display: flex; gap: 22px; align-items: center;
-    padding: 9px 24px;
-    background: linear-gradient(180deg, #0d1018 0%, #0a0d12 100%);
+    display: flex; gap: 16px; align-items: center;
+    padding: 5px 20px;
+    background: #0a0d12;
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap; position: relative;
   }
   .legend-item {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--text);
+    display: flex; align-items: center; gap: 5px;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-muted);
   }
-  .legend-dot { width: 12px; height: 12px; border-radius: 3px; border: 2px solid; flex-shrink: 0; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; border: 1.5px solid; flex-shrink: 0; }
   .legend-mistake {
     position: absolute; left: 50%; transform: translateX(-50%);
     font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900;
@@ -643,7 +643,7 @@
   }
   .compo-table-header {
     display: grid;
-    grid-template-columns: 180px 88px 32px 120px 1fr 24px;
+    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
     background: linear-gradient(180deg, #0d1018 0%, #0a0d12 100%);
     border-bottom: 1px solid #c8a84b22;
     padding: 8px 14px; gap: 6px; align-items: center;
@@ -654,7 +654,7 @@
   }
   .compo-row {
     display: grid;
-    grid-template-columns: 180px 88px 32px 120px 1fr 24px;
+    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
     border-bottom: 1px solid #1a1f28;
     gap: 6px; padding: 6px 14px;
     align-items: center; transition: background .12s;
@@ -689,8 +689,14 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
   .item-slot:hover { border-color: var(--gold-dark); box-shadow: 0 0 10px #c8a84b22; }
-  .item-slot img { width: 100%; height: 100%; object-fit: contain; display: block; flex-shrink: 0; }
-  .item-slot .slot-label { display: none; }
+  .item-slot img { width: 100%; height: calc(100% - 14px); object-fit: contain; display: block; flex-shrink: 0; }
+  .item-slot .slot-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    font-size: 5px; text-align: center; color: #ffffff55;
+    font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
+    pointer-events: none; background: #000000aa; padding: 1px 0; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
   .item-slot.swap-obligatorio { border-color: var(--green) !important; box-shadow: 0 0 8px #00e67644 !important; }
   .item-slot.swap-posible     { border-color: var(--yellow) !important; box-shadow: 0 0 8px #ffeb3b44 !important; }
   .item-slot.swap-pve         { border-color: var(--blue-swap) !important; box-shadow: 0 0 8px #2979ff44 !important; }
@@ -756,8 +762,7 @@
   .swap-btn[data-type="obligatorio"].selected { background: #00e67622; }
   .swap-btn[data-type="posible"].selected     { background: #ffeb3b22; }
   .swap-btn[data-type="pve"].selected         { background: #2979ff22; }
-  .modal-footer { padding: 8px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 7px; align-items: center; }
-  .modal-footer label.btn { display: flex; }
+  .modal-footer { padding: 8px 16px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 7px; }
 
   /* RENAME MODAL */
   .rename-modal { background: var(--bg-panel); border: 1px solid var(--border-gold); border-radius: 10px; padding: 28px 32px; width: 360px; max-width: 95vw; box-shadow: 0 20px 60px #000000cc; animation: modalIn .2s ease; text-align: center; }
@@ -817,56 +822,19 @@
 
   /* INLINE ROW EDITING */
   .role-select {
-    background:var(--bg-deep); border:2px solid var(--border); border-radius:5px;
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:3px;
     color:var(--text); cursor:pointer; font-family:'Rajdhani',sans-serif;
-    font-size:11px; font-weight:900; letter-spacing:1.5px; padding:5px 6px;
-    text-transform:uppercase; width:88px; transition:.2s;
-    text-align:center; text-align-last:center;
+    font-size:9px; font-weight:700; letter-spacing:1px; padding:3px 4px;
+    text-transform:uppercase; width:80px; transition:.15s;
   }
-  .role-select:focus { outline:none; }
-  .role-select:hover { transform:translateY(-1px); }
-  /* Color by role — con glow llamativo */
-  .role-select.roleTANK    {
-    background: linear-gradient(135deg, var(--tank-bg), #1a3a5f);
-    color:#7fb8f0; border-color:var(--tank);
-    box-shadow: 0 0 12px #4a90d955, inset 0 0 8px #4a90d922;
-    text-shadow: 0 0 8px #4a90d999;
-  }
-  .role-select.roleHEALER  {
-    background: linear-gradient(135deg, var(--healer-bg), #1a4a30);
-    color:#7fd9a8; border-color:var(--healer);
-    box-shadow: 0 0 12px #4caf7d55, inset 0 0 8px #4caf7d22;
-    text-shadow: 0 0 8px #4caf7d99;
-  }
-  .role-select.roleDPS     {
-    background: linear-gradient(135deg, var(--dps-bg), #5a1a1a);
-    color:#ff8888; border-color:var(--dps);
-    box-shadow: 0 0 12px #e0555555, inset 0 0 8px #e0555522;
-    text-shadow: 0 0 8px #e0555599;
-  }
-  .role-select.roleSUPPORT {
-    background: linear-gradient(135deg, var(--support-bg), #5a4a1a);
-    color:#f0d080; border-color:var(--support);
-    box-shadow: 0 0 12px #c8a84b55, inset 0 0 8px #c8a84b22;
-    text-shadow: 0 0 8px #c8a84b99;
-  }
-  .role-select.roleMONTURA {
-    background: linear-gradient(135deg, var(--montura-bg), #3a1a5f);
-    color:#c890e0; border-color:var(--montura);
-    box-shadow: 0 0 12px #9b59b655, inset 0 0 8px #9b59b622;
-    text-shadow: 0 0 8px #9b59b699;
-  }
-  .role-select.roleDEFTANK {
-    background: linear-gradient(135deg, var(--deftank-bg), #1a4a5a);
-    color:#8fd0e8; border-color:var(--deftank);
-    box-shadow: 0 0 12px #5bb8d455, inset 0 0 8px #5bb8d422;
-    text-shadow: 0 0 8px #5bb8d499;
-  }
-  /* options inside select keep readable */
-  .role-select option {
-    background: var(--bg-deep); color: var(--text);
-    text-shadow: none; box-shadow: none;
-  }
+  .role-select:focus { outline:none; border-color:var(--gold); }
+  /* Color by role */
+  .role-select.roleTANK    { background:var(--tank-bg);    color:var(--tank);    border-color:var(--tank); }
+  .role-select.roleHEALER  { background:var(--healer-bg);  color:var(--healer);  border-color:var(--healer); }
+  .role-select.roleDPS     { background:var(--dps-bg);     color:var(--dps);     border-color:var(--dps); }
+  .role-select.roleSUPPORT { background:var(--support-bg); color:var(--support); border-color:var(--support); }
+  .role-select.roleMONTURA { background:var(--montura-bg); color:var(--montura); border-color:var(--montura); }
+  .role-select.roleDEFTANK { background:var(--deftank-bg); color:var(--deftank); border-color:var(--deftank); }
   .weapon-input {
     background:transparent; border:none; border-bottom:1px solid transparent;
     color:var(--text); font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
@@ -998,24 +966,53 @@
   .back-to-selector:hover { color: var(--gold); background: var(--bg-hover); }
 
 
+  /* ROW ROLE AURAS — colored left border + subtle bg tint */
+  .compo-row.row-role-TANK {
+    border-left: 3px solid var(--tank);
+    background: linear-gradient(90deg, #4a90d90a 0%, transparent 15%);
+  }
+  .compo-row.row-role-TANK:hover { background: linear-gradient(90deg, #4a90d918 0%, #0d1118 15%); }
+  .compo-row.row-role-HEALER {
+    border-left: 3px solid var(--healer);
+    background: linear-gradient(90deg, #4caf7d0a 0%, transparent 15%);
+  }
+  .compo-row.row-role-HEALER:hover { background: linear-gradient(90deg, #4caf7d18 0%, #0d1118 15%); }
+  .compo-row.row-role-DPS {
+    border-left: 3px solid var(--dps);
+    background: linear-gradient(90deg, #e055550a 0%, transparent 15%);
+  }
+  .compo-row.row-role-DPS:hover { background: linear-gradient(90deg, #e0555518 0%, #0d1118 15%); }
+  .compo-row.row-role-SUPPORT {
+    border-left: 3px solid var(--support);
+    background: linear-gradient(90deg, #c8a84b0a 0%, transparent 15%);
+  }
+  .compo-row.row-role-SUPPORT:hover { background: linear-gradient(90deg, #c8a84b18 0%, #0d1118 15%); }
+  .compo-row.row-role-MONTURA {
+    border-left: 3px solid var(--montura);
+    background: linear-gradient(90deg, #9b59b60a 0%, transparent 15%);
+  }
+  .compo-row.row-role-MONTURA:hover { background: linear-gradient(90deg, #9b59b618 0%, #0d1118 15%); }
+  .compo-row.row-role-DEFTANK {
+    border-left: 3px solid var(--deftank);
+    background: linear-gradient(90deg, #5bb8d40a 0%, transparent 15%);
+  }
+  .compo-row.row-role-DEFTANK:hover { background: linear-gradient(90deg, #5bb8d418 0%, #0d1118 15%); }
+
   /* SWAP COLUMN SEPARATOR */
   .swap-col-sep {
-    width: 18px; flex-shrink: 0; align-self: stretch;
+    width: 2px; flex-shrink: 0; align-self: stretch;
     background: linear-gradient(180deg, transparent 0%, var(--gold-dark) 15%, var(--gold) 50%, var(--gold-dark) 85%, transparent 100%);
-    margin: 0 4px; position: relative;
+    margin: 0 6px; position: relative;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 9px;
     box-shadow: 0 0 8px #c8a84b33;
-    width: 2px;
   }
   .swap-col-label {
     position: absolute;
-    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900;
+    font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900;
     letter-spacing: 3px; color: var(--gold-light); white-space: nowrap;
     writing-mode: vertical-rl; text-orientation: mixed;
     background: #0a0d12; padding: 4px 1px;
     text-shadow: 0 0 8px var(--gold);
-    border-radius: 2px;
   }
 
 </style>
@@ -1146,10 +1143,6 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="clearSlot()">Quitar item</button>
-      <label class="btn btn-ghost admin-only" style="cursor:pointer;align-items:center;gap:5px" title="Sube un PNG del item si no aparece en la búsqueda">
-        📁 Subir PNG
-        <input type="file" accept="image/png,image/webp,image/jpeg" style="display:none" onchange="uploadCustomItemImage(event)">
-      </label>
       <button class="btn" onclick="confirmItem()">Confirmar</button>
     </div>
   </div>
@@ -1195,7 +1188,7 @@ let sb = null;
 let realtimeChannel = null;
 
 function initSupabase(){
-  if(sb) return; // ya inicializado, no crear doble cliente
+  // Supabase configured
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
@@ -1225,9 +1218,9 @@ const ROWS = [
   { role:'MONTURA', num:17, weapon:'ESCARABAJO',      group:3 },
 ];
 
-const SLOT_TYPES  = ['main','helmet','chest','boots','gloves','offhand','cape','potion','mount','food'];
+const SLOT_TYPES  = ['main','helmet','chest','boots','gloves','offhand','cape','potion','mount'];
 const SWAP_SLOT_TYPES = ['swap1','swap2','swap3','swap4','swap5'];
-const SLOT_LABELS = { main:'Arma', helmet:'Casco', chest:'Pecho', boots:'Botas', gloves:'Guantes', offhand:'Offhand', cape:'Capa', potion:'Poción', mount:'Montura', food:'Comida', swap1:'Swap 1', swap2:'Swap 2', swap3:'Swap 3', swap4:'Swap 4', swap5:'Swap 5' };
+const SLOT_LABELS = { main:'Arma', helmet:'Casco', chest:'Pecho', boots:'Botas', gloves:'Guantes', offhand:'Offhand', cape:'Capa', potion:'Poción', mount:'Montura', swap1:'Swap', swap2:'Swap', swap3:'Swap', swap4:'Swap', swap5:'Swap' };
 const ALBION_RENDER = 'https://render.albiononline.com/v1/item/';
 
 // ITEMS_DB removed - now using live Albion API search
@@ -1341,7 +1334,6 @@ function tryLogin(){
 (function(){
   const savedRole = localStorage.getItem('zvz_role');
   if(savedRole === 'admin'){
-    initSupabase(); // CRÍTICO: debe estar antes de connectRealtime dentro de enterApp
     enterApp('admin');
   }
 })();
@@ -1482,16 +1474,7 @@ function saveCurrentCompo(){
 }
 
 // ==================== RENDER COMPO ====================
-function getItemUrl(id, item){
-  if(!id) return '';
-  // Si el propio objeto item trae la imagen embebida (base64), usarla directamente
-  if(item && item.customImage) return item.customImage;
-  // Si es CUSTOM_ busca en localStorage (fallback local)
-  if(id.startsWith('CUSTOM_')){
-    try{ return JSON.parse(localStorage.getItem('zvz_custom_items')||'{}')[id]||''; }catch(e){ return ''; }
-  }
-  return `${ALBION_RENDER}${id}.png`;
-}
+function getItemUrl(id){ return `${ALBION_RENDER}${id}.png`; }
 
 function buildSlotHtml(rowNum,slotType){
   const key=`${rowNum}-${slotType}`;
@@ -1499,7 +1482,7 @@ function buildSlotHtml(rowNum,slotType){
   let swapClass=item?.swap?`swap-${item.swap}`:'';
   const label=SLOT_LABELS[slotType]||slotType;
   let inner=item
-    ?`<img src="${getItemUrl(item.id, item)}" alt="${item.name}" title="${item.name}" onerror="this.style.opacity='0'">`
+    ?`<img src="${getItemUrl(item.id)}" alt="${item.name}" title="${item.name}" onerror="this.style.display='none'">`
     :'';
   // Label always shown at bottom
   inner+=`<span class="slot-label">${label}</span>`;
@@ -1532,11 +1515,11 @@ function renderCompo(){
 
   let html=`<div class="compo-table">
     <div class="compo-table-header">
-      <div class="col-header">Jugador</div>
       <div class="col-header">Rol</div>
       <div class="col-header">#</div>
       <div class="col-header">Arma / Descripción</div>
-      <div class="col-header">Items / Swaps</div>
+      <div class="col-header">Items</div>
+      <div class="col-header">Jugador</div>
       <div class="col-header"></div>
     </div>`;
 
@@ -1547,10 +1530,9 @@ function renderCompo(){
     const roleClass=r.role.replace(/\s/g,'');
     const mainHtml = SLOT_TYPES.map(s=>buildSlotHtml(r.num,s)).join('');
     const swapHtml = SWAP_SLOT_TYPES.map(s=>buildSlotHtml(r.num,s)).join('');
-    const itemsHtml = mainHtml + `<div class="swap-col-sep"><span class="swap-col-label">SWAPS</span></div>` + swapHtml;
+    const itemsHtml = mainHtml + '<div class="swap-col-sep"><span class="swap-col-label">SWAPS</span></div>' + swapHtml;
     const roleOptions=ROLES.map(ro=>`<option value="${ro}"${ro===r.role?' selected':''}>${ro}</option>`).join('');
-    html+=`<div class="compo-row${sep}" data-rownum="${r.num}">
-      <div>${buildPlayerSlotHtml(r.num)}</div>
+    html+=`<div class="compo-row${sep} row-role-${roleClass}" data-rownum="${r.num}">
       <div>
         <select class="role-select role-${roleClass}" onchange="changeRowRole(${r.num},this.value)">
           ${roleOptions}
@@ -1561,6 +1543,7 @@ function renderCompo(){
         <input class="weapon-input" value="${r.weapon}" onchange="changeRowWeapon(${r.num},this.value)" placeholder="Arma / Rol">
       </div>
       <div class="items-row">${itemsHtml}</div>
+      <div>${buildPlayerSlotHtml(r.num)}</div>
       <div>
         <button class="row-delete-btn" onclick="deleteRow(${r.num})" title="Borrar fila">✕</button>
       </div>
@@ -1846,65 +1829,10 @@ function updateSwapButtons(){
   document.querySelectorAll('.swap-btn').forEach(b=>b.classList.toggle('selected',b.dataset.type===modalSelectedSwap));
 }
 
-function uploadCustomItemImage(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  e.target.value = '';
-
-  // Pedir nombre del item
-  const rawName = prompt('Nombre del item (ej: Spirithunter Bow):', file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g,' '));
-  if(!rawName || !rawName.trim()) return;
-  const itemName = rawName.trim();
-  const customId = 'CUSTOM_' + itemName.toUpperCase().replace(/\s+/g,'_') + '_' + Date.now();
-
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const dataUrl = ev.target.result;
-
-    // Guardar en localStorage para reutilizar en esta sesión
-    try{
-      const store = JSON.parse(localStorage.getItem('zvz_custom_items')||'{}');
-      store[customId] = dataUrl;
-      localStorage.setItem('zvz_custom_items', JSON.stringify(store));
-    }catch(ex){ console.warn('localStorage full?', ex); }
-
-    // Seleccionar el item — con customImage embebido para que lo vean los viewers via Supabase
-    modalSelectedItem = { id: customId, name: itemName, swap: modalSelectedSwap, customImage: dataUrl };
-
-    // Mostrar preview en el grid
-    document.getElementById('modalGrid').innerHTML = `
-      <div class="tier-group">
-        <div class="tier-group-label">📁 IMAGEN PERSONALIZADA</div>
-        <div class="tier-group-items">
-          <div class="item-option selected" style="position:relative">
-            <img src="${dataUrl}" style="width:44px;height:44px;object-fit:contain;border-radius:3px">
-            <span class="item-option-name">${itemName.slice(0,12)}</span>
-          </div>
-        </div>
-      </div>
-      <p style="font-size:10px;color:var(--text-muted);padding:8px 2px;line-height:1.5">
-        ✅ Imagen lista. Pulsa <strong style="color:var(--gold)">Confirmar</strong> para asignarla al slot.<br>
-        Los viewers verán la imagen automáticamente al sincronizar.
-      </p>`;
-    showToast('✅ PNG cargado — pulsa Confirmar');
-  };
-  reader.readAsDataURL(file);
-}
-
 function confirmItem(){
   if(!modalCtx) return;
   const key=`${modalCtx.rowNum}-${modalCtx.slotType}`;
-  if(modalSelectedItem){
-    const toSave = {...modalSelectedItem, swap: modalSelectedSwap};
-    // Si es item custom y no trae imagen embebida, la coge de localStorage
-    if(toSave.id && toSave.id.startsWith('CUSTOM_') && !toSave.customImage){
-      try{
-        const store = JSON.parse(localStorage.getItem('zvz_custom_items')||'{}');
-        if(store[toSave.id]) toSave.customImage = store[toSave.id];
-      }catch(ex){}
-    }
-    slotItems[key] = toSave;
-  }
+  if(modalSelectedItem) slotItems[key]={...modalSelectedItem,swap:modalSelectedSwap};
   closeModal(); renderCompo(); autoPush();
 }
 
@@ -2065,7 +1993,7 @@ function connectRealtime(){
   setRealtimeStatus(false);
   if(!sb){
     // Supabase not configured: just mark as local mode
-    document.getElementById('realtimeLabel').textContent='Sin conexión';
+    document.getElementById('realtimeLabel').textContent='CERRAR SESION REINICIAR';
     return;
   }
 
