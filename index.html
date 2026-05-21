@@ -531,18 +531,18 @@
 
   /* LEGEND BAR */
   .legend-bar {
-    display: flex; gap: 16px; align-items: center;
-    padding: 5px 20px;
-    background: #0a0d12;
+    display: flex; gap: 22px; align-items: center;
+    padding: 9px 24px;
+    background: linear-gradient(180deg, #0d1018 0%, #0a0d12 100%);
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap; position: relative;
   }
   .legend-item {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 9px; font-weight: 700; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--text-muted);
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text);
   }
-  .legend-dot { width: 8px; height: 8px; border-radius: 2px; border: 1.5px solid; flex-shrink: 0; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; border: 2px solid; flex-shrink: 0; }
   .legend-mistake {
     position: absolute; left: 50%; transform: translateX(-50%);
     font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900;
@@ -643,7 +643,7 @@
   }
   .compo-table-header {
     display: grid;
-    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
+    grid-template-columns: 180px 88px 32px 120px 1fr 24px;
     background: linear-gradient(180deg, #0d1018 0%, #0a0d12 100%);
     border-bottom: 1px solid #c8a84b22;
     padding: 8px 14px; gap: 6px; align-items: center;
@@ -654,7 +654,7 @@
   }
   .compo-row {
     display: grid;
-    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
+    grid-template-columns: 180px 88px 32px 120px 1fr 24px;
     border-bottom: 1px solid #1a1f28;
     gap: 6px; padding: 6px 14px;
     align-items: center; transition: background .12s;
@@ -817,19 +817,56 @@
 
   /* INLINE ROW EDITING */
   .role-select {
-    background:var(--bg-deep); border:1px solid var(--border); border-radius:3px;
+    background:var(--bg-deep); border:2px solid var(--border); border-radius:5px;
     color:var(--text); cursor:pointer; font-family:'Rajdhani',sans-serif;
-    font-size:9px; font-weight:700; letter-spacing:1px; padding:3px 4px;
-    text-transform:uppercase; width:80px; transition:.15s;
+    font-size:11px; font-weight:900; letter-spacing:1.5px; padding:5px 6px;
+    text-transform:uppercase; width:88px; transition:.2s;
+    text-align:center; text-align-last:center;
   }
-  .role-select:focus { outline:none; border-color:var(--gold); }
-  /* Color by role */
-  .role-select.roleTANK    { background:var(--tank-bg);    color:var(--tank);    border-color:var(--tank); }
-  .role-select.roleHEALER  { background:var(--healer-bg);  color:var(--healer);  border-color:var(--healer); }
-  .role-select.roleDPS     { background:var(--dps-bg);     color:var(--dps);     border-color:var(--dps); }
-  .role-select.roleSUPPORT { background:var(--support-bg); color:var(--support); border-color:var(--support); }
-  .role-select.roleMONTURA { background:var(--montura-bg); color:var(--montura); border-color:var(--montura); }
-  .role-select.roleDEFTANK { background:var(--deftank-bg); color:var(--deftank); border-color:var(--deftank); }
+  .role-select:focus { outline:none; }
+  .role-select:hover { transform:translateY(-1px); }
+  /* Color by role — con glow llamativo */
+  .role-select.roleTANK    {
+    background: linear-gradient(135deg, var(--tank-bg), #1a3a5f);
+    color:#7fb8f0; border-color:var(--tank);
+    box-shadow: 0 0 12px #4a90d955, inset 0 0 8px #4a90d922;
+    text-shadow: 0 0 8px #4a90d999;
+  }
+  .role-select.roleHEALER  {
+    background: linear-gradient(135deg, var(--healer-bg), #1a4a30);
+    color:#7fd9a8; border-color:var(--healer);
+    box-shadow: 0 0 12px #4caf7d55, inset 0 0 8px #4caf7d22;
+    text-shadow: 0 0 8px #4caf7d99;
+  }
+  .role-select.roleDPS     {
+    background: linear-gradient(135deg, var(--dps-bg), #5a1a1a);
+    color:#ff8888; border-color:var(--dps);
+    box-shadow: 0 0 12px #e0555555, inset 0 0 8px #e0555522;
+    text-shadow: 0 0 8px #e0555599;
+  }
+  .role-select.roleSUPPORT {
+    background: linear-gradient(135deg, var(--support-bg), #5a4a1a);
+    color:#f0d080; border-color:var(--support);
+    box-shadow: 0 0 12px #c8a84b55, inset 0 0 8px #c8a84b22;
+    text-shadow: 0 0 8px #c8a84b99;
+  }
+  .role-select.roleMONTURA {
+    background: linear-gradient(135deg, var(--montura-bg), #3a1a5f);
+    color:#c890e0; border-color:var(--montura);
+    box-shadow: 0 0 12px #9b59b655, inset 0 0 8px #9b59b622;
+    text-shadow: 0 0 8px #9b59b699;
+  }
+  .role-select.roleDEFTANK {
+    background: linear-gradient(135deg, var(--deftank-bg), #1a4a5a);
+    color:#8fd0e8; border-color:var(--deftank);
+    box-shadow: 0 0 12px #5bb8d455, inset 0 0 8px #5bb8d422;
+    text-shadow: 0 0 8px #5bb8d499;
+  }
+  /* options inside select keep readable */
+  .role-select option {
+    background: var(--bg-deep); color: var(--text);
+    text-shadow: none; box-shadow: none;
+  }
   .weapon-input {
     background:transparent; border:none; border-bottom:1px solid transparent;
     color:var(--text); font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:700;
@@ -959,6 +996,27 @@
     display: flex; align-items: center; gap: 6px;
   }
   .back-to-selector:hover { color: var(--gold); background: var(--bg-hover); }
+
+
+  /* SWAP COLUMN SEPARATOR */
+  .swap-col-sep {
+    width: 18px; flex-shrink: 0; align-self: stretch;
+    background: linear-gradient(180deg, transparent 0%, var(--gold-dark) 15%, var(--gold) 50%, var(--gold-dark) 85%, transparent 100%);
+    margin: 0 4px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 9px;
+    box-shadow: 0 0 8px #c8a84b33;
+    width: 2px;
+  }
+  .swap-col-label {
+    position: absolute;
+    font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900;
+    letter-spacing: 3px; color: var(--gold-light); white-space: nowrap;
+    writing-mode: vertical-rl; text-orientation: mixed;
+    background: #0a0d12; padding: 4px 1px;
+    text-shadow: 0 0 8px var(--gold);
+    border-radius: 2px;
+  }
 
 </style>
 </head>
@@ -1168,7 +1226,8 @@ const ROWS = [
 ];
 
 const SLOT_TYPES  = ['main','helmet','chest','boots','gloves','offhand','cape','potion','mount','food'];
-const SLOT_LABELS = { main:'Arma', helmet:'Casco', chest:'Pecho', boots:'Botas', gloves:'Guantes', offhand:'Offhand', cape:'Capa', potion:'Poción', mount:'Montura', food:'Comida' };
+const SWAP_SLOT_TYPES = ['swap1','swap2','swap3','swap4','swap5'];
+const SLOT_LABELS = { main:'Arma', helmet:'Casco', chest:'Pecho', boots:'Botas', gloves:'Guantes', offhand:'Offhand', cape:'Capa', potion:'Poción', mount:'Montura', food:'Comida', swap1:'Swap 1', swap2:'Swap 2', swap3:'Swap 3', swap4:'Swap 4', swap5:'Swap 5' };
 const ALBION_RENDER = 'https://render.albiononline.com/v1/item/';
 
 // ITEMS_DB removed - now using live Albion API search
@@ -1473,11 +1532,11 @@ function renderCompo(){
 
   let html=`<div class="compo-table">
     <div class="compo-table-header">
+      <div class="col-header">Jugador</div>
       <div class="col-header">Rol</div>
       <div class="col-header">#</div>
       <div class="col-header">Arma / Descripción</div>
-      <div class="col-header">Items</div>
-      <div class="col-header">Jugador</div>
+      <div class="col-header">Items / Swaps</div>
       <div class="col-header"></div>
     </div>`;
 
@@ -1486,9 +1545,12 @@ function renderCompo(){
     const sep=r.group!==lastGroup&&lastGroup!==-1?' group-sep':'';
     lastGroup=r.group;
     const roleClass=r.role.replace(/\s/g,'');
-    const itemsHtml=SLOT_TYPES.map(s=>buildSlotHtml(r.num,s)).join('');
+    const mainHtml = SLOT_TYPES.map(s=>buildSlotHtml(r.num,s)).join('');
+    const swapHtml = SWAP_SLOT_TYPES.map(s=>buildSlotHtml(r.num,s)).join('');
+    const itemsHtml = mainHtml + `<div class="swap-col-sep"><span class="swap-col-label">SWAPS</span></div>` + swapHtml;
     const roleOptions=ROLES.map(ro=>`<option value="${ro}"${ro===r.role?' selected':''}>${ro}</option>`).join('');
     html+=`<div class="compo-row${sep}" data-rownum="${r.num}">
+      <div>${buildPlayerSlotHtml(r.num)}</div>
       <div>
         <select class="role-select role-${roleClass}" onchange="changeRowRole(${r.num},this.value)">
           ${roleOptions}
@@ -1499,7 +1561,6 @@ function renderCompo(){
         <input class="weapon-input" value="${r.weapon}" onchange="changeRowWeapon(${r.num},this.value)" placeholder="Arma / Rol">
       </div>
       <div class="items-row">${itemsHtml}</div>
-      <div>${buildPlayerSlotHtml(r.num)}</div>
       <div>
         <button class="row-delete-btn" onclick="deleteRow(${r.num})" title="Borrar fila">✕</button>
       </div>
@@ -1526,7 +1587,7 @@ function deleteRow(num){
   const rows=compos[currentCompo].rows;
   if(rows.length<=1){showToast('Debe quedar al menos 1 fila');return;}
   compos[currentCompo].rows=rows.filter(r=>r.num!==num);
-  SLOT_TYPES.forEach(s=>delete slotItems[`${num}-${s}`]);
+  [...SLOT_TYPES, ...SWAP_SLOT_TYPES].forEach(s=>delete slotItems[`${num}-${s}`]);
   delete assignments[num];
   renderCompo(); renderPlayers(); autoPush();
 }
