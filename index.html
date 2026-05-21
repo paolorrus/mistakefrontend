@@ -2034,7 +2034,19 @@ function connectRealtime(){
 }
 
 // ==================== APP INIT ====================
+// ==================== APP INIT ====================
 initSupabase();
+
+// ── KEEP-ALIVE: evita que Render hiberne el bot ──
+(function keepBotAlive() {
+    const BACKEND_URL = 'https://zvz-backend.onrender.com';
+    setInterval(async () => {
+        try {
+            await fetch(`${BACKEND_URL}/health`);
+            console.log('[keep-alive] bot pinged');
+        } catch(e) {}
+    }, 4 * 60 * 1000); // cada 4 minutos
+})();
 
 async function manualRefresh(){
   const btn=document.getElementById('refreshFab');
