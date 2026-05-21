@@ -817,7 +817,7 @@ function setRealtimeStatus(online){
   const dot=document.getElementById('realtimeDot'),lbl=document.getElementById('realtimeLabel');
   if(!dot)return;
   dot.classList.toggle('online',online);dot.classList.toggle('offline',!online);
-  lbl.textContent=online?'EN VIVO':'Sin conexión';
+  lbl.textContent=online?'CONECTADO':'REINICIA NO FUNCIONA';
 }
 
 async function pushToSupabase(){
