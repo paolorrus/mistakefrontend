@@ -643,7 +643,7 @@
   }
   .compo-table-header {
     display: grid;
-    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
+    grid-template-columns: 88px 160px 32px 120px 1fr 24px;
     background: linear-gradient(180deg, #0d1018 0%, #0a0d12 100%);
     border-bottom: 1px solid #c8a84b22;
     padding: 8px 14px; gap: 6px; align-items: center;
@@ -654,7 +654,7 @@
   }
   .compo-row {
     display: grid;
-    grid-template-columns: 88px 32px 120px 1fr 180px 24px;
+    grid-template-columns: 88px 160px 32px 120px 1fr 24px;
     border-bottom: 1px solid #1a1f28;
     gap: 6px; padding: 6px 14px;
     align-items: center; transition: background .12s;
@@ -1516,10 +1516,10 @@ function renderCompo(){
   let html=`<div class="compo-table">
     <div class="compo-table-header">
       <div class="col-header">Rol</div>
+      <div class="col-header">Jugador</div>
       <div class="col-header">#</div>
       <div class="col-header">Arma / Descripción</div>
-      <div class="col-header">Items</div>
-      <div class="col-header">Jugador</div>
+      <div class="col-header">Items / Swaps</div>
       <div class="col-header"></div>
     </div>`;
 
@@ -1538,12 +1538,12 @@ function renderCompo(){
           ${roleOptions}
         </select>
       </div>
+      <div>${buildPlayerSlotHtml(r.num)}</div>
       <div class="row-num">${idx+1}</div>
       <div>
         <input class="weapon-input" value="${r.weapon}" onchange="changeRowWeapon(${r.num},this.value)" placeholder="Arma / Rol">
       </div>
       <div class="items-row">${itemsHtml}</div>
-      <div>${buildPlayerSlotHtml(r.num)}</div>
       <div>
         <button class="row-delete-btn" onclick="deleteRow(${r.num})" title="Borrar fila">✕</button>
       </div>
@@ -1905,8 +1905,18 @@ function setRealtimeStatus(online){
 
 async function pushToSupabase(){
   if(!sb || userRole!=='admin') return;
-  // Always save current slotItems into compo before pushing
-  compos[currentCompo].slotItems={...slotItems};
+  // Ensure all custom items have their base64 embedded (survives browser changes)
+  const enrichedSlots = {...slotItems};
+  try {
+    const customs = JSON.parse(localStorage.getItem('zvz_custom_items')||'{}');
+    Object.entries(enrichedSlots).forEach(([k,item]) => {
+      if(item && item.id && item.id.startsWith('CUSTOM_') && !item.customImage && customs[item.id]){
+        enrichedSlots[k] = {...item, customImage: customs[item.id]};
+      }
+    });
+  } catch(e){}
+  compos[currentCompo].slotItems = enrichedSlots;
+  slotItems = enrichedSlots; // keep local in sync
   compos[currentCompo].assignments={...assignments};
   try {
     await sb.from('zvz_state').upsert({
