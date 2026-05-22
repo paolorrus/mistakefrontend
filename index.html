@@ -4,59 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mistake Guild</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Space+Grotesk:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&family=Bebas+Neue&family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="zvz-style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* ── ITEM DRAG ── */
-.item-slot.drag-over-item { border-color: var(--fire) !important; box-shadow: 0 0 18px var(--fire-glow) !important; transform: scale(1.1) !important; }
+/* override drag states with new vars */
+.item-slot.drag-over-item { border-color: var(--lime) !important; box-shadow: 0 0 18px rgba(200,255,0,.4) !important; transform: scale(1.1) !important; }
 .item-slot.dragging-item  { opacity: .35; transform: scale(.94) !important; }
-.item-slot.copied-item    { border-color: var(--cyan) !important; box-shadow: 0 0 14px rgba(0,212,255,.5) !important; }
-
-/* ── CUSTOM IMAGE UPLOAD in modal ── */
-.custom-upload-zone {
-  border: 2px dashed rgba(100,140,255,.25); border-radius: 10px;
-  padding: 18px 16px; text-align: center; cursor: pointer;
-  transition: .2s; margin: 8px 16px;
-  background: rgba(100,140,255,.04);
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-}
-.custom-upload-zone:hover { border-color: rgba(255,107,0,.5); background: rgba(255,107,0,.06); }
-.custom-upload-zone.dragover { border-color: var(--fire); background: rgba(255,107,0,.10); }
-.cuz-icon { font-size: 28px; line-height: 1; }
-.cuz-title { font-family: 'Barlow Condensed',sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: var(--off-white); text-transform: uppercase; }
-.cuz-sub   { font-size: 11px; color: var(--muted); }
-.cuz-preview { width: 64px; height: 64px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border2); }
-.cuz-name  { font-family: 'Barlow Condensed',sans-serif; font-size: 11px; color: var(--fire); font-weight: 700; letter-spacing: 1px; }
-.custom-upload-input { display: none; }
-.modal-section-label { font-family: 'Barlow Condensed',sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 3px; color: rgba(255,107,0,.55); text-transform: uppercase; padding: 6px 16px 2px; }
-
-/* ── SLOT CONTEXT MENU ── */
-.slot-ctx-menu {
-  position: fixed; z-index: 1000;
-  background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 8px; overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0,0,0,.6);
-  min-width: 160px; animation: ctxIn .12s ease;
-}
-@keyframes ctxIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
-.slot-ctx-item {
-  padding: 9px 14px; cursor: pointer; font-family: 'Barlow',sans-serif;
-  font-size: 13px; font-weight: 600; color: var(--off-white);
-  display: flex; align-items: center; gap: 9px; transition: background .1s;
-}
-.slot-ctx-item:hover { background: rgba(255,107,0,.12); color: var(--fire-l); }
-.slot-ctx-item.danger:hover { background: rgba(255,71,87,.12); color: var(--dps); }
-.slot-ctx-sep { height: 1px; background: var(--border); margin: 2px 0; }
-
-/* viewer live dot */
-.poll-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--cyan); display: inline-block;
-  animation: pollBlink 1.5s ease-in-out infinite; margin-right: 4px;
-  vertical-align: middle;
-}
-@keyframes pollBlink { 0%,100%{opacity:.3} 50%{opacity:1} }
+.item-slot.copied-item    { border-color: var(--cyan) !important; box-shadow: 0 0 14px rgba(0,229,255,.5) !important; }
 </style>
 </head>
 <body>
@@ -143,11 +98,11 @@
     </div>
   </header>
   <div class="legend-bar">
-    <div class="legend-item"><div class="legend-dot" style="border-color:var(--green);background:rgba(34,217,133,.2)"></div>Swap Obligatorio</div>
-    <div class="legend-item"><div class="legend-dot" style="border-color:var(--yellow);background:rgba(255,211,42,.2)"></div>Swap Posible</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--green);background:rgba(0,229,122,.2)"></div>Swap Obligatorio</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:var(--yellow);background:rgba(255,214,0,.2)"></div>Swap Posible</div>
     <div class="legend-item"><div class="legend-dot" style="border-color:var(--blue-swap);background:rgba(59,158,255,.2)"></div>PvE Swap</div>
     <div class="legend-center">MISTAKE</div>
-    <span id="currentCompoName" style="margin-left:auto;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--fire)"></span>
+    <span id="currentCompoName" style="margin-left:auto;font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--lime)"></span>
   </div>
   <div class="layout">
     <aside class="sidebar">
@@ -481,7 +436,7 @@ function renderFishTable(){
       +'</select></td>'
       +'<td><input type="number" value="'+r.qty+'" min="0" style="'+baseStyle+';width:80px;text-align:right" oninput="updateFishRow('+r.id+',\'qty\',this.value)" onchange="renderFishTable()"></td>'
       +'<td><input type="number" value="'+r.price+'" min="0" style="'+baseStyle+';width:100px;text-align:right" oninput="updateFishRow('+r.id+',\'price\',this.value)" onchange="renderFishTable()"></td>'
-      +'<td style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:'+subtotalColor+'">'+formatSilver(subtotal)+'</td>'
+      +'<td style="font-family:\'Orbitron\',sans-serif;font-size:16px;color:'+subtotalColor+'">'+formatSilver(subtotal)+'</td>'
       +'<td><button class="fish-remove-btn" onclick="removeFishRow('+r.id+')">✕</button></td>'
       +'</tr>';
   }).join('');
