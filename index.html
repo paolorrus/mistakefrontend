@@ -182,119 +182,6 @@
   <svg viewBox="0 0 71 55"><path d="M60.1 4.9A58.5 58.5 0 0 0 45.5.4a.2.2 0 0 0-.2.1 40.7 40.7 0 0 0-1.8 3.7 54 54 0 0 0-16.2 0A37.5 37.5 0 0 0 25.5.5a.2.2 0 0 0-.2-.1A58.4 58.4 0 0 0 10.7 4.9a.2.2 0 0 0-.1.1C1.6 17.8-.9 30.4.3 42.8a.2.2 0 0 0 .1.1 58.8 58.8 0 0 0 17.7 9 .2.2 0 0 0 .2-.1 42 42 0 0 0 3.6-5.9.2.2 0 0 0-.1-.3 38.7 38.7 0 0 1-5.5-2.6.2.2 0 0 1 0-.4c.4-.3.7-.6 1.1-.8a.2.2 0 0 1 .2 0c11.5 5.3 24 5.3 35.4 0a.2.2 0 0 1 .2 0l1.1.9a.2.2 0 0 1 0 .3 36 36 0 0 1-5.6 2.6.2.2 0 0 0-.1.3 47.1 47.1 0 0 0 3.6 5.9.2.2 0 0 0 .2.1 58.6 58.6 0 0 0 17.8-9 .2.2 0 0 0 .1-.1c1.5-15.3-2.5-28-10.6-39.5a.2.2 0 0 0-.1-.2zM23.7 35.2c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2zm23.7 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2c3.6 0 6.5 3.3 6.4 7.2 0 4-2.8 7.2-6.4 7.2z"/></svg>
 </a>
 
-
-<!-- ===== PESCA ===== -->
-<div id="fishScreen" class="screen">
-  <div class="fish-bg"></div>
-  <div class="fish-topbar">
-    <button class="fish-back-btn" onclick="goSelector()">← Volver</button>
-    <div class="fish-title-bar">
-      <span class="fish-title-bar-icon">🎣</span>
-      <span class="fish-title-bar-text">CALCULADORA DE <span>PESCA</span></span>
-    </div>
-  </div>
-  <div class="fish-hero">
-    <div class="fish-hero-eyebrow">Albion Online · Herramienta de pesca</div>
-    <div class="fish-hero-title">FISHING <span>PROFIT</span></div>
-    <div class="fish-hero-sub">Calcula tus ganancias reales por sesión</div>
-  </div>
-  <div class="fish-content">
-    <div class="fish-profit-card">
-      <div class="fish-profit-title">⚡ Profit Total de la Sesión</div>
-      <div class="fish-profit-value" id="fishProfitVal">0</div>
-      <div class="fish-profit-currency">Silver / Sesión</div>
-      <div class="fish-profit-breakdown">
-        <div class="fish-profit-item">
-          <div class="fish-profit-item-val income" id="fishTotalIncome">0</div>
-          <div class="fish-profit-item-lbl">📈 Ingresos</div>
-        </div>
-        <div class="fish-profit-item">
-          <div class="fish-profit-item-val cost" id="fishTotalCost">0</div>
-          <div class="fish-profit-item-lbl">📉 Costes</div>
-        </div>
-        <div class="fish-profit-item">
-          <div class="fish-profit-item-val margin" id="fishMarginPct">0%</div>
-          <div class="fish-profit-item-lbl">📊 Margen</div>
-        </div>
-      </div>
-    </div>
-    <div class="fish-grid">
-      <div class="fish-card">
-        <div class="fish-card-title">🪣 Costes de la Sesión</div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Cebo usado<small>Precio × cantidad</small></div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input class="fish-input" type="number" id="fishBaitPrice" placeholder="precio" min="0" value="0" oninput="calcFish()" style="width:80px">
-            <span style="color:var(--dimmed);font-size:12px">×</span>
-            <input class="fish-input" type="number" id="fishBaitQty" placeholder="ud" min="0" value="0" oninput="calcFish()" style="width:55px">
-          </div>
-        </div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Reparación de caña<small>Coste total</small></div>
-          <input class="fish-input" type="number" id="fishRepair" placeholder="0" min="0" value="0" oninput="calcFish()">
-        </div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Coste de trozear<small>Por trozo × cantidad</small></div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input class="fish-input" type="number" id="fishCutPrice" placeholder="precio" min="0" value="0" oninput="calcFish()" style="width:80px">
-            <span style="color:var(--dimmed);font-size:12px">×</span>
-            <input class="fish-input" type="number" id="fishCutQty" placeholder="ud" min="0" value="0" oninput="calcFish()" style="width:55px">
-          </div>
-        </div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Foco gastado<small>Cantidad × valor</small></div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input class="fish-input" type="number" id="fishFocusQty" placeholder="foco" min="0" value="0" oninput="calcFish()" style="width:70px">
-            <span style="color:var(--dimmed);font-size:12px">@</span>
-            <input class="fish-input" type="number" id="fishFocusVal" placeholder="silver" min="0" value="0" oninput="calcFish()" style="width:80px">
-          </div>
-        </div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Otros costes<small>Tasas, viaje...</small></div>
-          <input class="fish-input" type="number" id="fishOther" placeholder="0" min="0" value="0" oninput="calcFish()">
-        </div>
-      </div>
-      <div class="fish-card">
-        <div class="fish-card-title">⏱️ Datos de Sesión</div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Duración<small>En minutos</small></div>
-          <input class="fish-input" type="number" id="fishDuration" placeholder="60" min="1" value="60" oninput="calcFish()">
-        </div>
-        <div class="fish-input-row">
-          <div class="fish-input-label">Zona de pesca<small>Multiplica tus ingresos</small></div>
-          <select class="fish-input" id="fishZone" onchange="calcFish()" style="text-align:left;width:145px">
-            <option value="1.0">🔵 Azul ×1.0</option>
-            <option value="1.15">🟡 Amarilla ×1.15</option>
-            <option value="1.3" selected>🔴 Roja ×1.3</option>
-            <option value="1.5">⚫ Negra ×1.5</option>
-          </select>
-        </div>
-        <div style="margin-top:12px" class="fish-tip">💡 <strong>Tip:</strong> Zona negra = ×1.5 en ingresos. Más riesgo, más plata.</div>
-        <div id="fishSessionStats" style="margin-top:14px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--cyan);text-transform:uppercase;opacity:0;transition:opacity .3s">
-          <div style="display:flex;gap:20px;flex-wrap:wrap">
-            <span>Silver/h: <strong id="fishSph" style="color:var(--text)">—</strong></span>
-            <span>Coste/min: <strong id="fishCpm" style="color:var(--text)">—</strong></span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="fish-section">
-      <div class="fish-section-title">🐟 Peces capturados</div>
-      <div class="fish-table-wrap">
-        <table class="fish-table">
-          <thead><tr>
-            <th>Pez</th><th>Tipo</th><th>Cantidad</th><th>Precio/ud</th><th>Subtotal</th><th></th>
-          </tr></thead>
-          <tbody id="fishTableBody"></tbody>
-        </table>
-      </div>
-      <button class="fish-add-btn" onclick="addFishRow()">＋ Añadir pez</button>
-    </div>
-    <button class="fish-calc-btn" onclick="calcFish()">🔄 Recalcular Profit</button>
-    <button class="fish-reset-btn" onclick="resetFish()">🗑 Resetear todo</button>
-  </div>
-</div>
-
 <script>
 // ==================== CONFIG (ofuscado — XOR+b64) ====================
 // Las keys están codificadas para no aparecer en texto plano en el repo.
@@ -453,7 +340,13 @@ function renderSelector(){
       <div class="card-add-inner"><div class="card-add-icon">＋</div><div class="card-add-label">Nueva Compo</div></div>
     </div>`;
   }
-  h+=`<div class="compo-card card-fish" onclick="goFishing()" style="animation-delay:${(compos.length+1)*.07}s"><div class="card-accent"></div><div class="compo-card-inner"><div class="card-index">🎣 HERRAMIENTA</div><div class="card-name">Fishing Profit</div><div class="card-fish-sub">Calcula profit por sesión: peces, costes, foco y más</div></div></div>`;
+  h+='<div class="compo-card card-fish" onclick="goFishing()" style="animation-delay:'+(compos.length+1)*.07+'s">'
+    +'<div class="card-accent"></div>'
+    +'<div class="compo-card-inner">'
+    +'<div class="card-index">HERRAMIENTA</div>'
+    +'<div class="card-name">Fishing Profit</div>'
+    +'<div class="card-fish-sub">Calcula profit: peces, costes, foco y mas</div>'
+    +'</div></div>';
   c.innerHTML=h;
 }
 
@@ -979,111 +872,226 @@ function connectRealtime(){
 // Keep-alive del backend
 setInterval(async()=>{try{await fetch(`${BACKEND_URL}/health`);}catch(e){}}, 4*60*1000);
 
-// ══════════════════════════════════════
+// ==============================
 // CALCULADORA DE PESCA
-// ══════════════════════════════════════
-let fishRows = [];
-let fishRowId = 0;
+// ==============================
+var fishRows = [];
+var fishRowId = 0;
 
 function goFishing(){
   showScreen('fishScreen');
-  if(fishRows.length === 0) initFishRows();
+  if(fishRows.length === 0){ initFishRows(); }
   renderFishTable();
   calcFish();
 }
 
 function initFishRows(){
   fishRows = [
-    {id:fishRowId++, name:'Carpa',  type:'raw', qty:0, price:0},
-    {id:fishRowId++, name:'Lucio',  type:'cut', qty:0, price:0},
+    {id:fishRowId++, name:'Carpa', type:'raw', qty:0, price:0},
+    {id:fishRowId++, name:'Lucio', type:'cut', qty:0, price:0}
   ];
 }
 
 function addFishRow(){
   fishRows.push({id:fishRowId++, name:'Pez', type:'raw', qty:0, price:0});
-  renderFishTable(); calcFish();
-}
-
-function removeFishRow(id){
-  fishRows = fishRows.filter(r => r.id !== id);
-  renderFishTable(); calcFish();
-}
-
-function updateFishRow(id, field, val){
-  const row = fishRows.find(r => r.id === id);
-  if(!row) return;
-  row[field] = (field === 'qty' || field === 'price') ? (parseFloat(val)||0) : val;
+  renderFishTable();
   calcFish();
 }
 
+function removeFishRow(id){
+  fishRows = fishRows.filter(function(r){ return r.id !== id; });
+  renderFishTable();
+  calcFish();
+}
+
+function fishSetName(id, v){ fishRows.forEach(function(r){ if(r.id===id){ r.name=v; } }); }
+function fishSetType(id, v){ fishRows.forEach(function(r){ if(r.id===id){ r.type=v; } }); calcFish(); }
+function fishSetQty(id, v){  fishRows.forEach(function(r){ if(r.id===id){ r.qty=parseFloat(v)||0; } }); calcFish(); }
+function fishSetPrice(id, v){ fishRows.forEach(function(r){ if(r.id===id){ r.price=parseFloat(v)||0; } }); calcFish(); }
+
 function renderFishTable(){
-  const tbody = document.getElementById('fishTableBody');
-  if(!tbody) return;
-  const bs = 'background:rgba(255,255,255,.06);border:1px solid rgba(0,229,204,.2);border-radius:6px;color:var(--text);font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;padding:5px 10px';
-  tbody.innerHTML = fishRows.map(r => {
-    const sub = (r.qty||0) * (r.price||0);
-    const sc  = sub > 0 ? 'var(--lime)' : 'var(--dimmed)';
-    return '<tr>'
-      + '<td><input type="text" value="' + r.name + '" style="' + bs + ';width:115px;text-align:left" oninput="updateFishRow(' + r.id + ','name',this.value)"></td>'
-      + '<td><select style="' + bs + ';width:110px;cursor:pointer" onchange="updateFishRow(' + r.id + ','type',this.value)">'
-      + '<option value="raw"' + (r.type==='raw'?' selected':'') + '>🐟 Crudo</option>'
-      + '<option value="cut"' + (r.type==='cut'?' selected':'') + '>🔪 Troceado</option>'
-      + '</select></td>'
-      + '<td><input type="number" value="' + r.qty + '" min="0" style="' + bs + ';width:80px;text-align:right" oninput="updateFishRow(' + r.id + ','qty',this.value)"></td>'
-      + '<td><input type="number" value="' + r.price + '" min="0" style="' + bs + ';width:95px;text-align:right" oninput="updateFishRow(' + r.id + ','price',this.value)"></td>'
-      + '<td style="font-family:Syne,sans-serif;font-size:17px;font-weight:800;color:' + sc + '">' + fmtSilver(sub) + '</td>'
-      + '<td><button class="fish-remove-btn" onclick="removeFishRow(' + r.id + ')">✕</button></td>'
-      + '</tr>';
-  }).join('');
+  var tbody = document.getElementById('fishTableBody');
+  if(!tbody){ return; }
+  var rows = '';
+  for(var i=0; i<fishRows.length; i++){
+    var r = fishRows[i];
+    var sub = (r.qty||0) * (r.price||0);
+    var sc = sub > 0 ? 'var(--lime)' : 'var(--dimmed)';
+    var bs = 'background:rgba(255,255,255,.06);border:1px solid rgba(0,229,204,.2);border-radius:6px;color:var(--text);font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;padding:5px 10px';
+    var nameEsc = (r.name||'').replace(/"/g, '&quot;');
+    var selR = r.type==='raw' ? ' selected' : '';
+    var selC = r.type==='cut' ? ' selected' : '';
+    rows += '<tr>';
+    rows += '<td><input type="text" value="' + nameEsc + '" style="' + bs + ';width:115px;text-align:left" oninput="fishSetName(' + r.id + ',this.value)"></td>';
+    rows += '<td><select style="' + bs + ';width:110px;cursor:pointer" onchange="fishSetType(' + r.id + ',this.value)">';
+    rows += '<option value="raw"' + selR + '>Crudo</option>';
+    rows += '<option value="cut"' + selC + '>Troceado</option>';
+    rows += '</select></td>';
+    rows += '<td><input type="number" value="' + r.qty + '" min="0" style="' + bs + ';width:80px;text-align:right" oninput="fishSetQty(' + r.id + ',this.value)"></td>';
+    rows += '<td><input type="number" value="' + r.price + '" min="0" style="' + bs + ';width:95px;text-align:right" oninput="fishSetPrice(' + r.id + ',this.value)"></td>';
+    rows += '<td style="font-family:Syne,sans-serif;font-size:17px;font-weight:800;color:' + sc + '">' + fmtSilver(sub) + '</td>';
+    rows += '<td><button class="fish-remove-btn" onclick="removeFishRow(' + r.id + ')">X</button></td>';
+    rows += '</tr>';
+  }
+  tbody.innerHTML = rows;
 }
 
 function fmtSilver(n){
-  if(n >= 1000000) return (n/1000000).toFixed(2) + 'M';
-  if(n >= 1000)    return (n/1000).toFixed(1) + 'K';
+  if(n >= 1000000){ return (n/1000000).toFixed(2) + 'M'; }
+  if(n >= 1000){ return (n/1000).toFixed(1) + 'K'; }
   return Math.round(n).toLocaleString();
 }
 
 function calcFish(){
-  const baitP  = parseFloat(document.getElementById('fishBaitPrice')?.value)||0;
-  const baitQ  = parseFloat(document.getElementById('fishBaitQty')?.value)||0;
-  const repair = parseFloat(document.getElementById('fishRepair')?.value)||0;
-  const cutP   = parseFloat(document.getElementById('fishCutPrice')?.value)||0;
-  const cutQ   = parseFloat(document.getElementById('fishCutQty')?.value)||0;
-  const focusQ = parseFloat(document.getElementById('fishFocusQty')?.value)||0;
-  const focusV = parseFloat(document.getElementById('fishFocusVal')?.value)||0;
-  const other  = parseFloat(document.getElementById('fishOther')?.value)||0;
-  const dur    = parseFloat(document.getElementById('fishDuration')?.value)||60;
-  const zone   = parseFloat(document.getElementById('fishZone')?.value)||1.0;
+  function gv(id){ var el=document.getElementById(id); return el ? parseFloat(el.value)||0 : 0; }
+  var baitP=gv('fishBaitPrice'), baitQ=gv('fishBaitQty'), repair=gv('fishRepair');
+  var cutP=gv('fishCutPrice'), cutQ=gv('fishCutQty');
+  var focQ=gv('fishFocusQty'), focV=gv('fishFocusVal'), other=gv('fishOther');
+  var dur=gv('fishDuration')||60;
+  var zEl=document.getElementById('fishZone');
+  var zone=zEl ? (parseFloat(zEl.value)||1.0) : 1.0;
 
-  const totalCost   = baitP*baitQ + repair + cutP*cutQ + focusQ*focusV + other;
-  const totalIncome = fishRows.reduce((s,r) => s + (r.qty||0)*(r.price||0), 0) * zone;
-  const profit  = totalIncome - totalCost;
-  const margin  = totalIncome > 0 ? (profit / totalIncome * 100) : 0;
-  const sph     = dur > 0 ? (profit / (dur/60)) : 0;
-  const cpm     = dur > 0 ? (totalCost / dur)   : 0;
+  var totalCost=baitP*baitQ+repair+cutP*cutQ+focQ*focV+other;
+  var totalIncome=0;
+  for(var i=0;i<fishRows.length;i++){ totalIncome+=(fishRows[i].qty||0)*(fishRows[i].price||0); }
+  totalIncome*=zone;
+  var profit=totalIncome-totalCost;
+  var margin=totalIncome>0?(profit/totalIncome*100):0;
+  var sph=dur>0?(profit/(dur/60)):0;
+  var cpm=dur>0?(totalCost/dur):0;
 
-  const pv = document.getElementById('fishProfitVal');
-  if(pv){ pv.textContent = (profit<0?'-':'') + fmtSilver(Math.abs(profit)); pv.className = 'fish-profit-value ' + (profit>=0?'positive':'negative'); }
-  const inc = document.getElementById('fishTotalIncome'); if(inc) inc.textContent = fmtSilver(totalIncome);
-  const cos = document.getElementById('fishTotalCost');   if(cos) cos.textContent = fmtSilver(totalCost);
-  const mp  = document.getElementById('fishMarginPct');
-  if(mp){ mp.textContent = margin.toFixed(1)+'%'; mp.className = 'fish-profit-item-val ' + (margin>=0?'margin':'cost'); }
-  const stats = document.getElementById('fishSessionStats'); if(stats) stats.style.opacity='1';
-  const sphEl = document.getElementById('fishSph'); if(sphEl) sphEl.textContent = fmtSilver(sph)+'/h';
-  const cpmEl = document.getElementById('fishCpm'); if(cpmEl) cpmEl.textContent = fmtSilver(cpm)+'/min';
+  function sv(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+  var pv=document.getElementById('fishProfitVal');
+  if(pv){ pv.textContent=(profit<0?'-':'')+fmtSilver(Math.abs(profit)); pv.className='fish-profit-value '+(profit>=0?'positive':'negative'); }
+  sv('fishTotalIncome',fmtSilver(totalIncome));
+  sv('fishTotalCost',fmtSilver(totalCost));
+  var mp=document.getElementById('fishMarginPct');
+  if(mp){ mp.textContent=margin.toFixed(1)+'%'; mp.className='fish-profit-item-val '+(margin>=0?'margin':'cost'); }
+  var stats=document.getElementById('fishSessionStats'); if(stats) stats.style.opacity='1';
+  sv('fishSph',fmtSilver(sph)+'/h');
+  sv('fishCpm',fmtSilver(cpm)+'/min');
   renderFishTable();
 }
 
 function resetFish(){
-  if(!confirm('¿Resetear todos los datos?')) return;
-  ['fishBaitPrice','fishBaitQty','fishRepair','fishCutPrice','fishCutQty','fishFocusQty','fishFocusVal','fishOther'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value=0;
-  });
-  document.getElementById('fishDuration').value=60;
+  if(!confirm('Resetear todos los datos?')){ return; }
+  var ids=['fishBaitPrice','fishBaitQty','fishRepair','fishCutPrice','fishCutQty','fishFocusQty','fishFocusVal','fishOther'];
+  for(var i=0;i<ids.length;i++){ var el=document.getElementById(ids[i]); if(el) el.value=0; }
+  var dur=document.getElementById('fishDuration'); if(dur) dur.value=60;
   fishRows=[]; fishRowId=0; initFishRows(); renderFishTable(); calcFish();
-  showToast('🔄 Calculadora reseteada');
+  showToast('Calculadora reseteada');
 }
 
 </script>
+
+<!-- ===== PESCA ===== -->
+<div id="fishScreen" class="screen">
+  <div class="fish-bg"></div>
+  <div class="fish-topbar">
+    <button class="fish-back-btn" onclick="goSelector()">&#8592; Volver</button>
+    <div class="fish-title-bar">
+      <span class="fish-title-bar-icon">&#127907;</span>
+      <span class="fish-title-bar-text">CALCULADORA DE <span>PESCA</span></span>
+    </div>
+  </div>
+  <div class="fish-hero">
+    <div class="fish-hero-eyebrow">Albion Online &#183; Herramienta de pesca</div>
+    <div class="fish-hero-title">FISHING <span>PROFIT</span></div>
+    <div class="fish-hero-sub">Calcula tus ganancias reales por sesion</div>
+  </div>
+  <div class="fish-content">
+    <div class="fish-profit-card">
+      <div class="fish-profit-title">Profit Total de la Sesion</div>
+      <div class="fish-profit-value" id="fishProfitVal">0</div>
+      <div class="fish-profit-currency">Silver / Sesion</div>
+      <div class="fish-profit-breakdown">
+        <div class="fish-profit-item">
+          <div class="fish-profit-item-val income" id="fishTotalIncome">0</div>
+          <div class="fish-profit-item-lbl">Ingresos</div>
+        </div>
+        <div class="fish-profit-item">
+          <div class="fish-profit-item-val cost" id="fishTotalCost">0</div>
+          <div class="fish-profit-item-lbl">Costes</div>
+        </div>
+        <div class="fish-profit-item">
+          <div class="fish-profit-item-val margin" id="fishMarginPct">0%</div>
+          <div class="fish-profit-item-lbl">Margen</div>
+        </div>
+      </div>
+    </div>
+    <div class="fish-grid">
+      <div class="fish-card">
+        <div class="fish-card-title">Costes de la Sesion</div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Cebo<small>Precio x cantidad</small></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input class="fish-input" type="number" id="fishBaitPrice" placeholder="precio" min="0" value="0" oninput="calcFish()" style="width:80px">
+            <span style="color:#4A4870">x</span>
+            <input class="fish-input" type="number" id="fishBaitQty" placeholder="ud" min="0" value="0" oninput="calcFish()" style="width:55px">
+          </div>
+        </div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Reparacion cana<small>Coste total</small></div>
+          <input class="fish-input" type="number" id="fishRepair" placeholder="0" min="0" value="0" oninput="calcFish()">
+        </div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Trozear<small>Precio x cantidad</small></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input class="fish-input" type="number" id="fishCutPrice" placeholder="precio" min="0" value="0" oninput="calcFish()" style="width:80px">
+            <span style="color:#4A4870">x</span>
+            <input class="fish-input" type="number" id="fishCutQty" placeholder="ud" min="0" value="0" oninput="calcFish()" style="width:55px">
+          </div>
+        </div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Foco gastado<small>Cantidad @ valor</small></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input class="fish-input" type="number" id="fishFocusQty" placeholder="foco" min="0" value="0" oninput="calcFish()" style="width:70px">
+            <span style="color:#4A4870">@</span>
+            <input class="fish-input" type="number" id="fishFocusVal" placeholder="silver" min="0" value="0" oninput="calcFish()" style="width:80px">
+          </div>
+        </div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Otros costes<small>Tasas, viaje...</small></div>
+          <input class="fish-input" type="number" id="fishOther" placeholder="0" min="0" value="0" oninput="calcFish()">
+        </div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-title">Datos de Sesion</div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Duracion<small>En minutos</small></div>
+          <input class="fish-input" type="number" id="fishDuration" placeholder="60" min="1" value="60" oninput="calcFish()">
+        </div>
+        <div class="fish-input-row">
+          <div class="fish-input-label">Zona de pesca<small>Multiplica ingresos</small></div>
+          <select class="fish-input" id="fishZone" onchange="calcFish()" style="text-align:left;width:145px">
+            <option value="1.0">Azul x1.0</option>
+            <option value="1.15">Amarilla x1.15</option>
+            <option value="1.3" selected>Roja x1.3</option>
+            <option value="1.5">Negra x1.5</option>
+          </select>
+        </div>
+        <div style="margin-top:12px" class="fish-tip">Zona negra = x1.5 en ingresos. Mas riesgo, mas plata.</div>
+        <div id="fishSessionStats" style="margin-top:14px;font-size:11px;color:var(--cyan);opacity:0;transition:opacity .3s">
+          Silver/h: <strong id="fishSph">-</strong> &nbsp; Coste/min: <strong id="fishCpm">-</strong>
+        </div>
+      </div>
+    </div>
+    <div class="fish-section">
+      <div class="fish-section-title">Peces capturados</div>
+      <div class="fish-table-wrap">
+        <table class="fish-table">
+          <thead><tr>
+            <th>Pez</th><th>Tipo</th><th>Cantidad</th><th>Precio/ud</th><th>Subtotal</th><th></th>
+          </tr></thead>
+          <tbody id="fishTableBody"></tbody>
+        </table>
+      </div>
+      <button class="fish-add-btn" onclick="addFishRow()">+ Anadir pez</button>
+    </div>
+    <button class="fish-calc-btn" onclick="calcFish()">Recalcular Profit</button>
+    <button class="fish-reset-btn" onclick="resetFish()">Resetear todo</button>
+  </div>
+</div>
+
 </body>
 </html>
